@@ -28,7 +28,7 @@ def user_create(_user_create: user_schema.UserCreate, db: Session = Depends(get_
     if user: 
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, 
                             detail="이미 가입된 회원입니다.")
-    
+    print("user_create: ", _user_create)
     user_crud.create_user(db, user_create=_user_create)
 
 # response_model: API의 응답값에 대한 스키마를 정의
