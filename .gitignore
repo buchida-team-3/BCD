@@ -4,7 +4,8 @@ images/*.png
 *.pyc
 __pycache__
 venv
-images/samples/*
+images/
+image_process/samples/*
 images/*.png
 *.DS_Store
 frontend/node_modules
