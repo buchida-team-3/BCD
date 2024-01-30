@@ -28,7 +28,6 @@ def user_create(_user_create: user_schema.UserCreate, db: Session = Depends(get_
     if user: 
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, 
                             detail="이미 가입된 회원입니다.")
-    print("user_create: ", _user_create)
     user_crud.create_user(db, user_create=_user_create)
 
 # response_model: API의 응답값에 대한 스키마를 정의
@@ -36,8 +35,6 @@ def user_create(_user_create: user_schema.UserCreate, db: Session = Depends(get_
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), 
                            db: Session = Depends(get_db)):
 # 로그인 api의 입력항목인 username, password를 OAuth2PasswordRequestForm 통해 받아옴
-    
-    print("form_data: ", form_data)
 
     # 로그인 예외 처리
     user = user_crud.get_user(db, username=form_data.username)
