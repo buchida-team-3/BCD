@@ -4,12 +4,13 @@ images/*.png
 *.pyc
 __pycache__
 venv
-images/
 images/samples/*
 images/*.png
 *.DS_Store
 frontend/node_modules
 alembic/versions/*
 *.db
-fastapi/migrations/versions/*
-fastapi/migrations/script.py.mako
+fastapi/migrations/*
+image_process/*.png
+__init__.py
+image_process/samples/*
