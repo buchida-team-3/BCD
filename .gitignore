@@ -4,7 +4,6 @@ images/*.png
 *.pyc
 __pycache__
 venv
-images/
 images/samples/*
 images/*.png
 *.DS_Store
@@ -12,3 +11,6 @@ frontend/node_modules
 alembic/versions/*
 *.db
 fastapi/migrations/*
+image_process/*.png
+__init__.py
+image_process/samples/*

@@ -2,14 +2,15 @@ from fastapi import APIRouter, HTTPException, File, UploadFile
 from typing import List
 import os
 
-from domain.image import image_crud, image_schema
+# from domain.image import image_crud, image_schema
 
 router = APIRouter(
-    prefix="/localhost:3000",
+    # prefix="/image",
 )
 
 
-start_dir = "/images/samples/sample"
+# start_dir = "./images/samples"
+start_dir = "../image_process/samples/sample"
 
 def make_sample_dir(start_dir):
     num = 1
@@ -28,8 +29,9 @@ def make_sample_dir(start_dir):
 async def image_upload(files: List[UploadFile] = File(...)):
     results = []
 
+    num_path = make_sample_dir(start_dir)
+
     for file in files:
-        num_path = make_sample_dir(start_dir)
         content = await file.read()
         file_path = os.path.join(num_path, file.filename)
 

@@ -8,6 +8,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.middleware.cors import CORSMiddleware
 
 from domain.user import user_router
+from domain.image import image_router 
 
 app = FastAPI()
 # templates = Jinja2Templates(directory="/Users/jiho/projects/buchida/yongjae/uploadBefore.html")
@@ -28,6 +29,7 @@ app.add_middleware(
 
 # 라우터를 등록
 app.include_router(user_router.router)
+app.include_router(image_router.router)
 
 @app.get("/main")
 def main_page():
