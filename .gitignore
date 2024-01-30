@@ -9,7 +9,7 @@ images/samples/*
 images/*.png
 *.DS_Store
 frontend/node_modules
-fastapi/alembic/script.py.mako
 alembic/versions/*
-fastapi/migrations
 *.db
+fastapi/migrations/versions/*
+fastapi/migrations/script.py.mako
