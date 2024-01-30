@@ -9,7 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from domain.user import user_router
-from domain.image import image_router 
+from domain.image import image_router
 
 app = FastAPI()
 # templates = Jinja2Templates(directory="/Users/jiho/projects/buchida/yongjae/uploadBefore.html")

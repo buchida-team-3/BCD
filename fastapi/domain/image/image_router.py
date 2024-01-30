@@ -1,32 +1,25 @@
-from fastapi import APIRouter, HTTPException, File, UploadFile
+from fastapi import APIRouter, HTTPException, File, UploadFile, Depends
 from typing import List
 import os
 
-# from domain.image import image_crud, image_schema
+from domain.image import image_crud, image_schema
+from domain.image.image_crud import make_sample_dir
+from domain.image.image_crud import recording_image
+
+from database import get_db
+
+from models import Image
 
 router = APIRouter(
     # prefix="/image",
 )
 
-
-# start_dir = "./images/samples"
 start_dir = "../image_process/samples/sample"
 
-def make_sample_dir(start_dir):
-    num = 1
-    while True:
-        fname = start_dir + '_' + f"{num:02}"
-        if not os.path.exists(fname):
-            os.makedirs(fname)
-            break
-        else:
-            num += 1
-            continue
-    return fname
-
-
 @router.post("/group/album/upload")
-async def image_upload(files: List[UploadFile] = File(...)):
+async def image_upload(files: List[UploadFile] = File(...), 
+                       image_upload: image_schema.ImageUpload = None,
+                       db=Depends(get_db)):    
     results = []
 
     num_path = make_sample_dir(start_dir)
@@ -38,8 +31,15 @@ async def image_upload(files: List[UploadFile] = File(...)):
         with open(file_path, "wb") as fp:
             fp.write(content)
 
+        # TODO: DB에 저장 -> user_id, image_path, image_name, id
+        # TODO: user_id는 현재 로그인한 사용자의 id를 사용해야 함
+        # TODO: id는 auto increment로 설정해야 함
+        
+        # db에 저장
+        recording_image(image_upload, db)
+        
         results.append({"filename": file_path})
-
+    
     return results
 
 
