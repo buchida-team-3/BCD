@@ -11,4 +11,4 @@ images/*.png
 frontend/node_modules
 alembic/versions/*
 *.db
-fastapi/migrations/versions/*
+fastapi/migrations/*
