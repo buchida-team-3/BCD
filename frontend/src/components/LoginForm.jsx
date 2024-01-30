@@ -34,6 +34,12 @@ function LoginForm() {
             if (response.status === 200) {
                 // 성공적으로 로그인 처리
                 console.log('로그인 성공', response.data);
+
+                // 로그인 성공시 토큰과 유저이름을 localStorage에 저장
+                // 토큰이 만료되면 토큰과 유저이름 모두 삭제 필요
+                localStorage.setItem('access_token', response.data.access_token);
+                localStorage.setItem('user_name', response.data.user_name);
+                window.location.href = '/group/album';
             } else {
                 // 로그인 실패 처리
                 console.error('로그인 실패', response.data);
