@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from domain.image.image_schema import UserCreate
+from domain.user.user_schema import UserCreate
 import os
 from models import Image
 
