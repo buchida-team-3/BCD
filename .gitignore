@@ -12,4 +12,3 @@ frontend/node_modules
 alembic/versions/*
 *.db
 fastapi/migrations/versions/*
-fastapi/migrations/script.py.mako
