@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 방향으로 중앙 정렬 */
+    align-items: center; /* 수평 방향으로 중앙 정렬 */
+    height: 100vh;
+}

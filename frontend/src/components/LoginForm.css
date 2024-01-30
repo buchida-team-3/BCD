@@ -1,0 +1,23 @@
+.login-input {
+    margin-bottom: 10px;
+    width: 95%;
+    padding: 10px;
+}
+
+.button-link-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.login-button,
+.signup-link {
+    padding: 10px;
+    flex-grow: 1;
+}
+
+.login-button {
+    margin-right: 10px;
+}
+
+/* ... 나머지 LoginForm 관련 스타일 ... */

@@ -1,0 +1,20 @@
+.signup-input {
+    margin-bottom: 10px;
+    width: 95%;
+    padding: 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.button {
+    padding: 10px;
+    flex-grow: 1;
+}
+
+.confirm-button {
+    margin-right: 10px;
+}

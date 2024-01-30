@@ -1,0 +1,9 @@
+/* InputField.css */
+
+.input-field {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: calc(100% - 22px);
+}

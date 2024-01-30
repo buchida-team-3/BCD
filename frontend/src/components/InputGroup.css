@@ -1,0 +1,15 @@
+/* InputGroup.css */
+.input-field {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: calc(100% - 22px); /* 패딩과 보더 고려 */
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 300px;
+}
