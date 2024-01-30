@@ -1,0 +1,15 @@
+images/samples/*
+images/*.png
+*.DS_Store
+*.pyc
+__pycache__
+venv
+images/
+images/samples/*
+images/*.png
+*.DS_Store
+frontend/node_modules
+fastapi/alembic/script.py.mako
+alembic/versions/*
+alembic.ini
+fastapi/migrations
