@@ -17,8 +17,8 @@ function App() {
           <Route path="/main" element={<MainPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/group/create" element={<CreateGroup />} />
-          <Route path="/group/select" element={<SelectGroup />} />
+          {/* <Route path="/group/create" element={<CreateGroup />} />
+          <Route path="/group/select" element={<SelectGroup />} /> */}
           <Route path="/group/album" element={<UploadAfter />} />
           <Route path="/group/album/upload" element={<UploadBefore />} />
         </Routes>

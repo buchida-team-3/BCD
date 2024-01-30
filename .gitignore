@@ -13,3 +13,4 @@ fastapi/alembic/script.py.mako
 alembic/versions/*
 alembic.ini
 fastapi/migrations
+*.db
