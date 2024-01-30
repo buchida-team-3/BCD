@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 
 from domain.user import user_router
+from domain.image import image_router
 
 app = FastAPI()
 # templates = Jinja2Templates(directory="/Users/jiho/projects/buchida/yongjae/uploadBefore.html")
@@ -29,6 +30,7 @@ app.add_middleware(
 
 # 라우터를 등록
 app.include_router(user_router.router)
+app.include_router(image_router.router)
 
 @app.get("/main")
 def main_page():
@@ -38,6 +40,7 @@ def main_page():
         # with open(html_file_path, "r") as f:
         #     return HTMLResponse(content=f.read(), status_code=200)
         
+        print("main page")
         return RedirectResponse(url="http://localhost:3000/login")
     except FileNotFoundError:        
         return HTTPException(status_code=404, detail="File not found.")

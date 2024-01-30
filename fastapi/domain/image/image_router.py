@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, File, UploadFile
 from typing import List
 import os
 
-from domain.image import image_crud, image_schema
+# from domain.image import image_crud, image_schema
 
 router = APIRouter(
     prefix="/localhost:3000",

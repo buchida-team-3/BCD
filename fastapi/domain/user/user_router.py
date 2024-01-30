@@ -37,6 +37,8 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                            db: Session = Depends(get_db)):
 # 로그인 api의 입력항목인 username, password를 OAuth2PasswordRequestForm 통해 받아옴
     
+    print("form_data: ", form_data)
+
     # 로그인 예외 처리
     user = user_crud.get_user(db, username=form_data.username)
     if not user or not pwd_context.verify(form_data.password, user.password):
