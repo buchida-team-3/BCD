@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 # from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
 from starlette.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 
 from domain.user import user_router
 from domain.image import image_router 
@@ -33,11 +34,14 @@ app.include_router(image_router.router)
 
 @app.get("/main")
 def main_page():
-    html_file_path = "../yongjae/mainpage.html"
+    # html_file_path = "../yongjae/mainpage.html"
     # TODO: index.html 파일을 읽어서 리턴
     try:
-        with open(html_file_path, "r") as f:
-            return HTMLResponse(content=f.read(), status_code=200)
+        # with open(html_file_path, "r") as f:
+        #     return HTMLResponse(content=f.read(), status_code=200)
+        
+        print("main page")
+        return RedirectResponse(url="http://localhost:3000/login")
     except FileNotFoundError:        
         return HTTPException(status_code=404, detail="File not found.")
     # return {"message": "메인 화면입니다."}
