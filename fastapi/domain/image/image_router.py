@@ -41,5 +41,4 @@ async def image_upload(files: List[UploadFile] = File(...)):
         results.append({"filename": file_path})
 
     return results
-
-
+# 요청시 클라에서 토큰을 헤더에 담아서 보내는데 그것을 검증할 부분을 추가해야함
