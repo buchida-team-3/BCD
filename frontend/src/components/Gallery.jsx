@@ -8,15 +8,90 @@ import getUuid from 'uuid-by-string'
 import './Gallery.css';
 const GOLDENRATIO = 1.61803398875
 
+function Upload3DButton({ position, onClick }) {
+  const ref = useRef();
+
+  // 버튼에 애니메이션 추가하기 위한 ref
+  useFrame(() => {
+    // 예: Y축을 중심으로 회전하는 애니메이션을 제거하거나 조절
+    ref.current.rotation.y += 0.00;
+  });
+
+  return (
+    <group
+      ref={ref}
+      position={position}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+      onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}>
+      <mesh>
+        <boxGeometry args={[1, 0.5, 0.1]} />
+        <meshStandardMaterial color="royalblue" />
+      </mesh>
+      <Text
+        position={[0, 0, 0.06]} // Adjust text position based on button geometry
+        fontSize={0.25}
+        color="white" // Text color
+        anchorX="center" // Center the text horizontally
+        anchorY="middle" // Center the text vertically
+      >
+        Upload
+      </Text>
+    </group>
+  );
+}
+
+function Stitch3DButton({ position, onClick }) {
+  const ref = useRef();
+
+  // 버튼에 애니메이션 추가하기 위한 ref
+  useFrame((state, delta) => {
+    // 예: Z축을 중심으로 회전하는 애니메이션을 추가
+    ref.current.rotation.z += 0.00;
+  });
+
+  return (
+    <group
+      ref={ref}
+      position={position}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+      onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}>
+      <mesh>
+        <boxGeometry args={[1, 0.5, 0.1]} />
+        <meshStandardMaterial color="limegreen" />
+      </mesh>
+      <Text
+        position={[0, 0, 0.1]} // Adjust text position based on button geometry
+        fontSize={0.2}
+        color="white" // Text color
+        anchorX="center" // Center the text horizontally
+        anchorY="middle" // Center the text vertically
+      >
+        Stitch
+      </Text>
+    </group>
+  );
+}
+
 // 갤러리 컴포넌트
 const Gallery = ({ images }) => {
+  // 버튼 클릭 시 호출될 함수
+  const handleButtonClick = () => {
+    console.log('Button clicked!');
+  };
+
+  const handleStitchButtonClick = () => {
+    console.log('Stitch Button clicked!');
+  };
+
   return (
     <Canvas dpr={[1, 1.5]} camera={{ fov: 70, position: [0, 2, 15] }}>
       {/* 배경 색상 설정 */}
       <color attach="background" args={['#191920']} />
       {/* 안개 설정 */}
       <fog attach="fog" args={['#191920', 0, 15]} />
-      <group position={[0, -1.5, 0]}>
+      <group position={[0, -0.5, 0]}>
         {/* 프레임과 반사 효과를 가진 이미지 렌더링 */}
         <Frames images={images} />
         {/* 반사 효과를 가진 평면 생성 */}
@@ -37,7 +112,15 @@ const Gallery = ({ images }) => {
         </mesh>
       </group>
       {/* 3D 환경 렌더링 */}
-      <Environment preset="lobby" />
+      <Environment preset="city" />
+      {/* 버튼 추가 */}
+      <Upload3DButton position={[-3, 1.5, 2.9]} onClick={handleButtonClick} />
+      <Upload3DButton position={[0, 1.5, 2.9]} onClick={handleButtonClick} />
+      <Upload3DButton position={[3, 1.5, 2.9]} onClick={handleButtonClick} />
+
+      {/* Stitch3DButton 추가 */}
+      <Stitch3DButton position={[-3, -0.3, 2.9]} onClick={handleStitchButtonClick} />
+      <Stitch3DButton position={[3, -0.3, 2.9]} onClick={handleStitchButtonClick} />
     </Canvas>
   )
 }
@@ -59,7 +142,7 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
       // 선택된 프레임의 부모 객체의 월드 매트릭스 업데이트
       clicked.current.parent.updateWorldMatrix(true, true);
       // 선택된 프레임의 부모 객체의 로컬 좌표를 월드 좌표로 변환하여 위치 갱신
-      clicked.current.parent.localToWorld(p.set(0, GOLDENRATIO / 2, 2.25));
+      clicked.current.parent.localToWorld(p.set(0, GOLDENRATIO / 2, 1.25));
       // 선택된 프레임의 부모 객체의 쿼터니언을 가져와서 q에 할당
       clicked.current.parent.getWorldQuaternion(q);
     } else {
@@ -105,7 +188,7 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
   // useFrame을 사용하여 매 프레임마다 이미지와 프레임의 애니메이션 효과 적용
   useFrame((state, dt) => {
     // 이미지의 확대/축소 애니메이션
-    // image.current.material.zoom = 2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2;
+    image.current.material.zoom = 2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2;
     // 이미지와 프레임의 크기 조절 및 프레임의 색상 변화
     easing.damp3(image.current.scale, [0.85 * (!isActive && hovered ? 0.85 : 1), 0.9 * (!isActive && hovered ? 0.905 : 1), 1], 0.1, dt);
     easing.dampC(frame.current.material.color, hovered ? 'orange' : 'white', 0.1, dt);

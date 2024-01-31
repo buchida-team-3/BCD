@@ -43,22 +43,26 @@ const Gallery = ({ images }) => {
 }
 
 // 갤러리 컴포넌트에서 사용되는 Frames 컴포넌트
-function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() }) {
+function Frames({ images }) {
   // useRef를 통해 프레임과 클릭된 아이템에 대한 참조 생성
   const ref = useRef();
   const clicked = useRef();
   // 현재 라우터 파라미터와 로케이션을 가져오기 위해 useRoute와 useLocation 훅 사용
   const [, params] = useRoute('/item/:id');
   const [, setLocation] = useLocation();
-
+  
   // 클릭된 프레임의 ID를 저장할 상태 추가
   const [clickedFrameId, setClickedFrameId] = useState(null);
+
+  const p = new THREE.Vector3();
+  const q = new THREE.Quaternion();
 
   // useEffect를 사용하여 라우터 파라미터가 변경될 때마다 실행
   useEffect(() => {
     // 선택된 프레임을 찾아 참조 업데이트
     clicked.current = ref.current.getObjectByName(params?.id);
-    setClickedFrameId(params?.id); 
+    setClickedFrameId(params?.id); // 클릭된 프레임의 ID를 업데이트
+
     if (clicked.current) {
       // 선택된 프레임의 부모 객체의 월드 매트릭스 업데이트
       clicked.current.parent.updateWorldMatrix(true, true);
@@ -71,7 +75,8 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
       p.set(0, 0, 5.5);
       q.identity();
     }
-  }, [params?.id]);
+  }, [params?.id, p, q]);
+
 
   // useFrame을 사용하여 매 프레임마다 카메라의 위치와 회전을 부드럽게 애니메이션화
   useFrame((state, dt) => {
@@ -81,15 +86,14 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
 
   // 프레임들을 렌더링하는 컴포넌트 반환
   return (
-    <group ref={ref}>
+    <group
+      ref={ref}
+      // 클릭 시 해당 아이템으로 이동 또는 이미 선택된 경우 메인 화면으로 이동
+      onClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}
+      onPointerMissed={() => setLocation('/')}>
       {images?.map((props) => <Frame key={props.url} {...props} />)}
-
-      {/* 버튼 추가 */}
       {clickedFrameId && (
-        <mesh position={[2, 0, 0]} onClick={() => {
-          // 클릭된 상태에서 다시 클릭할 때 /item/ URL 제거하면서 다른 화면으로 이동
-          setLocation('/');
-        }}>
+        <mesh position={[2, 0, 0]} onClick={() => setLocation('/')}>
           <boxGeometry args={[1, 0.5, 0.2]} />
           <meshStandardMaterial color="blue" />
           <Text anchorX="left" anchorY="top" position={[0.5, 0.25, 0.1]} fontSize={0.1}>
@@ -111,7 +115,6 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
   const [hovered, hover] = useState(false);
   const [rnd] = useState(() => Math.random());
   const name = getUuid(url);
-  const [, setLocation] = useLocation();
   const isActive = params?.id === name;
 
   // useCursor를 사용하여 호버 시 커서 상태를 관리
@@ -135,17 +138,6 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
     }
   });
 
-  const handleClick = (e) => {
-    e.stopPropagation();
-    if (isActive) {
-      // 이미지가 확대된 상태에서 클릭했을 때만 /item/ URL 제거하면서 다른 화면으로 이동
-      setLocation('/');
-    } else {
-      // 이미지가 확대되지 않은 상태에서 클릭하면 /item/ URL에 해당 이미지 ID를 추가하여 이동
-      setLocation('/item/' + name);
-    }
-  };
-
   // 각 프레임을 렌더링하는 JSX 반환
   return (
     <group {...props}>
@@ -154,7 +146,6 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
         // 포인터 이벤트 처리
         onPointerOver={(e) => (e.stopPropagation(), hover(true))}
         onPointerOut={() => hover(false)}
-        onClick={handleClick}
         scale={[1, GOLDENRATIO, 0.05]}
         position={[0, GOLDENRATIO / 2, 0]}>
         <boxGeometry />

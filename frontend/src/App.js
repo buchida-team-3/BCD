@@ -9,10 +9,11 @@ import SelectGroup from './components/SelectGroup';
 import UploadAfter from './components/UploadAfter';
 import UploadBefore from './components/UploadBefore';
 import Gallery from './components/Gallery';
+import Photo from './components/Photo';
 
 function App() {
   return (
-    <div className="App">
+    
       <Router>
         <Routes>
           <Route path="/main" element={<MainPage />} />
@@ -22,10 +23,10 @@ function App() {
           <Route path="/group/select" element={<SelectGroup />} /> */}
           <Route path="/group/album" element={<UploadAfter />} />
           <Route path="/group/album/upload" element={<UploadBefore />} />
-          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/gallery" element={<Gallery images={Photo}/>} />
         </Routes>
       </Router>
-    </div>
+   
   );
 }
 

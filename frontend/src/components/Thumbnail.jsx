@@ -1,4 +1,3 @@
-
 const thumbnail = [
   // Front
   { position: [0, 0, 1.0], rotation: [0, 0, 0], url: 'img/img1.jpg' },
