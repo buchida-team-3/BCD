@@ -14,7 +14,7 @@ router = APIRouter(
     # prefix="/image",
 )
 
-start_dir = "../image_process/samples/sample"
+start_dir = "../frontend/public/img"
 
 @router.post("/group/album/upload")
 async def image_upload(background_tasks: BackgroundTasks,

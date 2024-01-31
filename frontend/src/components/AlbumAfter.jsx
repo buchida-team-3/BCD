@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useCursor, MeshReflectorMaterial, Image, Text, Environment } from '@react-three/drei'
@@ -40,7 +39,6 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
   const clicked = useRef()
   const [, params] = useRoute('/item/:id')
   const [, setLocation] = useLocation()
-  const navigate = useNavigate();
   useEffect(() => {
     clicked.current = ref.current.getObjectByName(params?.id)
     if (clicked.current) {
@@ -59,7 +57,7 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
   return (
     <group
       ref={ref}
-      onClick={() => navigate('/Gallery')}
+      onClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}
       onPointerMissed={() => setLocation('/')}>
       {images.map((props) => <Frame key={props.url} {...props} /> /* prettier-ignore */)}
     </group>
