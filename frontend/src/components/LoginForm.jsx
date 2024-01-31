@@ -40,6 +40,7 @@ function LoginForm() {
                 localStorage.setItem('access_token', response.data.access_token);
                 localStorage.setItem('user_name', response.data.user_name);
                 window.location.href = 'album';
+
             } else {
                 // 로그인 실패 처리
                 console.error('로그인 실패', response.data);
