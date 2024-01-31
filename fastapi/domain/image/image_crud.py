@@ -41,7 +41,7 @@ async def image_process(sample_number: int):
     # samples/sample_* 폴더에 있는 이미지를 사용하여 main.py를 실행합니다.
     sample_path = current_dir / f"image_process/samples/sample_{sample_number}"
     
-    # subprocess를 사용하여 main.py를 실행합니다.
+    # subprocess를 사용하여 main.py를 실행
     result = subprocess.run(['python3', script_path, '-v', 
                             sample_path], capture_output=True, 
                             text=True)

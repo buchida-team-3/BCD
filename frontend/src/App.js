@@ -18,10 +18,10 @@ function App() {
           <Route path="/main" element={<MainPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/album" element={<Album />} />
           <Route path="/group/album" element={<UploadAfter />} />
           <Route path="/group/album/upload" element={<UploadBefore />} />
           <Route path="/gallery" element={<Gallery images={Photo}/>} />
-          <Route path="/album" element={<Album />} />
         </Routes>
       </Router>
    
