@@ -1,13 +1,19 @@
-from fastapi import APIRouter, HTTPException, File, UploadFile, Depends
+from fastapi import APIRouter, HTTPException, File, UploadFile
 from typing import List
 import os
 
 from domain.image import image_crud, image_schema
-from domain.image.image_crud import make_sample_dir, recording_image, image_process
+from domain.image.image_crud import make_sample_dir, image_process, path_to_database
 
-from database import get_db
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 
 from models import Image
+
+DATABASE_URL = "sqlite:///./fastapi.db"
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+db = SessionLocal()
 
 router = APIRouter(
     # prefix="/image",
@@ -16,9 +22,9 @@ router = APIRouter(
 start_dir = "../image_process/samples/sample"
 
 @router.post("/group/album/upload")
-async def image_upload(files: List[UploadFile] = File(...), 
-                       db=Depends(get_db)):
+async def image_upload(files: List[UploadFile] = File(...)):
     results = []
+    results_for_db = {}
 
     num_path, num = make_sample_dir(start_dir)
 
@@ -28,18 +34,11 @@ async def image_upload(files: List[UploadFile] = File(...),
 
         with open(file_path, "wb") as fp:
             fp.write(content)
-
-        # TODO: DB에 저장 -> user_id, image_path, image_name, id
-        # TODO: user_id는 현재 로그인한 사용자의 id를 사용해야 함
-        # TODO: id는 auto increment로 설정해야 함
-        
-        # db에 저장
-        # recording_image(image_upload, db)
         
         results.append({"filename": file_path})
     
-    # !image_process()의 실행 시간이 오래 걸리므로 비동기로 실행해야 함
-    await image_process(sample_number=num)
-    
+    results_for_db = {"image_path": num_path, "image_name": file.filename}
+    path_to_database(db, image_upload=image_schema.ImageUpload(**results_for_db))
+
     return results
-# 요청시 클라에서 토큰을 헤더에 담아서 보내는데 그것을 검증할 부분을 추가해야함
+
