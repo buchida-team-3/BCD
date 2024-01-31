@@ -37,7 +37,7 @@ function Content() {
                         },
                         body: formData
                     });
-    
+                    console.log(response.json());
                     if (response.ok) {
                         alert('파일 업로드 성공!');
                     } else {
