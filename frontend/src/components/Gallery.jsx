@@ -220,7 +220,7 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
     <group
       ref={ref}
       // 클릭 시 해당 아이템으로 이동 또는 이미 선택된 경우 메인 화면으로 이동
-      onClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}
+      onDoubleClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}
       onPointerMissed={() => setLocation('/')}>
       {images?.map((props) => <Frame key={props.url} {...props} />)}
     </group>
@@ -242,6 +242,14 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
   // useCursor를 사용하여 호버 시 커서 상태를 관리
   useCursor(hovered);
 
+  // useThree 훅을 사용하여 state 객체를 가져옴
+  const { camera, mouse } = useThree();
+
+  // 드래그 이벤트 처리를 위한 상태와 함수 정의
+  const [dragging, setDragging] = useState(false);
+  const [mouseStart, setMouseStart] = useState({ x: 0, y: 0 });
+  const [frameStart, setFrameStart] = useState({ x: 0, y: 0 });
+
   // useFrame을 사용하여 매 프레임마다 이미지와 프레임의 애니메이션 효과 적용
   useFrame((state, dt) => {
     // 이미지의 확대/축소 애니메이션
@@ -249,22 +257,63 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
     // 이미지와 프레임의 크기 조절 및 프레임의 색상 변화
     easing.damp3(image.current.scale, [0.85 * (!isActive && hovered ? 0.85 : 1), 0.9 * (!isActive && hovered ? 0.905 : 1), 1], 0.1, dt);
     easing.dampC(frame.current.material.color, hovered ? 'orange' : 'white', 0.1, dt);
+
+    // 드래그 중일 때 프레임 이동 처리
+    if (dragging) {
+      const { x: mouseX, y: mouseY } = mouse;
+      const deltaX = (mouseX - mouseStart.x) * 5;
+      const deltaY = (mouseY - mouseStart.y) * 5; // 상하 마우스 움직임 반대로 처리
+      frame.current.position.x = frameStart.x + deltaX;
+      frame.current.position.y = frameStart.y + deltaY; // 상하 마우스 움직임 반대로 처리
+    }
   });
+
+  // 프레임 클릭 시 선택된 아이템으로 이동 또는 이미 선택된 경우 메인 화면으로 이동
+  const handleFrameClick = (e) => {
+    e.stopPropagation();
+    if (!dragging) {
+      hover(true);
+      // setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name);
+    }
+  };
+
+  // 드래그 시작 이벤트 처리
+  const handleDragStart = (e) => {
+    e.stopPropagation();
+    setDragging(true);
+    setMouseStart({ x: mouse.x, y: mouse.y });
+    setFrameStart({ x: frame.current.position.x, y: frame.current.position.y });
+  };
+
+  // 드래그 종료 이벤트 처리
+  const handleDragEnd = () => {
+    setDragging(false);
+  };
 
   // 각 프레임을 렌더링하는 JSX 반환
   return (
-    <group {...props}>
+    <group
+      {...props}
+      onPointerDown={handleDragStart}
+      onPointerUp={handleDragEnd}
+      onPointerOver={(e) => (e.stopPropagation(), hover(true))}
+      onPointerOut={() => hover(false)}
+      onClick={handleFrameClick}
+      onPointerMissed={() => {} /* setLocation('/') */}>
+      {/* 프레임 아래에 텍스트 표시 */}
+      <Text maxWidth={0.1} anchorX="left" anchorY="top" position={[0.55, GOLDENRATIO, 0]} fontSize={0.025}>
+        {/* 파일 이름에서 하이픈 제거 후 공백으로 대체하여 표시 */}
+        {name.split('-').join(' ')}
+      </Text>
       <mesh
         name={name}
-        // 포인터 이벤트 처리
-        onPointerOver={(e) => (e.stopPropagation(), hover(true))}
-        onPointerOut={() => hover(false)}
+        // 프레임에 대한 재질 설정
         scale={[1, GOLDENRATIO, 0.05]}
-        position={[0, GOLDENRATIO / 2, 0]}>
+        position={[0, GOLDENRATIO / 2, 0]}
+        ref={frame}>
         <boxGeometry />
-        {/* 프레임에 대한 재질 설정 */}
         <meshStandardMaterial color="#151515" metalness={0.5} roughness={0.5} envMapIntensity={2} />
-        <mesh ref={frame} raycast={() => null} scale={[0.9, 0.93, 0.9]} position={[0, 0, 0.2]}>
+        <mesh raycast={() => null} scale={[0.9, 0.93, 0.9]} position={[0, 0, 0.2]}>
           <boxGeometry />
           {/* 프레임 내부에 대한 재질 설정 */}
           <meshBasicMaterial toneMapped={false} fog={false} />
@@ -272,11 +321,6 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
         {/* 프레임에 이미지 표시 */}
         <Image raycast={() => null} ref={image} position={[0, 0, 0.7]} url={url} />
       </mesh>
-      {/* 프레임 아래에 텍스트 표시 */}
-      <Text maxWidth={0.1} anchorX="left" anchorY="top" position={[0.55, GOLDENRATIO, 0]} fontSize={0.025}>
-        {/* 파일 이름에서 하이픈 제거 후 공백으로 대체하여 표시 */}
-        {name.split('-').join(' ')}
-      </Text>
     </group>
   );
 }
