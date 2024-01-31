@@ -8,6 +8,7 @@ import CreateGroup from './components/CreateGroup';
 import SelectGroup from './components/SelectGroup';
 import UploadAfter from './components/UploadAfter';
 import UploadBefore from './components/UploadBefore';
+import Gallery from './components/Gallery';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/group/select" element={<SelectGroup />} /> */}
           <Route path="/group/album" element={<UploadAfter />} />
           <Route path="/group/album/upload" element={<UploadBefore />} />
+          <Route path="/gallery" element={<Gallery />} />
         </Routes>
       </Router>
     </div>

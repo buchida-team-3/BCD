@@ -22,10 +22,12 @@ async def image_upload(background_tasks: BackgroundTasks,
     results = []
 
     num_path, num = make_sample_dir(start_dir)
-
+    cnt = 1
     for file in files:
         content = await file.read()
-        file_path = os.path.join(num_path, file.filename)
+        file_path = os.path.join(num_path, f"img_{cnt}.jpg")
+
+        cnt += 1
 
         with open(file_path, "wb") as fp:
             fp.write(content)
@@ -45,3 +47,14 @@ async def image_upload(background_tasks: BackgroundTasks,
     return results
 
 # 요청시 클라에서 토큰을 헤더에 담아서 보내는데 그것을 검증할 부분을 추가해야함
+
+
+@router.get("/group/album/images")
+async def get_images():
+    image_list = []
+    for root, dirs, files in os.walk(start_dir):
+        for file in files:
+            if file.endswith(".jpg"):
+                image_list.append(os.path.join(root, file))
+
+    return JSONResponse(content=image_list)
