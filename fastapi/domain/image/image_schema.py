@@ -4,8 +4,8 @@
 from pydantic import BaseModel
 
 class ImageUpload(BaseModel):
-    id: int
-    user_id: int
+    # id: int
+    # user_id: int
     image_name: str
     image_path: str
 

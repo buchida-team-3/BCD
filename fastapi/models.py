@@ -13,6 +13,9 @@ class User(Base):
     username = Column(String, unique=True, nullable=False) # 중복 불가 -> 오류 예외 처리 필요(user_crud.py)
     password = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False) # 중복 불가 -> 오류 예외 처리 필요(user_crud.py)
+    
+    # image_id = Column(Integer, ForeignKey("images.id"))
+    # images = relationship("Image", back_populates="user") # ?
         
 class Image(Base):
     __tablename__ = "images"
@@ -20,5 +23,6 @@ class Image(Base):
     id = Column(Integer, primary_key=True)
     image_name = Column(String, unique=True, nullable=False) # 중복 불가 -> 오류 예외 처리 필요(image_crud.py)
     image_path = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    user = relationship("User", back_populates="images") # ?
+    
+    # user_id = Column(Integer, ForeignKey("users.id"))
+    # user = relationship("User", back_populates="images") # ?

@@ -3,8 +3,7 @@ from typing import List
 import os
 
 from domain.image import image_crud, image_schema
-from domain.image.image_crud import make_sample_dir
-from domain.image.image_crud import recording_image
+from domain.image.image_crud import make_sample_dir, recording_image, image_process
 
 from database import get_db
 
@@ -18,11 +17,10 @@ start_dir = "../image_process/samples/sample"
 
 @router.post("/group/album/upload")
 async def image_upload(files: List[UploadFile] = File(...), 
-                       image_upload: image_schema.ImageUpload = None,
-                       db=Depends(get_db)):    
+                       db=Depends(get_db)):
     results = []
 
-    num_path = make_sample_dir(start_dir)
+    num_path, num = make_sample_dir(start_dir)
 
     for file in files:
         content = await file.read()
@@ -36,9 +34,12 @@ async def image_upload(files: List[UploadFile] = File(...),
         # TODO: id는 auto increment로 설정해야 함
         
         # db에 저장
-        recording_image(image_upload, db)
+        # recording_image(image_upload, db)
         
         results.append({"filename": file_path})
+    
+    # !image_process()의 실행 시간이 오래 걸리므로 비동기로 실행해야 함
+    await image_process(sample_number=num)
     
     return results
 # 요청시 클라에서 토큰을 헤더에 담아서 보내는데 그것을 검증할 부분을 추가해야함
