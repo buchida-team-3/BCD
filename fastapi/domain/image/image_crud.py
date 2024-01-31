@@ -45,7 +45,7 @@ async def image_process(sample_number: int):
     print("sample_number:", sample_number)
     
     # samples/sample_* 폴더에 있는 이미지를 사용하여 main.py를 실행합니다.
-    sample_path = os.path.join(current_dir, f'samples/sample_{sample_number}')
+    sample_path = os.path.join(current_dir, f'image_process/samples/sample_{sample_number}')
     print("sample_path:", sample_path)
     
     print("path 설정 완료")
