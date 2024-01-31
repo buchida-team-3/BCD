@@ -8,6 +8,9 @@ import UploadBefore from './components/UploadBefore';
 import Gallery from './components/Gallery';
 import Photo from './components/Photo';
 import Album from './components/Album';
+import AlbumAfter from './components/AlbumAfter';
+import AfterImage from './components/AfterImage';
+import BeforeImage from './components/BeforeImage';
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
           <Route path="/group/album" element={<UploadAfter />} />
           <Route path="/group/album/upload" element={<UploadBefore />} />
           <Route path="/gallery" element={<Gallery images={Photo}/>} />
+          <Route path="/album" element={<Album images={BeforeImage} />} />
+          <Route path="/aIbum" element={<AlbumAfter images={AfterImage} />} />
+
         </Routes>
       </Router>
    
