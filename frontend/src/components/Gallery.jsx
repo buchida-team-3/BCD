@@ -1,12 +1,14 @@
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { useCursor, MeshReflectorMaterial, Image, Text, Environment } from '@react-three/drei'
+import { extend, Canvas, useThree, useFrame } from '@react-three/fiber'
+import { useCursor, MeshReflectorMaterial, Html, Image, Text, Environment } from '@react-three/drei'
 import { useRoute, useLocation } from 'wouter'
 import { easing } from 'maath'
 import getUuid from 'uuid-by-string'
 import './Gallery.css';
 const GOLDENRATIO = 1.61803398875
+
+extend({ Html });
 
 function Upload3DButton({ position, onClick }) {
   const ref = useRef();
@@ -76,10 +78,63 @@ function Stitch3DButton({ position, onClick }) {
 
 // 갤러리 컴포넌트
 const Gallery = ({ images }) => {
-  // 버튼 클릭 시 호출될 함수
-  const handleButtonClick = () => {
-    console.log('Button clicked!');
+  const InputBox = () => {
+    const { size } = useThree();
+  
+    return (
+      <Html>
+        <input type="file" id="fileInput" multiple style={{ display: 'none' }} ref={fileInputRef} onChange={handleUpload} />
+      </Html>
+    );
   };
+  // 버튼 클릭 시 호출될 함수
+  const fileInputRef = useRef(null);
+  // useRef를 사용해서 파일 입력 요소를 참조
+
+  const uploadFiles = async () => {
+      const fileInput = fileInputRef.current;
+      // 이벤트 리스너를 추가/제거해서 중복 이벤트 리스너 등록을 방지
+
+      if (fileInput) {
+          fileInput.setAttribute('multiple', true);
+          fileInput.click();
+      }
+  };
+
+  const handleUpload = async () => {
+    const fileInput = fileInputRef.current;
+    if (fileInput) {
+      const selectedFiles = fileInput.files;
+      if (selectedFiles.length > 0) {
+        const formData = new FormData();
+
+        // 선택한 모든 파일을 FormData에 추가
+        for (let i = 0; i < selectedFiles.length; i++) {
+          formData.append('files', selectedFiles[i]);
+        }
+
+        try {
+          const response = await fetch('http://localhost:8000/group/album/upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+              // 추가된 부분: 인증 토큰을 헤더에 포함시킵니다.
+            },
+            body: formData
+          });
+          console.log(response.json());
+          if (response.ok) {
+            alert('파일 업로드 성공!');
+          } else {
+            alert('파일 업로드 실패.');
+          }
+        } catch (error) {
+          console.error('파일 업로드 중 오류 발생:', error);
+        }
+      }
+    }
+  };
+
 
   const handleStitchButtonClick = () => {
     console.log('Stitch Button clicked!');
@@ -114,11 +169,13 @@ const Gallery = ({ images }) => {
       {/* 3D 환경 렌더링 */}
       <Environment preset="city" />
       {/* 버튼 추가 */}
-      <Upload3DButton position={[-3, 1.5, 2.9]} onClick={handleButtonClick} />
-      <Upload3DButton position={[0, 1.5, 2.9]} onClick={handleButtonClick} />
-      <Upload3DButton position={[3, 1.5, 2.9]} onClick={handleButtonClick} />
-
-      {/* Stitch3DButton 추가 */}
+      <InputBox />
+      <Upload3DButton position={[-3, 1.5, 2.9]} onClick={uploadFiles} />
+      <InputBox />
+      <Upload3DButton position={[0, 1.5, 2.9]} onClick={uploadFiles}/>
+      <InputBox />
+      <Upload3DButton position={[3, 1.5, 2.9]} onClick={uploadFiles} />
+u      {/* Stitch3DButton 추가 */}
       <Stitch3DButton position={[-3, -0.3, 2.9]} onClick={handleStitchButtonClick} />
       <Stitch3DButton position={[3, -0.3, 2.9]} onClick={handleStitchButtonClick} />
     </Canvas>
