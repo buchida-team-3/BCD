@@ -328,8 +328,8 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
     // 드래그 중일 때 프레임 이동 처리
     if (dragging) {
       const { x: mouseX, y: mouseY } = mouse;
-      const deltaX = (mouseX - mouseStart.x) * 5;
-      const deltaY = (mouseY - mouseStart.y) * 5; // 상하 마우스 움직임 반대로 처리
+      const deltaX = (mouseX - mouseStart.x) * 6;
+      const deltaY = (mouseY - mouseStart.y) * 6; // 상하 마우스 움직임 반대로 처리
       frame.current.position.x = frameStart.x + deltaX;
       frame.current.position.y = frameStart.y + deltaY; // 상하 마우스 움직임 반대로 처리
     }
