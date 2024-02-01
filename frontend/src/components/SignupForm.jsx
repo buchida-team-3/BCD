@@ -43,7 +43,7 @@ function SignupForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className='signup-form' onSubmit={handleSubmit}>
             <input 
                 type="text" 
                 id="username" 
@@ -82,7 +82,6 @@ function SignupForm() {
             />
             <div className="button-container">
                 <input type="submit" value="확인" className="button confirm-button"/>
-                <button type="button" className="button" onClick={() => window.location.href='/login'}>뒤로</button>
             </div>
         </form>
     );

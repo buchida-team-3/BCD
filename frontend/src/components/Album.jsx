@@ -1,16 +1,31 @@
 import * as THREE from 'three'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { useCursor, MeshReflectorMaterial, Image, Text, Environment } from '@react-three/drei'
+import { extend, Canvas, useFrame } from '@react-three/fiber'
+import { useCursor, MeshReflectorMaterial, Html, Image, Text, Environment } from '@react-three/drei'
 import { useRoute, useLocation } from 'wouter'
 import { easing } from 'maath'
 import getUuid from 'uuid-by-string'
 
+extend({ Html });
+
 const GOLDENRATIO = 1.61803398875
 
-const AlbumAfter = ({ images }) => (
+const Album = ({ images }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate image loading delay
+    const delay = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    // Clean up the timeout on component unmount
+    return () => clearTimeout(delay);
+  }, []);
+
+  return (
   <Canvas dpr={[1, 1.5]} camera={{ fov: 70, position: [0, 2, 15] }}>
+    {loading && <ProgressBar />}
     <color attach="background" args={['#191920']} />
     <fog attach="fog" args={['#191920', 0, 15]} />
     <group position={[0, -0.5, 0]}>
@@ -33,7 +48,31 @@ const AlbumAfter = ({ images }) => (
     </group>
     <Environment preset="city" />
   </Canvas>
-)
+  );
+};
+
+function ProgressBar() {
+  // 프로그레스 바를 나타내는 컴포넌트
+  return (
+    <Html>
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', // 흰색 배경
+      }}>
+        <div>Loading...</div>
+      </div>
+    </Html>
+  );
+}
+
+
 
 function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() }) {
   const ref = useRef()
@@ -74,12 +113,16 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
   const [rnd] = useState(() => Math.random())
   const name = getUuid(url)
   const isActive = params?.id === name
-  useCursor(hovered)
+
+  
+  useCursor(hovered);
   useFrame((state, dt) => {
     image.current.material.zoom = 2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2
     easing.damp3(image.current.scale, [0.85 * (!isActive && hovered ? 0.85 : 1), 0.9 * (!isActive && hovered ? 0.905 : 1), 1], 0.1, dt)
     easing.dampC(frame.current.material.color, hovered ? 'orange' : 'white', 0.1, dt)
   })
+
+
   return (
     <group {...props}>
       <mesh
@@ -103,4 +146,4 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
   )
 }
 
-export default AlbumAfter;
+export default Album;

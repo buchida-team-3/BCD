@@ -7,6 +7,7 @@ import { useRoute, useLocation } from 'wouter';
 import { easing } from 'maath';
 import getUuid from 'uuid-by-string';
 import './Gallery.css';
+
 const GOLDENRATIO = 1.61803398875
 
 extend({ Html });
@@ -287,8 +288,7 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
     <group
       ref={ref}
       // 클릭 시 해당 아이템으로 이동 또는 이미 선택된 경우 메인 화면으로 이동
-      onDoubleClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}
-      {/* onPointerMissed={() => setLocation('/')}> */}
+      onDoubleClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}>
       {images?.map((props) => <Frame key={props.url} {...props} />)}
     </group>
   );

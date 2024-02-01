@@ -51,7 +51,7 @@ function LoginForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className='login-form' onSubmit={handleSubmit}>
             <input
                 type="text"
                 id="username"
@@ -65,14 +65,13 @@ function LoginForm() {
                 type="password"
                 id="password"
                 name="password"
-                placeholder="패스워드"
+                placeholder="비밀번호"
                 className="login-input"
                 value={credentials.password}
                 onChange={handleInputChange}
             />
             <div className="button-link-container">
-                <input type="submit" value="로그인" className="login-button" />
-                <a href="/signup" className="signup-link">회원가입</a>
+                <input type="submit" value="로그인" className="login-confirm-button" />
             </div>
         </form>
     );

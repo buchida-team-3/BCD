@@ -11,6 +11,8 @@ import Album from './components/Album';
 import AlbumAfter from './components/AlbumAfter';
 import AfterImage from './components/AfterImage';
 import BeforeImage from './components/BeforeImage';
+import LoginSignup from './components/LoginSignup';
+
 
 function App() {
   return (
@@ -21,13 +23,13 @@ function App() {
           <Route path="/main" element={<MainPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/album" element={<Album />} />
           <Route path="/group/album" element={<UploadAfter />} />
           <Route path="/group/album/upload" element={<UploadBefore />} />
           <Route path="/gallery" element={<Gallery images={Photo}/>} />
           <Route path="/album" element={<Album images={BeforeImage} />} />
           <Route path="/aIbum" element={<AlbumAfter images={AfterImage} />} />
 
+          <Route path="/loginandsignup" element={<LoginSignup />} />
         </Routes>
       </Router>
    

@@ -1,7 +1,9 @@
 .signup-container {
-    width: 300px;
+    width: 400px;
+    height: 500px;
     padding: 25px;
     border: 1px solid #ddd;
+    border-radius: 10px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -9,5 +11,5 @@
 
     /* 페이지 중앙 정렬을 위한 스타일 */
     margin: auto;
-    margin-top: 20vh;
+    margin-top: 10vh;
 }
