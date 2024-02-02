@@ -15,7 +15,7 @@ function Navbar() {
                         <a href="#">Add Group</a>
                     </div>
                 </div>
-                <button className="logout-button">Logout</button>
+                <button className="logout-button">Login</button>
             </div>
         </div>
     );

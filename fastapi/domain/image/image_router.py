@@ -14,6 +14,7 @@ router = APIRouter(
     # prefix="/image",
 )
 
+# 이미지 저장 경로(임시)
 start_dir = "../frontend/public/img"
 
 @router.post("/group/album/upload")
@@ -58,3 +59,4 @@ async def get_images():
                 image_list.append(os.path.join(root, file))
 
     return JSONResponse(content=image_list)
+
