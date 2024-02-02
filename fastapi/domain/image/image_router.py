@@ -1,14 +1,22 @@
+from fastapi import APIRouter, HTTPException, File, UploadFile
 from fastapi.responses import JSONResponse
 from fastapi import APIRouter, HTTPException, File, UploadFile, Depends, BackgroundTasks
 from typing import List
 import os
 
 from domain.image import image_crud, image_schema
-from domain.image.image_crud import make_sample_dir, recording_image, image_process
+from domain.image.image_crud import make_sample_dir, image_process, path_to_database
 
-from database import get_db
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 
 from models import Image
+from database import get_db
+
+DATABASE_URL = "sqlite:///./fastapi.db"
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+db = SessionLocal()
 
 router = APIRouter(
     # prefix="/image",
@@ -21,7 +29,8 @@ async def image_upload(background_tasks: BackgroundTasks,
                        files: List[UploadFile] = File(...), 
                        db=Depends(get_db)):
     results = []
- 
+    results_for_db = {}
+    
     num_path, num = make_sample_dir(start_dir)
     cnt = 1
     for file in files:
@@ -32,16 +41,12 @@ async def image_upload(background_tasks: BackgroundTasks,
 
         with open(file_path, "wb") as fp:
             fp.write(content)
-
-        # TODO: DB에 저장 -> user_id, image_path, image_name, id
-        # TODO: user_id는 현재 로그인한 사용자의 id를 사용해야 함
-        # TODO: id는 auto increment로 설정해야 함
-        
-        # db에 저장
-        # recording_image(image_upload, db)
         
         results.append({"filename": file_path, "num": num})
     
+    results_for_db = {"image_path": num_path, "image_name": file.filename}
+    path_to_database(db, image_upload=image_schema.ImageUpload(**results_for_db))
+
     # image_process() 백드라운드 작업으로 추가(비동기)
     background_tasks.add_task(image_process, sample_number=num)
     

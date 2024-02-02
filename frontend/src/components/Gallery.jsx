@@ -285,7 +285,7 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
 
   // 프레임들을 렌더링하는 컴포넌트 반환
   return (
-    <group
+    <group>
       ref={ref}
       // 클릭 시 해당 아이템으로 이동 또는 이미 선택된 경우 메인 화면으로 이동
       onDoubleClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}>
