@@ -15,3 +15,4 @@ fastapi/migrations/*
 image_process/*.png
 __init__.py
 image_process/samples/*
+frontend/public/img*

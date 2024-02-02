@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from domain.image.image_schema import ImageUpload
 from models import Image
 import subprocess
+from pathlib import Path
 
 
 def make_sample_dir(start_dir):
@@ -28,27 +29,25 @@ async def image_process(sample_number: int):
     current_dir = os.path.dirname(current_dir)
     current_dir = os.path.dirname(current_dir)
     print("current_dir:", current_dir)
+    
+    # 현재 스크립트의 디렉토리를 구함
+    current_dir = Path(__file__).resolve().parent
 
-    # 상위 디렉토리에서 image_process/main.py 경로를 생성합니다.
-    script_path = os.path.join(current_dir, "image_process", 'main.py')
-    print("script_path:", script_path)
-    
-    print("sample_number:", sample_number)
-    
+    # 상위 디렉토리로 3번 이동
+    current_dir = current_dir.parent.parent.parent
+
+    # 상위 디렉토리에서 image_process/main.py 경로를 생성
+    script_path = current_dir / "image_process" / "main.py"
+
     # samples/sample_* 폴더에 있는 이미지를 사용하여 main.py를 실행합니다.
-    sample_path = os.path.join(current_dir, f'image_process/samples/sample_{sample_number}')
-    print("sample_path:", sample_path)
+    sample_path = current_dir / f"image_process/samples/sample_{sample_number}"
     
-    print("path 설정 완료")
-    
-    # subprocess를 사용하여 main.py를 실행합니다.
+    # subprocess를 사용하여 main.py를 실행
     result = subprocess.run(['python3', script_path, '-v', 
                             sample_path], capture_output=True, 
                             text=True)
-
-    print("출력:\n",result.stdout if result.stdout else "(없음)")
-    print("오류 메시지:\n",result.stderr if result.stderr else "(없음)")
-    print("종료 상태:",result.returncode if result.returncode else "(없음)")
+    
+    print("result.stderr:\n", result.stderr if result.stderr else "(없음)")
     
     return result
 
