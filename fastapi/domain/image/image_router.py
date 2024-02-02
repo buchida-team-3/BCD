@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 from models import Image
+from database import get_db
 
 DATABASE_URL = "sqlite:///./fastapi.db"
 engine = create_engine(DATABASE_URL)
