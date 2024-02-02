@@ -1,9 +1,11 @@
 import os
-from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from domain.image.image_schema import ImageUpload
 from models import Image
 import subprocess
 from pathlib import Path
+
 
 def make_sample_dir(start_dir):
     num = 1
@@ -17,17 +19,16 @@ def make_sample_dir(start_dir):
             continue
     return fname, f'{num:02}'
 
-def recording_image(db: Session, image_upload: ImageUpload):
-    image_record = Image(
-                id=image_upload.id,
-                user_id=image_upload.user_id,
-                image_name=image_upload.filename, 
-                image_path=image_upload.file_path)
-    
-    db.add(image_record)    
-    db.commit()
 
 async def image_process(sample_number: int):
+    # 현재 스크립트의 디렉토리를 구합니다.
+    current_dir = os.path.dirname(__file__)
+    
+    # 상위 디렉토리로 이동
+    current_dir = os.path.dirname(current_dir)
+    current_dir = os.path.dirname(current_dir)
+    current_dir = os.path.dirname(current_dir)
+    print("current_dir:", current_dir)
     
     # 현재 스크립트의 디렉토리를 구함
     current_dir = Path(__file__).resolve().parent
@@ -50,3 +51,21 @@ async def image_process(sample_number: int):
     
     return result
 
+
+DATABASE_URL = "sqlite:///./fastapi.db"
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+db = SessionLocal()
+
+def path_to_database(db, image_upload: ImageUpload):
+    """
+    이미지 경로를 DB에 저장합니다.
+    """
+    db_image = Image(
+        image_name=image_upload.image_name,
+        image_path=image_upload.image_path,
+    )
+    db.add(db_image)
+    db.commit()
+
+    

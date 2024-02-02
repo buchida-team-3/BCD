@@ -21,8 +21,8 @@ class Image(Base):
     __tablename__ = "images"
     
     id = Column(Integer, primary_key=True)
-    image_name = Column(String, unique=True, nullable=False) # 중복 불가 -> 오류 예외 처리 필요(image_crud.py)
     image_path = Column(String, nullable=False)
+    image_name = Column(String, nullable=False)
     
     # user_id = Column(Integer, ForeignKey("users.id"))
     # user = relationship("User", back_populates="images") # ?
