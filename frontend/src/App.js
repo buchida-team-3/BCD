@@ -12,6 +12,7 @@ import AlbumAfter from './components/AlbumAfter';
 import AfterImage from './components/AfterImage';
 import BeforeImage from './components/BeforeImage';
 import LoginSignup from './components/LoginSignup';
+import ImagePage from './components/ImagePage';
 
 
 function App() {
@@ -30,6 +31,8 @@ function App() {
           <Route path="/aIbum" element={<AlbumAfter images={AfterImage} />} />
 
           <Route path="/loginandsignup" element={<LoginSignup />} />
+
+          <Route path="/imagepage" element={<ImagePage />} />
         </Routes>
       </Router>
    

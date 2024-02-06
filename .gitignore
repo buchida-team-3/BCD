@@ -9,6 +9,7 @@ image_process/samples/*
 images/*.png
 *.DS_Store
 frontend/node_modules
+frontend/public/*.jpeg
 alembic/versions/*
 *.db
 fastapi/migrations/*
