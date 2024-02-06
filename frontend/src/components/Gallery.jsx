@@ -285,7 +285,7 @@ function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() })
 
   // 프레임들을 렌더링하는 컴포넌트 반환
   return (
-    <group>
+    <group
       ref={ref}
       // 클릭 시 해당 아이템으로 이동 또는 이미 선택된 경우 메인 화면으로 이동
       onDoubleClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/item/' + e.object.name))}>
@@ -328,8 +328,8 @@ function Frame({ url, c = new THREE.Color(), ...props }) {
     // 드래그 중일 때 프레임 이동 처리
     if (dragging) {
       const { x: mouseX, y: mouseY } = mouse;
-      const deltaX = (mouseX - mouseStart.x) * 5;
-      const deltaY = (mouseY - mouseStart.y) * 5; // 상하 마우스 움직임 반대로 처리
+      const deltaX = (mouseX - mouseStart.x) * 6;
+      const deltaY = (mouseY - mouseStart.y) * 6; // 상하 마우스 움직임 반대로 처리
       frame.current.position.x = frameStart.x + deltaX;
       frame.current.position.y = frameStart.y + deltaY; // 상하 마우스 움직임 반대로 처리
     }

@@ -5,10 +5,19 @@ import { useCursor, MeshReflectorMaterial, Image, Text, Environment } from '@rea
 import { useRoute, useLocation } from 'wouter'
 import { easing } from 'maath'
 import getUuid from 'uuid-by-string'
+import { useNavigate } from 'react-router-dom';
 
 const GOLDENRATIO = 1.61803398875
 
-const AlbumAfter = ({ images }) => (
+const AlbumAfter = ({ images }) => {
+  const navigate = useNavigate();
+
+  const handleBackButtonClick = () => {
+    navigate('/main');
+  };
+
+return (
+  
   <Canvas dpr={[1, 1.5]} camera={{ fov: 70, position: [0, 2, 15] }}>
     <color attach="background" args={['#191920']} />
     <fog attach="fog" args={['#191920', 0, 15]} />
@@ -31,8 +40,43 @@ const AlbumAfter = ({ images }) => (
       </mesh>
     </group>
     <Environment preset="city" />
+    <BackButton position={[-2.8, 1.4, 2.9]} onClick={handleBackButtonClick} />
   </Canvas>
 )
+}
+
+function BackButton({ position, onClick }) {
+  const ref = useRef();
+
+  // 버튼에 애니메이션 추가하기 위한 ref
+  useFrame((state, delta) => {
+    // 예: Z축을 중심으로 회전하는 애니메이션을 추가
+    ref.current.rotation.z += 0.00;
+  });
+
+  return (
+    <group
+      ref={ref}
+      position={position}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+      onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}>
+      <mesh>
+        <boxGeometry args={[1, 0.5, 0.1]} />
+        <meshStandardMaterial color="red" />
+      </mesh>
+      <Text
+        position={[0, 0, 0.1]} // Adjust text position based on button geometry
+        fontSize={0.2}
+        color="white" // Text color
+        anchorX="center" // Center the text horizontally
+        anchorY="middle" // Center the text vertically
+      >
+        Back
+      </Text>
+    </group>
+  );
+}
 
 function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() }) {
   const ref = useRef()
