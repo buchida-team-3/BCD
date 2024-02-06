@@ -1,16 +1,15 @@
-import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 from domain.image.image_schema import ImageUpload
-from models import Image
-import subprocess
-from pathlib import Path
+from models import Image, User
+
+import os
+import boto3
 
 
 def make_sample_dir(start_dir):
     num = 1
     while True:
-        fname = start_dir + '_' + f"{num:02}" # f"{num:02}": 문자열 포맷팅, 2자리 숫자로 표현
+        fname = start_dir + '_' + f"{num:02}"
         if not os.path.exists(fname):
             os.makedirs(fname)
             break
@@ -20,52 +19,34 @@ def make_sample_dir(start_dir):
     return fname, f'{num:02}'
 
 
-async def image_process(sample_number: int):
-    # 현재 스크립트의 디렉토리를 구합니다.
-    current_dir = os.path.dirname(__file__)
+def aws_upload(input, bucket, output):
+    SERVICE_NAME =  "s3"
+    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+    SECRET_KEY = "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"
+    REGION = "ap-northeast-2"
+    BUCKET_NAME = "jungle-buchida-s3"
+
+    s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
+
+    try:
+        s3.upload_file(input, bucket, output, ExtraArgs={'ContentType': 'image/jpeg'})
+    except Exception as e:
+        print(e)
+        return None
     
-    # 상위 디렉토리로 이동
-    current_dir = os.path.dirname(current_dir)
-    current_dir = os.path.dirname(current_dir)
-    current_dir = os.path.dirname(current_dir)
-    print("current_dir:", current_dir)
+    image_url = f"https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/{output}"
     
-    # 현재 스크립트의 디렉토리를 구함
-    current_dir = Path(__file__).resolve().parent
-
-    # 상위 디렉토리로 3번 이동
-    current_dir = current_dir.parent.parent.parent
-
-    # 상위 디렉토리에서 image_process/main.py 경로를 생성
-    script_path = current_dir / "image_process" / "main.py"
-
-    # samples/sample_* 폴더에 있는 이미지를 사용하여 main.py를 실행합니다.
-    sample_path = current_dir / f"image_process/samples/sample_{sample_number}"
-    
-    # subprocess를 사용하여 main.py를 실행
-    result = subprocess.run(['python3', script_path, '-v', 
-                            sample_path], capture_output=True, 
-                            text=True)
-    
-    print("result.stderr:\n", result.stderr if result.stderr else "(없음)")
-    
-    return result
+    return image_url
 
 
-DATABASE_URL = "sqlite:///./fastapi.db"
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-db = SessionLocal()
-
-def path_to_database(db, image_upload: ImageUpload):
-    """
-    이미지 경로를 DB에 저장합니다.
-    """
+def db_update(db: Session, update_db: ImageUpload, user: User):
     db_image = Image(
-        image_name=image_upload.image_name,
-        image_path=image_upload.image_path,
-    )
+            image_path = update_db.image_path,
+            image_name = update_db.image_name,
+            image_lable = update_db.image_lable,
+            user = user
+            )
     db.add(db_image)
-    db.commit()
-
+    db.commit()    
     
+
