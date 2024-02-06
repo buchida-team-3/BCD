@@ -7,9 +7,9 @@ function Overlay() {
           href="https://www.instagram.com/tilldeathwedoart2020/"
           target="_blank"
           style={{ position: 'absolute', bottom: 43, left: 80, fontSize: '20px' }}>
-          Follow me
+          뒤로 가기
         </a>
-        <div style={{ position: 'absolute', top: 40, left: 40, fontSize: '20px' }}>Ria Chakravarty</div>
+        <div style={{ position: 'absolute', top: 40, left: 40, fontSize: '20px' }}>테마 이름</div>
         {/* <div style={{ position: 'absolute', bottom: 40, right: 40, fontSize: '13px' }}>10/15/2021</div> */}
       </div>
     )

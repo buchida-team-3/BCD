@@ -12,7 +12,7 @@
     "maath": "^0.10.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.3",
+    "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
     "react-three-fiber": "^6.0.13",
     "react-use-gesture": "^9.1.3",

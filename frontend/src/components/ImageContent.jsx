@@ -5,31 +5,42 @@ import { Preload, Image as ImageImpl } from '@react-three/drei'
 import { ScrollControls, Scroll, useScroll } from './ScrollControls'
 
 function Image(props) {
-    const ref = useRef()
-    const group = useRef()
-    const data = useScroll()
-    useFrame((state, delta) => {
-      group.current.position.z = THREE.MathUtils.damp(group.current.position.z, Math.max(0, data.delta * 50), 4, delta)
-      ref.current.material.grayscale = THREE.MathUtils.damp(ref.current.material.grayscale, Math.max(0, 1 - data.delta * 1000), 4, delta)
-    })
-    return (
+  const ref = useRef();
+  const group = useRef();
+  const data = useScroll();
+
+  useFrame((state, delta) => {
+      group.current.position.z = THREE.MathUtils.damp(group.current.position.z, Math.max(0, data.delta * 50), 4, delta);
+      const targetGrayscale = Math.max(0, 1 - data.delta * 1000);
+      ref.current.material.grayscale = THREE.MathUtils.damp(ref.current.material.grayscale, Math.min(targetGrayscale, 0.1), 4, delta);
+  });
+
+  // 클릭 이벤트 핸들러 추가
+  const handleClick = () => {
+      // URL에서 파일 이름 추출 ('/image1.jpeg' -> 'image1')
+      const imageName = props.url.split('/').pop().split('.').shift();
+      // 'edit/' 경로와 함께 리디렉션
+      window.location.href = `/edit/${imageName}`;
+  };
+
+  return (
       <group ref={group}>
-        <ImageImpl ref={ref} {...props} />
+          <ImageImpl ref={ref} {...props} onClick={handleClick} />
       </group>
-    )
-  }
+  );
+}
   
-  function Page({ m = 0.4, urls, ...props }) {
-    const { width } = useThree((state) => state.viewport)
-    const w = width < 10 ? 1.5 / 3 : 1 / 3
-    return (
+function Page({ m = 0.4, urls, ...props }) {
+  const { width } = useThree((state) => state.viewport);
+  const w = width < 10 ? 1.5 / 3 : 1 / 3;
+  return (
       <group {...props}>
-        <Image position={[-width * w, 0, -1]} scale={[width * w - m * 2, 5, 1]} url={urls[0]} />
-        <Image position={[0, 0, 0]} scale={[width * w - m * 2, 5, 1]} url={urls[1]} />
-        <Image position={[width * w, 0, 1]} scale={[width * w - m * 2, 5, 1]} url={urls[2]} />
+          <Image position={[-width * w, 0, -1]} scale={[width * w - m * 2, 5, 1]} url={urls[0]} />
+          <Image position={[0, 0, 0]} scale={[width * w - m * 2, 5, 1]} url={urls[1]} />
+          <Image position={[width * w, 0, 1]} scale={[width * w - m * 2, 5, 1]} url={urls[2]} />
       </group>
-    )
-  }
+  );
+}
   
   function Pages() {
     const { width } = useThree((state) => state.viewport)
@@ -59,7 +70,8 @@ function Image(props) {
               <Pages />
             </Scroll>
             <Scroll html>
-              <h1 style={{ position: 'absolute', top: '20vh', left: '-75vw' }}>Art</h1>
+              {/* 화면 내 글씨들 */}
+              {/* <h1 style={{ position: 'absolute', top: '20vh', left: '-75vw' }}>Art</h1>
               <h1 style={{ position: 'absolute', top: '20vh', left: '25vw' }}>Till</h1>
               <h1 style={{ position: 'absolute', top: '20vh', left: '125vw' }}>Death</h1>
               <h1 style={{ position: 'absolute', top: '20vh', left: '225vw' }}>We</h1>
@@ -69,7 +81,7 @@ function Image(props) {
               <h1 style={{ position: 'absolute', top: '20vh', left: '525vw' }}>Till</h1>
               <h1 style={{ position: 'absolute', top: '20vh', left: '625vw' }}>Death</h1>
               <h1 style={{ position: 'absolute', top: '20vh', left: '725vw' }}>We</h1>
-              <h1 style={{ position: 'absolute', top: '20vh', left: '825vw' }}>Do</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '825vw' }}>Do</h1> */}
             </Scroll>
           </ScrollControls>
           <Preload />
