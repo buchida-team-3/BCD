@@ -42,19 +42,34 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
     results_clustering = image_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_model.pkl")
 
     for i in range((len(results_aws))):
-        result_for_db = {"image_path": results_aws[i], "image_name": results_clustering[i]['image_name'], "image_lable": results_clustering[i]['image_label']}
+        result_for_db = {"image_path": results_aws[i], 
+                         "image_name": results_clustering[i]['image_name'], 
+                         "image_lable": results_clustering[i]['image_label']}
         db_update(db, update_db=image_schema.ImageUpload(**result_for_db), user=current_user)
 
     return JSONResponse(content = results)
 
 
-@router.get("/group/album/images")
-async def get_images():
-    image_list = []
-    for root, dirs, files in os.walk(start_dir):
-        for file in files:
-            if file.endswith(".jpg"):
-                image_list.append(os.path.join(root, file))
+@router.get("/album")
+async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+    album_list = []
+    album = db.query(image_crud.Image).filter(
+        image_crud.Image.user_id == current_user.id
+        ).all()
+    for i in album:
+        album_list.append(i.image_path)
 
-    return JSONResponse(content=image_list)
+    return JSONResponse(content=album_list)
+
+
+
+# @router.get("/group/album/images")
+# async def get_images():
+#     image_list = []
+#     for root, dirs, files in os.walk(start_dir):
+#         for file in files:
+#             if file.endswith(".jpg"):
+#                 image_list.append(os.path.join(root, file))
+
+#     return JSONResponse(content=image_list)
 
