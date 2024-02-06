@@ -1,7 +1,10 @@
 import React, { useRef } from 'react';
-import "./UploadButtonTwo.css";
+import Navbar from "./Navbar";
+import PhotoGrid from "./PhotoGrid";
+import UploadButtonTwo from "./UploadButtonTwo";
+import bgImage from "./content/background.jpg";
 
-function UploadButtonTwo() {
+function UploadPage() {
   const fileInputRef = useRef(null);
   // useRef를 사용해서 파일 입력 요소를 참조
 
@@ -54,19 +57,12 @@ function UploadButtonTwo() {
 
   return (
     <div>
-      <button className="upload-buttonTwo" onClick={uploadFiles}>
-        +
-      </button>
-      <input
-        type="file"
-        id="fileInput"
-        multiple
-        style={{ display: "none" }}
-        ref={fileInputRef}
-        onChange={handleChange}
-      />
+      <Navbar />
+      <img src={bgImage} alt="background" className="background-image" />
+      <PhotoGrid />
+      <UploadButtonTwo />
     </div>
   );
 }
 
-export default UploadButtonTwo;
+export default UploadPage;

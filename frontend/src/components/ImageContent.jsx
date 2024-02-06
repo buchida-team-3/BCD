@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { Suspense, useRef, useEffect, useState } from 'react'
+import { Suspense, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Preload, Image as ImageImpl } from '@react-three/drei'
 import { ScrollControls, Scroll, useScroll } from './ScrollControls'
@@ -42,53 +42,50 @@ function Page({ m = 0.4, urls, ...props }) {
   );
 }
   
-function Pages({ imageGroups }) {
-  const { width } = useThree((state) => state.viewport);
-  return (
-    <>
-      {imageGroups && imageGroups.map((urls, index) => ( // imageGroups가 undefined일 경우를 대비한 체크
-        <Page key={index} position={[width * index, 0, 0]} urls={urls} />
-      ))}
-    </>
-  );
-}
+  function Pages() {
+    const { width } = useThree((state) => state.viewport)
+    return (
+      <>
+        <Page position={[-width * 1, 0, 0]} urls={['image4.jpeg', '/image5.jpeg', '/image6.jpeg']} />
+        <Page position={[width * 0, 0, 0]} urls={['/image7.jpeg', '/image8.jpeg', '/image9.jpeg']} />
+        <Page position={[width * 1, 0, 0]} urls={['/image10.jpeg', '/image11.jpeg', '/image12.jpeg']} />
+        <Page position={[width * 2, 0, 0]} urls={['/image1.jpeg', '/image2.jpeg', '/image3.jpeg']} />
+        <Page position={[width * 3, 0, 0]} urls={['image13.jpeg', '/image14.jpeg', '/image15.jpeg']} />
   
-export default function ImageContent() {
-  const [imageGroups, setImageGroups] = useState([]); // imageGroups를 빈 배열로 초기화
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await fetch('서버의 이미지 URL 리스트를 제공하는 엔드포인트', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          },
-        });
-        if (!response.ok) throw new Error('Server response was not ok.');
-        const data = await response.json();
-        setImageGroups(data.imageGroups); // 서버로부터 받은 이미지 URL 그룹을 상태에 저장
-      } catch (error) {
-        console.error('Failed to fetch images:', error);
-      }
-    };
-
-    fetchImages();
-  }, []); // 빈 배열을 전달하여 컴포넌트 마운트 시 한 번만 실행되도록 함
-
-  return (
-    <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
-      <Suspense fallback={null}>
-        <ScrollControls infinite horizontal damping={4} pages={imageGroups.length} distance={1}>
-          <Scroll>
-            <Pages imageGroups={imageGroups} />
-          </Scroll>
-          <Scroll html>
-            {/* 화면 내 글씨들 */}
-          </Scroll>
-        </ScrollControls>
-        <Preload />
-      </Suspense>
-    </Canvas>
-  );
-}
+        <Page position={[width * 4, 0, 0]} urls={['image4.jpeg', '/image5.jpeg', '/image6.jpeg']} />
+        <Page position={[width * 5, 0, 0]} urls={['/image7.jpeg', '/image8.jpeg', '/image9.jpeg']} />
+        <Page position={[width * 6, 0, 0]} urls={['/image10.jpeg', '/image11.jpeg', '/image12.jpeg']} />
+        <Page position={[width * 7, 0, 0]} urls={['/image1.jpeg', '/image2.jpeg', '/image3.jpeg']} />
+        <Page position={[width * 8, 0, 0]} urls={['image13.jpeg', '/image14.jpeg', '/image15.jpeg']} />
+      </>
+    )
+  }
+  
+  export default function ImageContent() {
+    return (
+      <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
+        <Suspense fallback={null}>
+          <ScrollControls infinite horizontal damping={4} pages={6} distance={1}>
+            <Scroll>
+              <Pages />
+            </Scroll>
+            <Scroll html>
+              {/* 화면 내 글씨들 */}
+              {/* <h1 style={{ position: 'absolute', top: '20vh', left: '-75vw' }}>Art</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '25vw' }}>Till</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '125vw' }}>Death</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '225vw' }}>We</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '325vw' }}>Do</h1>
+  
+              <h1 style={{ position: 'absolute', top: '20vh', left: '425vw' }}>Art</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '525vw' }}>Till</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '625vw' }}>Death</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '725vw' }}>We</h1>
+              <h1 style={{ position: 'absolute', top: '20vh', left: '825vw' }}>Do</h1> */}
+            </Scroll>
+          </ScrollControls>
+          <Preload />
+        </Suspense>
+      </Canvas>
+    )
+  }

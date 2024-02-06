@@ -13,6 +13,7 @@ import AfterImage from './components/AfterImage';
 import BeforeImage from './components/BeforeImage';
 import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
+import UploadPage from './components/UploadPage';
 
 
 function App() {
@@ -33,6 +34,8 @@ function App() {
           <Route path="/loginandsignup" element={<LoginSignup />} />
 
           <Route path="/imagepage" element={<ImagePage />} />
+
+          <Route path="/uploadpage" element={<UploadPage />} />
         </Routes>
       </Router>
    
