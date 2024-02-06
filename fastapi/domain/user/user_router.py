@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException # -> HTTPException: 예외처리를 위한 클래스, 중복 회원 등
-from fastapi.security import OAuth2PasswordRequestForm # -> 로그인을 위한 클래스
-from jose import jwt # -> JWT 토큰 생성을 위한 라이브러리
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer # -> 로그인을 위한 클래스
+from jose import jwt, JWTError # -> JWT 토큰 생성을 위한 라이브러리
 import secrets
 from sqlalchemy.orm import Session
 from starlette import status
@@ -15,6 +15,7 @@ from domain.user.user_crud import pwd_context # ??
 ACCESS_TOKEN_EXPIRE_MINUTES = 5 # 토큰 유효 시간
 SECRET_KEY = secrets.token_hex(32) # 랜덤한 문자열 64자리
 ALGORITHM = "HS256"
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login") # -> OAuth2PasswordBearer: 로그인을 위한 클래스, tokenUrl: 로그인 경로   
 
 router = APIRouter(
     # prefix="/api/user",
@@ -60,3 +61,22 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
         "username": user.username
     }
     
+def get_current_user(token: str = Depends(oauth2_scheme),
+                     db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    else:
+        user = user_crud.get_user(db, username=username)
+        if user is None:
+            raise credentials_exception
+        return user
