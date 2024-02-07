@@ -1,11 +1,10 @@
 import React, { useRef } from 'react';
 import Navbar from "./Navbar";
-import PhotoGrid from "./PhotoGrid";
+import PhotoGrid2 from "./PhotoGrid2";
 import UploadButtonTwo from "./UploadButtonTwo";
 import bgImage from "./content/background.jpg";
-import Background from './Background'; // Background 컴포넌트 임포트
 
-function UploadPage() {
+function UploadPage2() {
   const fileInputRef = useRef(null);
   // useRef를 사용해서 파일 입력 요소를 참조
 
@@ -60,10 +59,10 @@ function UploadPage() {
     <div>
       <Navbar />
       <img src={bgImage} alt="background" className="background-image" />
-      <PhotoGrid />
+      <PhotoGrid2 />
       <UploadButtonTwo />
     </div>
   );
 }
 
-export default UploadPage;
+export default UploadPage2;

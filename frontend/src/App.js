@@ -14,6 +14,7 @@ import BeforeImage from './components/BeforeImage';
 import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
 import UploadPage from './components/UploadPage';
+import UploadPage2 from './components/UploaePage2';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="/imagepage" element={<ImagePage />} />
 
           <Route path="/uploadpage" element={<UploadPage />} />
+          <Route path="/uploadpage2" element={<UploadPage2 />} />
         </Routes>
       </Router>
    
