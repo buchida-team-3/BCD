@@ -49,23 +49,23 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
     return JSONResponse(content = results)
 
-# @router.get("/album")
-# async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
-#     album_list = []
-#     album = db.query(image_crud.Image).filter(
-#         image_crud.Image.user_id == current_user.id
-#         ).all()
-#     for i in album:
-#         album_list.append(i.image_path)
-#     return JSONResponse(content=album_list)
-
 @router.get("/album")
-async def get_album(db: Session = Depends(get_db)):
+async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
     album_list = []
-    album = db.query(image_crud.Image).all()  # 모든 이미지를 조회
+    album = db.query(image_crud.Image).filter(
+        image_crud.Image.user_id == current_user.id
+        ).all()
     for i in album:
         album_list.append(i.image_path)
     return JSONResponse(content=album_list)
+
+# @router.get("/album")
+# async def get_album(db: Session = Depends(get_db)):
+#     album_list = []
+#     album = db.query(image_crud.Image).all()  # 모든 이미지를 조회
+#     for i in album:
+#         album_list.append(i.image_path)
+#     return JSONResponse(content=album_list)
 
 @router.get("/group/album/images")
 async def get_images():

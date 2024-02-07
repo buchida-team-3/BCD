@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import React, { createContext, useContext, useMemo, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useFrame, useThree, context as fiberContext } from '@react-three/fiber';
+import { createRoot } from 'react-dom/client'; // React 18에서 createRoot 임포트
 import mergeRefs from 'react-merge-refs';
 
 const ScrollControlsContext = createContext(null);
@@ -166,6 +167,7 @@ const ScrollCanvas = React.forwardRef(({ children }, ref) => {
   return <group ref={mergeRefs([ref, group])}>{children}</group>;
 });
 
+// ScrollHtml 컴포넌트 변경 부분
 const ScrollHtml = React.forwardRef(({ children, style, ...props }, ref) => {
   const state = useScroll();
   const group = useRef();
@@ -180,18 +182,21 @@ const ScrollHtml = React.forwardRef(({ children, style, ...props }, ref) => {
     }
   });
 
-  ReactDOM.render(
-    <div
-      ref={mergeRefs([ref, group])}
-      style={{ ...style, position: 'absolute', top: 0, left: 0, willChange: 'transform' }}
-      {...props}
-    >
-      <ScrollControlsContext.Provider value={state}>
-        <fiberContext.Provider value={fiberState}>{children}</fiberContext.Provider>
-      </ScrollControlsContext.Provider>
-    </div>,
-    state.fixed
-  );
+  useEffect(() => {
+    const root = createRoot(state.fixed); // state.fixed에 대한 root 생성
+    root.render(
+      <div
+        ref={mergeRefs([ref, group])}
+        style={{ ...style, position: 'absolute', top: 0, left: 0, willChange: 'transform' }}
+        {...props}
+      >
+        <ScrollControlsContext.Provider value={state}>
+          <fiberContext.Provider value={fiberState}>{children}</fiberContext.Provider>
+        </ScrollControlsContext.Provider>
+      </div>
+    );
+    return () => root.unmount(); // 컴포넌트 unmount 시 cleanup
+  }, [children, style, props, ref, group, state, fiberState]); // 의존성 배열에 사용된 모든 변수 포함
 
   return null;
 });

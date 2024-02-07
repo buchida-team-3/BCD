@@ -3,6 +3,8 @@ import { Suspense, useRef, useEffect, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Preload, Image as ImageImpl } from '@react-three/drei'
 import { ScrollControls, Scroll, useScroll } from './ScrollControls'
+import axios from 'axios'
+
 function Image(props) {
   const ref = useRef();
   const group = useRef();
@@ -48,26 +50,24 @@ function Pages({ imageGroups }) {
 }
 export default function ImageContent() {
   const [imageGroups, setImageGroups] = useState([]); // imageGroups를 빈 배열로 초기화
+
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await fetch('http://localhost:8000/album', {
-          method: 'GET',
+        const response = await axios.get('http://localhost:8000/album', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          },
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
         });
-        if (!response.ok) throw new Error('Server response was not ok.');
-        const imagePaths = await response.json(); // 서버로부터 받은 이미지 경로 목록
-  
-        // 서버 응답을 직접 setImageGroups에 할당
-        setImageGroups(imagePaths); // 변경된 부분
+        setImageGroups(response.data); // axios는 자동으로 JSON을 파싱해줍니다.
       } catch (error) {
         console.error('Failed to fetch images:', error);
       }
     };
+
     fetchImages();
   }, []);
+
   return (
     <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
       <Suspense fallback={null}>
@@ -79,7 +79,6 @@ export default function ImageContent() {
             {/* 화면 내 글씨들 */}
           </Scroll>
         </ScrollControls>
-        <Preload />
       </Suspense>
     </Canvas>
   );
