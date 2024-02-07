@@ -23,28 +23,31 @@ start_dir = "../frontend/public/img"
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
     results = []
     results_aws = []
-    results_clustering = []
+    results_feature = []
+    results_rgb = []
+
+    result_for_db = []
 
     num_path, num = make_sample_dir(start_dir)
-    cnt = 1
+
     for file in files:
         content = await file.read()
-        file_path = os.path.join(num_path, f"img_{cnt}.jpg")
-
-        cnt += 1
+        file_path = os.path.join(num_path, file.filename)
 
         with open(file_path, "wb") as fp:
             fp.write(content)
 
         results.append({"filename": file_path, "num": num})
-        results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/img_{cnt-1}.jpg"))
+        results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
 
-    results_clustering = image_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_model.pkl")
+    results_feature = image_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_model.pkl")
+    results_rgb = rgb_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_rgb_model.pkl")
 
     for i in range((len(results_aws))):
         result_for_db = {"image_path": results_aws[i], 
-                         "image_name": results_clustering[i]['image_name'], 
-                         "image_lable": results_clustering[i]['image_label']}
+                         "image_name": results_feature[i]['image_name'], 
+                         "image_lable_feature": results_feature[i]['image_label'], # feature
+                         "image_lable_rgb": results_rgb[i]['image_label']}         # rgb
         db_update(db, update_db=image_schema.ImageUpload(**result_for_db), user=current_user)
 
     return JSONResponse(content = results)
