@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';
+import NavbarBefore from './NavbarBefore';
 import LoginContainer from './LoginContainer';
 import SignupContainer from './SignupContainer';
 import bgImage from './content/background.jpg'
@@ -14,7 +14,7 @@ function LoginSignup() {
 
   return (
     <div className='login-signup-container'>
-      <Navbar />
+      <NavbarBefore />
       <img src={bgImage} alt="background" className="background-image" />
       <div className={`login-signup ${isVisible ? 'show' : ''}`}>
         <LoginContainer />

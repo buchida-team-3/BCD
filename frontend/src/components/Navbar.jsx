@@ -10,9 +10,8 @@ function Navbar() {
                 <div className="dropdown">
                     <button className="dropdown-button">Group</button>
                     <div className="dropdown-content">
-                        <a href="#">Group 1</a>
-                        <a href="#">Group 2</a>
-                        <a href="#">Add Group</a>
+                        <a href="/uploadpage">Group 1</a>
+                        <a href="/uploadpage2">Group 2</a>
                     </div>
                 </div>
                 <button className="logout-button">Logout</button>

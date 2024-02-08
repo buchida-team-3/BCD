@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import './MainPage.css';
 import LoginButton from './LoginButton';
 import bgImage from './content/background.jpg'
-import Navbar from './Navbar';
+import NavbarBefore from './NavbarBefore';
 
 function MainPage() {
     
     return (
         <div className="container">
-            <Navbar />
+            <NavbarBefore />
             <img src={bgImage} alt="background" className="background-image" />
             <LoginButton />
         </div>
