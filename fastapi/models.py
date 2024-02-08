@@ -21,6 +21,7 @@ class Image(Base):
     id = Column(Integer, primary_key=True)
     image_path = Column(String, nullable=False)
     image_name = Column(String, nullable=False)
-    image_lable = Column(Integer, nullable=True)
+    image_lable_feature = Column(Integer, nullable=True)
+    image_lable_rgb = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="image")

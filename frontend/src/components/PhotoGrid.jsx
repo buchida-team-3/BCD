@@ -1,13 +1,26 @@
 import React from 'react';
-import './PhotoGrid.css';   // 스타일을 PhotoGrid.css 파일로 분리했다고 가정
+import './PhotoGrid.css';
+import ThumbnailGroup from './ThumbnailGroup';
 
+function PhotoGrid(images) {
+  const navigateTo = (url) => () => {
+    window.location.href = url;
+  };
 
-// 썸네일 사진들을 보여주는 PhotoGrid 컴포넌트
-// http://localhost:3000/group/album
-function PhotoGrid( images ) {
   return (
     <div className="photo-grid">
-      {/* 썸네일 사진들을 보여주는 부분 */}
+      <div onClick={navigateTo('/imagepage')}>
+        <ThumbnailGroup src="/moun.jpg" />
+      </div>
+      <div onClick={navigateTo('/destination/sea')}>
+        <ThumbnailGroup src="/sea.jpg" />
+      </div>
+      <div onClick={navigateTo('/destination/forest')}>
+        <ThumbnailGroup src="/in.jpg" />
+      </div>
+      <div onClick={navigateTo('/destination/city')}>
+        <ThumbnailGroup src="/city.jpg" />
+      </div>
     </div>
   );
 }
