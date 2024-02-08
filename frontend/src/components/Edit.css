@@ -1,0 +1,25 @@
+.image-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.image-container-navbar {
+  display: flex;
+}
+
+.selected-image {
+  width: 400px;
+  height: 400px;
+}
+
+.image-list {
+  height: 400px;
+  overflow: auto;
+}
+
+.image-checkbox {
+  display: flex;
+  height: 70px;
+  font-size: 20px;
+  padding: 10px;
+}

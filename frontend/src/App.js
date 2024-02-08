@@ -15,7 +15,7 @@ import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
 import UploadPage from './components/UploadPage';
 import UploadPage2 from './components/UploaePage2';
-
+import Edit from './components/Edit';
 
 function App() {
   return (
@@ -38,6 +38,9 @@ function App() {
 
           <Route path="/uploadpage" element={<UploadPage />} />
           <Route path="/uploadpage2" element={<UploadPage2 />} />
+    
+          <Route path="/edit" element={<Edit />} />
+          
         </Routes>
       </Router>
    
