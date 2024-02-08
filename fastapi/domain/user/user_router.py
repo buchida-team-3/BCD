@@ -12,7 +12,7 @@ from domain.user import user_crud, user_schema
 from domain.user.user_crud import pwd_context # ??
 
 # 비밀번호 암호화
-ACCESS_TOKEN_EXPIRE_MINUTES = 10 # 토큰 유효 시간
+ACCESS_TOKEN_EXPIRE_MINUTES = 50 # 토큰 유효 시간
 SECRET_KEY = secrets.token_hex(32) # 랜덤한 문자열 64자리
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login") # -> OAuth2PasswordBearer: 로그인을 위한 클래스, tokenUrl: 로그인 경로   
