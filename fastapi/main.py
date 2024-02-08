@@ -18,6 +18,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000", # react의 포트
     "http://localhost:8000", 
+    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/",
 ]
 
 app.add_middleware(
