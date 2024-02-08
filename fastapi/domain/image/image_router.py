@@ -13,6 +13,8 @@ from domain.user.user_router import get_current_user
 from models import User
 from database import get_db
 
+from sqlalchemy.orm import Session  # Session 클래스 임포트
+
 router = APIRouter(
     # prefix="/image",
 )
@@ -52,6 +54,23 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
     return JSONResponse(content = results)
 
+@router.get("/album")
+async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+    album_list = []
+    album = db.query(image_crud.Image).filter(
+        image_crud.Image.user_id == current_user.id
+        ).all()
+    for i in album:
+        album_list.append(i.image_path)
+    return JSONResponse(content=album_list)
+
+# @router.get("/album")
+# async def get_album(db: Session = Depends(get_db)):
+#     album_list = []
+#     album = db.query(image_crud.Image).all()  # 모든 이미지를 조회
+#     for i in album:
+#         album_list.append(i.image_path)
+#     return JSONResponse(content=album_list)
 
 @router.get("/album")
 async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
