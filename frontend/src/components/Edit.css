@@ -17,6 +17,10 @@
   height: 100px;
 }
 
+.overlay-image {
+  width: 100px;
+  height: 100px;
+}
 .image-list {
   height: 400px;
   overflow: auto;
