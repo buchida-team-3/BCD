@@ -1,6 +1,6 @@
-from fastapi.responses import JSONResponse
-from fastapi import APIRouter, HTTPException, File, UploadFile, Depends
-from typing import List
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi import APIRouter, HTTPException, File, UploadFile, Depends, BackgroundTasks
+from typing import List, Dict
 import os
 
 from domain.image import image_crud, image_schema
@@ -15,11 +15,31 @@ from database import get_db
 
 from sqlalchemy.orm import Session  # Session 클래스 임포트
 
+from pydantic import BaseModel, Field
+import aiofiles
+from PIL import Image
+
+from rembg import remove
+import numpy as np
+
 router = APIRouter(
     # prefix="/image",
 )
 
+class ImageNames(BaseModel):
+    images: List[str]
 start_dir = "../frontend/public/img"
+remove_dir = "../frontend/public/img_0"
+
+class OverlayImage(BaseModel):
+    url: str = Field(..., alias='imageUrl')
+    x: float
+    y: float
+
+class ImageMergeData(BaseModel):
+    baseImage: str
+    overlayImages: List[OverlayImage] # 예: [{"url": "image_url", "x": 100, "y": 200}, ...]
+
 
 @router.post("/group/album/upload")
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -64,34 +84,68 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
         album_list.append(i.image_path)
     return JSONResponse(content=album_list)
 
-# @router.get("/album")
-# async def get_album(db: Session = Depends(get_db)):
-#     album_list = []
-#     album = db.query(image_crud.Image).all()  # 모든 이미지를 조회
-#     for i in album:
-#         album_list.append(i.image_path)
-#     return JSONResponse(content=album_list)
+@router.get("/api/images")
+def get_image_list():
+    # 이미지 폴더에서 이미지 파일 이름들을 가져옴
+    image_files = os.listdir(start_dir)
+    return image_files
 
-@router.get("/album")
-async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
-    album_list = []
-    album = db.query(image_crud.Image).filter(
-        image_crud.Image.user_id == current_user.id
-        ).all()
-    for i in album:
-        album_list.append(i.image_path)
+@router.get("/api/images/{image_name}")
+def get_image(image_name: str):
+    # 이미지 파일 경로 반환
+    return f"/img/{image_name}"
 
-    return JSONResponse(content=album_list)
+@router.post("/remove_background")
+async def remove_background(image_names: ImageNames):
 
+    processed_images = []
+    for image_name in image_names.images:
+        # 이미 처리된 이미지가 있는지 확인
+        print('now : ', image_name)
+        if os.path.exists(f'{remove_dir}/removed_{image_name}'):
+            print(f"Image {image_name} already processed.")
+            processed_images.append(f'removed_{image_name}')
+            continue  # 이미 처리되었다면 다음 이미지로 넘어감
 
+        try:
+            async with aiofiles.open(f'{start_dir}/{image_name}', 'rb') as image:
+                input_image = await image.read()
+            output_image = remove(input_image)
+            output_image_name = f'removed_{image_name}'
+            async with aiofiles.open(f'{remove_dir}/{output_image_name}', 'wb') as image:
+                await image.write(output_image)
+            processed_images.append(output_image_name)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+    print('end')
+    return processed_images
 
-# @router.get("/group/album/images")
-# async def get_images():
-#     image_list = []
-#     for root, dirs, files in os.walk(start_dir):
-#         for file in files:
-#             if file.endswith(".jpg"):
-#                 image_list.append(os.path.join(root, file))
+@router.post("/merge_images")
+async def merge_images(data: ImageMergeData):
+    base_image = Image.open(data.baseImage)
+    base_image_resized = base_image.resize((400, 400))
+    for overlay in data.overlayImages:    
+        # 각 "처리된 이미지"를 열고, 지정된 위치에 붙입니다.
+        overlay_image_path = overlay.url.replace(f'{overlay.url}', f'{remove_dir}/{overlay.url}')
+        overlay_image = Image.open(overlay_image_path)
 
-#     return JSONResponse(content=image_list)
+        # # 원본 이미지의 너비와 높이를 가져옴
+        # original_width, original_height = overlay_image.size
 
+        # 원본의 10% 크기로 조정하기 위한 새로운 크기 계산
+        # resize_percentage = 0.2  # 10%
+        # new_width = int(original_width * resize_percentage)
+        # new_height = int(original_height * resize_percentage)
+        
+        # 새로운 크기로 이미지 크기 조정
+        overlay_image_resized = overlay_image.resize((100, 100))
+
+        base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized)
+    
+    # 합성된 이미지를 저장하거나 클라이언트에 직접 반환합니다.
+    output_path = f"{start_dir}/overlay_{overlay.url}"
+    # if output_path:
+    #     cnt = 0
+    #     base_image.save(f'{output_path} ({cnt})')
+    base_image_resized.save(output_path)
+    return {"message": "Image merged successfully", "mergedImagePath": output_path}
