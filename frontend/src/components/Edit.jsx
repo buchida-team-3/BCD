@@ -47,26 +47,19 @@ const Edit = () => {
   };
 
 
-  const handleComplete = async () => {
+  const handleComplete = async (event) => {
     console.log(checkedImages);
-    const formData = new FormData();
-    for ( const checkedImage of checkedImages ) {
-      axios.get(`http://localhost:8000/api/images/${checkedImage}`)
-        .then(response => {
-          console.log(response.data.replace('/img/', ''))
-          formData.append('files', response.data.replace('/img/', ''));
-        })
-    }
+    event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/remove_background', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await axios.post('http://localhost:8000/remove_background', {
+        images: checkedImages
+      })
+      console.log('Image processed', response.data);
       setRemovedImages(response.data);
-
-    } catch (error) {
-      console.error('Error removing background:', error);
+      console.log('removedImages now: ', removedImages);
+    }
+    catch (error) {
+      console.log('Error uploading images: ', error);
     }
     // setRemovedImages(response.data);
 
@@ -123,7 +116,7 @@ const Edit = () => {
           <div className="rmoved-image-container">
             <h2>처리된 이미지</h2>
             {removedImages.map(removedImage => (
-              <img key={removedImage} src={`/src/img_0/${removedImage}`} alt={removedImage} className="removed-image" />
+              <img key={removedImage} src={`/img_0/${removedImage}`} alt={removedImage} className="removed-image" />
             ))}
           </div>
         </div>
