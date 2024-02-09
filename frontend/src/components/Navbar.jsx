@@ -1,3 +1,4 @@
+// 삭제하면 안됨
 import React from 'react';
 import './Navbar.css';
 import logo from './content/logo.png';

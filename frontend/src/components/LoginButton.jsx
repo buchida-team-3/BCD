@@ -1,6 +1,7 @@
+// 삭제하면 안됨
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MainLoginButton.css';
+import './LoginButton.css';
 
 function LoginButton() {
     const navigate = useNavigate();

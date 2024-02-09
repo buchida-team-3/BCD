@@ -1,3 +1,4 @@
+// 삭제하면 안됨
 import React from 'react';
 import './PhotoGrid.css';   // 스타일을 PhotoGrid.css 파일로 분리했다고 가정
 import ThumbnailGroup from './ThumbnailGroup';  // ThumbnailGroup 컴포넌트 import

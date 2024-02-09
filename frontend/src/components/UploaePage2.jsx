@@ -1,3 +1,4 @@
+// 삭제하면 안됨
 import React, { useRef } from 'react';
 import Navbar from "./Navbar";
 import PhotoGrid2 from "./PhotoGrid2";

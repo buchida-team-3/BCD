@@ -4,6 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Preload, Image as ImageImpl } from '@react-three/drei'
 import { ScrollControls, Scroll, useScroll } from './ScrollControls'
 import axios from 'axios'
+import bgImage from './content/background.jpg'
 
 function Image(props) {
   const ref = useRef();
@@ -75,7 +76,7 @@ export default function ImageContent() {
   }, []);
 
   return (
-    <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
+    <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} style={{ backgroundImage: `url(${bgImage})` }}>
       <Suspense fallback={null}>
         {/* pages는 전체 스크롤 길이 */}
         <ScrollControls infinite horizontal damping={4} pages={imageGroups.length/3} distance={1}>
