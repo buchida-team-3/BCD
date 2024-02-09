@@ -64,6 +64,7 @@ export default function ImageContent() {
         setImageGroups(response.data); // axios는 자동으로 JSON을 파싱해줍니다.
       } catch (error) {
         console.error('Failed to fetch images:', error);
+        window.location.href = '/loginandsignup';
       }
     };
 
