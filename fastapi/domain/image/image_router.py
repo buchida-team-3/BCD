@@ -1,6 +1,6 @@
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi import APIRouter, HTTPException, File, UploadFile, Depends, BackgroundTasks
-from typing import List
+from typing import List, Dict
 import os
 
 from domain.image import image_crud, image_schema
@@ -15,8 +15,9 @@ from database import get_db
 
 from sqlalchemy.orm import Session  # Session 클래스 임포트
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import aiofiles
+from PIL import Image
 
 from rembg import remove
 import numpy as np
@@ -29,6 +30,16 @@ class ImageNames(BaseModel):
     images: List[str]
 start_dir = "../frontend/public/img"
 remove_dir = "../frontend/public/img_0"
+
+class OverlayImage(BaseModel):
+    url: str = Field(..., alias='imageUrl')
+    x: float
+    y: float
+
+class ImageMergeData(BaseModel):
+    baseImage: str
+    overlayImages: List[OverlayImage] # 예: [{"url": "image_url", "x": 100, "y": 200}, ...]
+
 
 @router.post("/group/album/upload")
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -108,3 +119,33 @@ async def remove_background(image_names: ImageNames):
             raise HTTPException(status_code=500, detail=str(e))
     print('end')
     return processed_images
+
+@router.post("/merge_images")
+async def merge_images(data: ImageMergeData):
+    base_image = Image.open(data.baseImage)
+    base_image_resized = base_image.resize((400, 400))
+    for overlay in data.overlayImages:    
+        # 각 "처리된 이미지"를 열고, 지정된 위치에 붙입니다.
+        overlay_image_path = overlay.url.replace(f'{overlay.url}', f'{remove_dir}/{overlay.url}')
+        overlay_image = Image.open(overlay_image_path)
+
+        # # 원본 이미지의 너비와 높이를 가져옴
+        # original_width, original_height = overlay_image.size
+
+        # 원본의 10% 크기로 조정하기 위한 새로운 크기 계산
+        # resize_percentage = 0.2  # 10%
+        # new_width = int(original_width * resize_percentage)
+        # new_height = int(original_height * resize_percentage)
+        
+        # 새로운 크기로 이미지 크기 조정
+        overlay_image_resized = overlay_image.resize((100, 100))
+
+        base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized)
+    
+    # 합성된 이미지를 저장하거나 클라이언트에 직접 반환합니다.
+    output_path = f"{start_dir}/overlay_{overlay.url}"
+    # if output_path:
+    #     cnt = 0
+    #     base_image.save(f'{output_path} ({cnt})')
+    base_image_resized.save(output_path)
+    return {"message": "Image merged successfully", "mergedImagePath": output_path}
