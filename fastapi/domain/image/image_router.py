@@ -72,19 +72,6 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
 #         album_list.append(i.image_path)
 #     return JSONResponse(content=album_list)
 
-@router.get("/album")
-async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
-    album_list = []
-    album = db.query(image_crud.Image).filter(
-        image_crud.Image.user_id == current_user.id
-        ).all()
-    for i in album:
-        album_list.append(i.image_path)
-
-    return JSONResponse(content=album_list)
-
-
-
 # @router.get("/group/album/images")
 # async def get_images():
 #     image_list = []

@@ -1,7 +1,7 @@
 """
 모델 클래스를 정의하는 파일
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 

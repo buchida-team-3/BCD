@@ -1,6 +1,8 @@
 """
 이미지 스키마
 """
+import datetime
+
 from pydantic import BaseModel
 
 class ImageUpload(BaseModel):
@@ -10,5 +12,4 @@ class ImageUpload(BaseModel):
     image_name: str
     image_lable_feature: int
     image_lable_rgb: int
-
     

@@ -30,11 +30,12 @@ function Image(props) {
 function Page({ m = 0.4, urls, ...props }) {
   const { width } = useThree((state) => state.viewport);
   const w = width < 10 ? 1.5 / 3 : 1 / 3;
+  console.log(urls);
   return (
       <group {...props}>
-          <Image position={[-width * w, 0, -1]} scale={[width * w - m * 2, 5, 1]} url={urls[0]} />
-          <Image position={[0, 0, 0]} scale={[width * w - m * 2, 5, 1]} url={urls[1]} />
-          <Image position={[width * w, 0, 1]} scale={[width * w - m * 2, 5, 1]} url={urls[2]} />
+          <Image position={[-width * w, 0, -1]} scale={[width * w - m * 2, 5, 1]} url={urls} />
+          <Image position={[0, 0, 0]} scale={[width * w - m * 2, 5, 1]} url={urls} />
+          <Image position={[width * w, 0, 1]} scale={[width * w - m * 2, 5, 1]} url={urls} />
       </group>
   );
 }
@@ -59,6 +60,7 @@ export default function ImageContent() {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           }
         });
+        console.log(response.data);
         setImageGroups(response.data); // axios는 자동으로 JSON을 파싱해줍니다.
       } catch (error) {
         console.error('Failed to fetch images:', error);
