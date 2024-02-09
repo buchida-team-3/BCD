@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import React, { createContext, useContext, useMemo, useEffect, useRef } from 'react';
 import { useFrame, useThree, context as fiberContext } from '@react-three/fiber';
-import { createRoot } from 'react-dom'; // React 18에서 createRoot 임포트
+import { createRoot } from 'react-dom/client'; // React 18에서 createRoot 임포트
 import mergeRefs from 'react-merge-refs';
 
 const ScrollControlsContext = createContext(null);
