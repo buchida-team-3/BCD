@@ -5,7 +5,6 @@ function Overlay() {
       <div style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
         <a
           href="/uploadpage"
-          target="_blank"
           style={{ position: 'absolute', bottom: 43, left: 80, fontSize: '20px' }}>
           뒤로 가기
         </a>
