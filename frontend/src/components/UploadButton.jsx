@@ -1,8 +1,7 @@
-// 삭제하면 안됨
 import React, { useRef } from 'react';
-import "./UploadButtonTwo.css";
+import "./UploadButton.css";
 
-function UploadButtonTwo() {
+function UploadButton() {
   const fileInputRef = useRef(null);
   // useRef를 사용해서 파일 입력 요소를 참조
 
@@ -55,7 +54,7 @@ function UploadButtonTwo() {
 
   return (
     <div>
-      <button className="upload-buttonTwo" onClick={uploadFiles}>
+      <button className="upload-button" onClick={uploadFiles}>
         +
       </button>
       <input
@@ -70,4 +69,4 @@ function UploadButtonTwo() {
   );
 }
 
-export default UploadButtonTwo;
+export default UploadButton;

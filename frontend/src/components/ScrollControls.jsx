@@ -1,4 +1,3 @@
-// 삭제하면 안됨
 import * as THREE from 'three';
 import React, { createContext, useContext, useMemo, useEffect, useRef } from 'react';
 import { useFrame, useThree, context as fiberContext } from '@react-three/fiber';

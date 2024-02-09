@@ -1,8 +1,7 @@
-// 삭제하면 안됨
 import React, { useRef } from 'react';
 import Navbar from "./Navbar";
 import PhotoGrid from "./PhotoGrid";
-import UploadButtonTwo from "./UploadButtonTwo";
+import UploadButton from "./UploadButton";
 import bgImage from "./content/background.jpg";
 
 function UploadPage() {
@@ -61,7 +60,7 @@ function UploadPage() {
       <Navbar />
       <img src={bgImage} alt="background" className="background-image" />
       <PhotoGrid />
-      <UploadButtonTwo />
+      <UploadButton />
     </div>
   );
 }

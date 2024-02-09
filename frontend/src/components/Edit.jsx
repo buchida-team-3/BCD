@@ -1,4 +1,3 @@
-// 삭제하면 안됨
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';

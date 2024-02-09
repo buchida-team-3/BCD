@@ -1,4 +1,3 @@
-// 삭제하면 안됨
 import React from 'react';
 import './PhotoGrid.css';
 import ThumbnailGroup from './ThumbnailGroup';

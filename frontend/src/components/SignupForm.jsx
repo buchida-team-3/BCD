@@ -1,4 +1,3 @@
-// 삭제하면 안됨
 import React, { useState } from 'react';
 import './SignupForm.css';
 

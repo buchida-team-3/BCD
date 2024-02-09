@@ -1,4 +1,3 @@
-// 삭제하면 안됨
 import React from 'react';
 import './ThumbnailGroup.css'; // CSS 파일 임포트
 

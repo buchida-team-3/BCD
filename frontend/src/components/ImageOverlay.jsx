@@ -1,6 +1,6 @@
 import React from "react";
 
-function Overlay() {
+function ImageOverlay() {
     return (
       <div style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
         <a
@@ -14,4 +14,4 @@ function Overlay() {
     )
   }
 
-export default Overlay;
+export default ImageOverlay;

@@ -1,4 +1,3 @@
-// 삭제하면 안됨
 import React, { useState, useEffect } from 'react';
 import NavbarBefore from './NavbarBefore';
 import LoginContainer from './LoginContainer';
