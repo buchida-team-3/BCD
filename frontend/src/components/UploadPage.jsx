@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import PhotoGrid from "./PhotoGrid";
 import UploadButtonTwo from "./UploadButtonTwo";
 import bgImage from "./content/background.jpg";
-import Background from './Background'; // Background 컴포넌트 임포트
 
 function UploadPage() {
   const fileInputRef = useRef(null);
