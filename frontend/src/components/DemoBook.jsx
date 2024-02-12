@@ -3,10 +3,13 @@ import HTMLFlipBook from "react-pageflip";
 import "./DemoBook.css";
 import PageCover from "./PageCover";
 import Page from "./Page";
+import EditModal from "./EditModal"; // EditModal 컴포넌트를 불러옵니다. (아래에서 구현)
 
 function DemoBook(props) {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editTexts, setEditTexts] = useState({}); // 페이지 번호를 키로 하는 객체
   const flipBook = useRef(null);
 
   useEffect(() => {
@@ -28,8 +31,18 @@ function DemoBook(props) {
     setPage(e.data);
   };
 
+  const openEditModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const saveTexts = (leftText, rightText) => {
+    setEditTexts({ ...editTexts, [page]: leftText, [page + 1]: rightText });
+    setIsModalOpen(false);
+  };
+
   return (
     <div>
+      <button onClick={openEditModal}>Edit Text</button>
       <HTMLFlipBook
         width={620}
         height={580}
@@ -46,23 +59,23 @@ function DemoBook(props) {
         ref={flipBook}
       >
         <PageCover>BOOK TITLE</PageCover>
-        <Page number={1}>Lorem ipsum...</Page>
-        <Page number={2}>Lorem ipsum...</Page>
-        {/* 페이지들을 계속 추가 */}
+        {/* 페이지 번호와 텍스트를 Page 컴포넌트에 전달 */}
+        <Page number={1} text={editTexts[1] || "Page 1 Default Text"} />
+        <Page number={2} text={editTexts[2] || "Page 2 Default Text"} />
+        <Page number={3} text={editTexts[3] || "Page 3 Default Text"} />
+        <Page number={4} text={editTexts[4] || "Page 4 Default Text"} />
+        <Page number={5} text={editTexts[5] || "Page 5 Default Text"} />
+        <Page number={6} text={editTexts[6] || "Page 6 Default Text"} />
         <PageCover>THE END</PageCover>
       </HTMLFlipBook>
 
-      <div className="demo-container">
-        <div>
-          <button type="button" onClick={prevButtonClick}>
-            Previous page
-          </button>
-          [<span>{page}</span> of <span>{totalPage}</span>]
-          <button type="button" onClick={nextButtonClick}>
-            Next page
-          </button>
-        </div>
-      </div>
+      <EditModal
+        isOpen={isModalOpen}
+        leftPageText={editTexts[page] || ""}
+        rightPageText={editTexts[page + 1] || ""}
+        onSave={saveTexts}
+        onCancel={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
