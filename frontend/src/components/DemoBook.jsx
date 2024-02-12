@@ -3,7 +3,7 @@ import HTMLFlipBook from "react-pageflip";
 import "./DemoBook.css";
 import PageCover from "./PageCover";
 import Page from "./Page";
-import EditModal from "./EditModal"; // EditModal 컴포넌트를 불러옵니다. (아래에서 구현)
+import EditModal from "./EditModal";
 
 function DemoBook(props) {
   const [page, setPage] = useState(0);
@@ -59,7 +59,6 @@ function DemoBook(props) {
         ref={flipBook}
       >
         <PageCover>BOOK TITLE</PageCover>
-        {/* 페이지 번호와 텍스트를 Page 컴포넌트에 전달 */}
         <Page number={1} text={editTexts[1] || "Page 1 Default Text"} />
         <Page number={2} text={editTexts[2] || "Page 2 Default Text"} />
         <Page number={3} text={editTexts[3] || "Page 3 Default Text"} />
@@ -75,6 +74,7 @@ function DemoBook(props) {
         rightPageText={editTexts[page + 1] || ""}
         onSave={saveTexts}
         onCancel={() => setIsModalOpen(false)}
+        currentPage={page} // 현재 페이지 번호 전달
       />
     </div>
   );
