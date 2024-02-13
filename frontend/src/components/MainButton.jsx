@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './MainLoginButton.css';
+import './MainButton.css';
 
-function LoginButton() {
+function MainButton() {
     const navigate = useNavigate();
     return (
         <button className="main-login-button" onClick={() => navigate('/loginandsignup')}>
@@ -11,4 +11,4 @@ function LoginButton() {
     );
 }
 
-export default LoginButton;
+export default MainButton;

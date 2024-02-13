@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './MainPage.css';
-import LoginButton from './LoginButton';
+import MainButton from './MainButton';
 import bgImage from './content/background.jpg'
 import NavbarBefore from './NavbarBefore';
 
@@ -10,7 +10,7 @@ function MainPage() {
         <div className="container">
             <NavbarBefore />
             <img src={bgImage} alt="background" className="background-image" />
-            <LoginButton />
+            <MainButton />
         </div>
     );
 }
