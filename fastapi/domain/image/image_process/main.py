@@ -1,6 +1,7 @@
 """
 Main script.
 Create panoramas from a set of images.
+watchdog_for_image.p와 같은 디렉토리에 있어야 함
 """
 
 import argparse
@@ -59,7 +60,9 @@ args = vars(parser.parse_args())
 if args["verbose"]:
     logging.basicConfig(level=logging.INFO)
 
-logging.info("Gathering images...")
+# logging.info("이미지 스티칭 시작")
+# logging.info("Gathering images...")
+# logging.info("이미지 모으는 중...")
 
 valid_images_extensions = {".jpg", ".png", ".bmp", ".jpeg"}
 
@@ -72,29 +75,32 @@ image_paths = [
 images = [Image(path, args.get("size")) for path in image_paths]
 
 logging.info("Found %d images", len(images))
-logging.info("Computing features with SIFT...")
+# logging.info("Computing features with SIFT...")
+# logging.info("SIFT로 특징점 계산 중...")
 
 for image in images:
     image.compute_features()
 
-logging.info("Matching images with features...")
+# logging.info("Matching images with features...")
+# logging.info("특징점으로 이미지 매칭 중...")
 
 matcher = MultiImageMatches(images)
 pair_matches: list[PairMatch] = matcher.get_pair_matches()
 pair_matches.sort(key=lambda pair_match: len(pair_match.matches), reverse=True)
 
-logging.info("Finding connected components...")
+# logging.info("Finding connected components...")
+# logging.info("연결된 요소 찾는 중...")
 
 connected_components = find_connected_components(pair_matches)
 
-logging.info("Found %d connected components", len(connected_components))
-logging.info("Building homographies...")
+# logging.info("Found %d connected components", len(connected_components))
+# logging.info("호모그래피 빌드 중...")
 
 build_homographies(connected_components, pair_matches)
 
 time.sleep(0.1)
 
-logging.info("Computing gain compensations...")
+# logging.info("Computing gain compensations...")
 
 for connected_component in connected_components:
     component_matches = [
@@ -118,7 +124,8 @@ for image in images:
 results = []
 
 if args["multi_band_blending"]:
-    logging.info("Applying multi-band blending...")
+    # logging.info("Applying multi-band blending...")
+    logging.info("Multi-band blending 적용 중...")
     results = [
         multi_band_blending(
             connected_component,
@@ -130,13 +137,14 @@ if args["multi_band_blending"]:
 
 
 else:
-    logging.info("Applying simple blending...")
+    # logging.info("Applying simple blending...")
+    logging.info("Simple blending 적용 중...")
     results = [
         simple_blending(connected_component)
         for connected_component in connected_components
     ]
 
-logging.info("Saving results to %s", args["data_dir"] / "results")
+logging.info("스티칭 결과 저장: %s", args["data_dir"] / "results")
 
 (args["data_dir"] / "results").mkdir(exist_ok=True, parents=True)
 for i, result in enumerate(results):
