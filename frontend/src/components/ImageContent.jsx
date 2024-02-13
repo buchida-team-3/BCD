@@ -61,7 +61,8 @@ export default function ImageContent() {
       try {
         const response = await axios.get('http://localhost:8000/album', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Label': 'img_label_0'
           }
         });
         // console.log(response.data);
