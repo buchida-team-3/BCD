@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+from pathlib import Path
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -42,12 +43,23 @@ class Handler(FileSystemEventHandler):
     def on_created(self, event): #파일, 디렉터리가 생성되면 실행
         # print(event)
         
-        # 현재 스크립트의 상대 경로를 사용하여 main.py의 경로를 설정합니다.
-        script_path = os.path.join(os.path.dirname(__file__), 'main.py')
+        # # 현재 스크립트의 상대 경로를 사용하여 main.py의 경로를 설정합니다. -> 경로는 문제없음
+        # script_path = os.path.join(os.path.dirname(__file__), 'main.py')
 
+        # 현재 스크립트 파일이 위치한 디렉토리의 경로를 Path 객체로 가져옴
+        script_dir = Path(__file__).parent
+
+        # 'main.py'의 전체 경로를 생성
+        script_path = script_dir / 'main.py'
+
+        # 'samples/sample_04' 폴더의 전체 경로를 생성
+        #TODO: 유동적으로 경로 변경해야 함
+        samples_dir = script_dir / 'samples' / 'sample_04'
+
+        #! 동기실행: 문제가 생길까?
         # subprocess를 사용하여 main.py를 실행합니다.
-        result = subprocess.run(['python3', script_path, '-v', 'samples/sample_04'], capture_output=True, text=True)
-
+        result = subprocess.run(['python3', str(script_path), '-v', str(samples_dir)], capture_output=True, text=True)
+        
         print("출력:\n",result.stdout if result.stdout else "(없음)")
         print("로그:\n",result.stderr if result.stderr else "(없음)")
         print("종료 상태:",result.returncode if result.returncode else "(없음)")
