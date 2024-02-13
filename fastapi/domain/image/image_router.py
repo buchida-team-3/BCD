@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session  # Session 클래스 임포트
 from pydantic import BaseModel, Field
 import aiofiles
 from PIL import Image
+from io import BytesIO
 
 from rembg import remove
 import numpy as np
@@ -35,6 +36,8 @@ class OverlayImage(BaseModel):
     url: str = Field(..., alias='imageUrl')
     x: float
     y: float
+    width: int
+    height: int
 
 class ImageMergeData(BaseModel):
     baseImage: str
@@ -111,9 +114,21 @@ async def remove_background(image_names: ImageNames):
             async with aiofiles.open(f'{start_dir}/{image_name}', 'rb') as image:
                 input_image = await image.read()
             output_image = remove(input_image)
+            
+            # 바이트 데이터를 Image 객체로 변환
+            image = Image.open(BytesIO(output_image))
+
+            # 이미지 크기 조정
+            resized_image = image.resize((100, 100))
+            
+            # Image 객체를 바이트 데이터로 변환
+            buf = BytesIO()
+            resized_image.save(buf, format='PNG')  # 저장 포맷을 지정 (원본 이미지의 포맷에 따라 변경 가능)
+            resized_image_bytes = buf.getvalue()
+
             output_image_name = f'removed_{image_name}'
             async with aiofiles.open(f'{remove_dir}/{output_image_name}', 'wb') as image:
-                await image.write(output_image)
+                await image.write(resized_image_bytes)
             processed_images.append(output_image_name)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
@@ -129,16 +144,8 @@ async def merge_images(data: ImageMergeData):
         overlay_image_path = overlay.url.replace(f'{overlay.url}', f'{remove_dir}/{overlay.url}')
         overlay_image = Image.open(overlay_image_path)
 
-        # # 원본 이미지의 너비와 높이를 가져옴
-        # original_width, original_height = overlay_image.size
-
-        # 원본의 10% 크기로 조정하기 위한 새로운 크기 계산
-        # resize_percentage = 0.2  # 10%
-        # new_width = int(original_width * resize_percentage)
-        # new_height = int(original_height * resize_percentage)
-        
         # 새로운 크기로 이미지 크기 조정
-        overlay_image_resized = overlay_image.resize((100, 100))
+        overlay_image_resized = overlay_image.resize((overlay.width, overlay.height))
 
         base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized)
     
