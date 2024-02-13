@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import React, { createContext, useContext, useMemo, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
 import { useFrame, useThree, context as fiberContext } from '@react-three/fiber';
 import { createRoot } from 'react-dom/client'; // React 18에서 createRoot 임포트
 import mergeRefs from 'react-merge-refs';
@@ -164,10 +163,9 @@ const ScrollCanvas = React.forwardRef(({ children }, ref) => {
     group.current.position.y = state.horizontal ? 0 : height * (state.pages - 1) * state.offset;
   });
 
-  return <group ref={mergeRefs([ref, group])}>{children}</group>;
+  return <group ref={group}>{children}</group>;
 });
 
-// ScrollHtml 컴포넌트 변경 부분
 const ScrollHtml = React.forwardRef(({ children, style, ...props }, ref) => {
   const state = useScroll();
   const group = useRef();

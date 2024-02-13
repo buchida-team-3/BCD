@@ -17,8 +17,8 @@ app = FastAPI()
 # CORS를 허용할 오리진 도메인, 포트를 설정
 origins = [
     "http://localhost:3000", # react의 포트
-    "http://localhost:8000", 
-    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/",
+    "http://localhost:8000",
+    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/" 
 ]
 
 app.add_middleware(

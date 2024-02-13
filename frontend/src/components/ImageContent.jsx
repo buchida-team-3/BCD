@@ -4,6 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Preload, Image as ImageImpl } from '@react-three/drei'
 import { ScrollControls, Scroll, useScroll } from './ScrollControls'
 import axios from 'axios'
+import bgImage from './content/background.jpg'
 
 function Image(props) {
   const ref = useRef();
@@ -30,25 +31,28 @@ function Image(props) {
 function Page({ m = 0.4, urls, ...props }) {
   const { width } = useThree((state) => state.viewport);
   const w = width < 10 ? 1.5 / 3 : 1 / 3;
-  console.log(urls);
+  // console.log(urls);
   return (
       <group {...props}>
           <Image position={[-width * w, 0, -1]} scale={[width * w - m * 2, 5, 1]} url={urls} />
-          <Image position={[0, 0, 0]} scale={[width * w - m * 2, 5, 1]} url={urls} />
-          <Image position={[width * w, 0, 1]} scale={[width * w - m * 2, 5, 1]} url={urls} />
+          
       </group>
   );
 }
 function Pages({ imageGroups }) {
   const { width } = useThree((state) => state.viewport);
+  const pageWidth = width / 3; // 페이지 너비 (화면 너비의 1/3)
+  // pageWidth는 페이지 간 간격 거리 조정
+
   return (
     <>
       {imageGroups && imageGroups.map((urls, index) => ( // imageGroups가 undefined일 경우를 대비한 체크
-        <Page key={index} position={[width * index, 0, 0]} urls={urls} />
+        <Page key={index} position={[index * pageWidth, 0, 0]} urls={urls} />
       ))}
     </>
   );
 }
+
 export default function ImageContent() {
   const [imageGroups, setImageGroups] = useState([]); // imageGroups를 빈 배열로 초기화
 
@@ -60,10 +64,11 @@ export default function ImageContent() {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           }
         });
-        console.log(response.data);
+        // console.log(response.data);
         setImageGroups(response.data); // axios는 자동으로 JSON을 파싱해줍니다.
       } catch (error) {
         console.error('Failed to fetch images:', error);
+        window.location.href = '/loginandsignup';
       }
     };
 
@@ -71,9 +76,10 @@ export default function ImageContent() {
   }, []);
 
   return (
-    <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
+    <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} style={{ backgroundImage: `url(${bgImage})` }}>
       <Suspense fallback={null}>
-        <ScrollControls infinite horizontal damping={4} pages={imageGroups.length} distance={1}>
+        {/* pages는 전체 스크롤 길이 */}
+        <ScrollControls infinite horizontal damping={4} pages={imageGroups.length/3} distance={1}>
           <Scroll>
             <Pages imageGroups={imageGroups} />
           </Scroll>
