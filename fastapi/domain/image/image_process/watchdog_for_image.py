@@ -54,7 +54,8 @@ class Handler(FileSystemEventHandler):
 
         # 'samples/sample_04' 폴더의 전체 경로를 생성
         #TODO: 유동적으로 경로 변경해야 함
-        samples_dir = script_dir / 'samples' / 'sample_04'
+        sample_number = 4
+        samples_dir = script_dir / 'samples' / f'sample_{sample_number:02d}'
 
         #! 동기실행: 문제가 생길까?
         # subprocess를 사용하여 main.py를 실행합니다.
