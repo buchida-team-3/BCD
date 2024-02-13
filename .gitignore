@@ -4,7 +4,6 @@ images/*.png
 *.pyc
 __pycache__
 venv
-images/
 image_process/samples/*
 images/*.png
 *.DS_Store
