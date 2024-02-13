@@ -57,6 +57,7 @@ export function ScrollControls({
   }, [eps, damping, horizontal, pages]);
 
   useEffect(() => {
+    if (!target) return;
     el.current.style.position = 'absolute';
     el.current.style.width = '100%';
     el.current.style.height = '100%';
@@ -97,6 +98,7 @@ export function ScrollControls({
   }, [pages, distance, horizontal, target]);
 
   useEffect(() => {
+    if (!el.current) return;
     const containerLength = size[horizontal ? 'width' : 'height'];
     const scrollLength = el.current[horizontal ? 'scrollWidth' : 'scrollHeight'];
     const scrollThreshold = scrollLength - containerLength;
