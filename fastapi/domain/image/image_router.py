@@ -2,8 +2,10 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi import APIRouter, HTTPException, File, UploadFile, Depends, BackgroundTasks
 from typing import List, Dict
 import os
+import subprocess
 
-from domain.image import image_crud, image_schema
+from domain.image import image_crud
+from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, ImageMergeData
 from domain.image.image_crud import make_sample_dir, aws_upload, db_update
 from domain.image.clustering_image import image_clustering
 from domain.image.clustering_rgb import rgb_clustering
@@ -14,8 +16,6 @@ from models import User
 from database import get_db
 
 from sqlalchemy.orm import Session  # Session 클래스 임포트
-
-from pydantic import BaseModel, Field
 import aiofiles
 from PIL import Image
 from io import BytesIO
@@ -27,21 +27,9 @@ router = APIRouter(
     # prefix="/image",
 )
 
-class ImageNames(BaseModel):
-    images: List[str]
+
 start_dir = "../frontend/public/img"
 remove_dir = "../frontend/public/img_0"
-
-class OverlayImage(BaseModel):
-    url: str = Field(..., alias='imageUrl')
-    x: float
-    y: float
-    width: int
-    height: int
-
-class ImageMergeData(BaseModel):
-    baseImage: str
-    overlayImages: List[OverlayImage] # 예: [{"url": "image_url", "x": 100, "y": 200}, ...]
 
 
 @router.post("/group/album/upload")
@@ -73,7 +61,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
                          "image_name": results_feature[i]['image_name'], 
                          "image_lable_feature": results_feature[i]['image_label'], # feature
                          "image_lable_rgb": results_rgb[i]['image_label']}         # rgb
-        db_update(db, update_db=image_schema.ImageUpload(**result_for_db), user=current_user)
+        db_update(db, update_db=ImageUpload(**result_for_db), user=current_user)
 
     return JSONResponse(content = results)
 
@@ -156,3 +144,26 @@ async def merge_images(data: ImageMergeData):
     #     base_image.save(f'{output_path} ({cnt})')
     base_image_resized.save(output_path)
     return {"message": "Image merged successfully", "mergedImagePath": output_path}
+
+@router.post("/stitch_images")
+async def stitch_images():
+    # main.py 스크립트가 위치한 경로
+    script_path = "./image_process/main.py"
+    
+    # 스크립트 실행에 필요한 커맨드라인 인자
+    # 예: 이미지가 저장된 디렉토리 경로
+    images_directory = start_dir + '/results'
+    print('=========================pass========================')
+    # subprocess.run()을 사용하여 main.py 실행
+    # `subprocess.run(args, ...)`: args는 실행할 명령을 나타내는 문자열이나 리스트입니다.
+    result = subprocess.run(["python", script_path, images_directory], capture_output=True, text=True)
+    
+    if result.returncode == 0:
+        # 스크립트 실행 성공
+        print("Success:", result.stdout)    
+    else:
+        # 스크립트 실행 실패
+        print("Error:", result.stderr)
+    
+    # 결과 반환 (예시)
+    return {"message": "Image stitching completed", "output": result.stdout}

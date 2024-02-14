@@ -84,7 +84,6 @@ def gruop_select_page():
 def gruop_album_page():
     return RedirectResponse(url="http://localhost:3000")
 
-# TODO: watch_dog를 이용하여 파일이 생성되면 실행되는 함수
 @app.on_event("startup")
 async def startup_event():
     print("FastAPI 서버 실행 중...")
