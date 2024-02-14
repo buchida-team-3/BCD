@@ -69,13 +69,18 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
     results_rgb = rgb_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_rgb_model.pkl")
 
     for i in range((len(results_aws))):
-        result_for_db = {"image_path": results_aws[i], 
-                         "image_name": results_feature[i]['image_name'], 
-                         "image_lable_feature": results_feature[i]['image_label'], # feature
-                         "image_lable_rgb": results_rgb[i]['image_label']}         # rgb
+        result_for_db = {
+                            "image_path": results_aws[i], 
+                            "image_name": results_feature[i]['image_name'], 
+                            "image_lable_feature": results_feature[i]['image_label'],
+                            "image_lable_rgb": results_rgb[i]['image_label'],
+                            
+                        }         
         db_update(db, update_db=image_schema.ImageUpload(**result_for_db), user=current_user)
 
+    print(result_for_db)
     return JSONResponse(content = results)
+
 
 @router.get("/album")
 async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):

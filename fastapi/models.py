@@ -1,7 +1,7 @@
 """
 모델 클래스를 정의하는 파일
 """
-from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -25,3 +25,13 @@ class Image(Base):
     image_lable_rgb = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="image")
+    image_edited = Column(Boolean, default=False)
+    
+
+class Detection(Base):
+    __tablename__ = "detection"
+
+    id = Column(Integer, primary_key=True)
+    image_id = Column(Integer, ForeignKey("image.id"))
+    image = relationship("Image", backref="detection")
+    json_data = Column("data", JSON)

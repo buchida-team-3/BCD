@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # DB 접속 주소
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:1234@43.200.2.237/fastapi_pybo"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:1234@43.200.2.237/buchida"
 # -> sqlite3 DB의 파일을 의미, 프로젝트 루트 디렉토리에 저장한다는 의미
 # 커넥션 풀 생성: DB에 접속하는 객체를 일정 갯수만큼 미리 만들어 놓고, 필요할 때마다 꺼내서 사용하는 방식
 # check_same_thread=False -> 스레드 안전성을 무시하고, 여러 스레드가 DB에 접근할 수 있도록 함
