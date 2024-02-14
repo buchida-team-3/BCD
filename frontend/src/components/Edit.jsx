@@ -112,7 +112,7 @@ const Edit = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:8000/merge_images', {
+      const response = await axios.post('http://localhost:8000/stitch_images', {
         images: checkedImages // 선택된 이미지들을 백엔드로 전송
       });
       // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
