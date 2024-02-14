@@ -33,7 +33,7 @@ function Navbar() {
                 <a className='link-button' href="/edit">Edit</a>
                 <a className='link-button' href="/imagepage">View</a>
                 <a className='link-button' href="/uploadpage">List</a>
-                <a className='link-button' href="/demo">Album</a>
+                <a className='link-button' href="/demobook">Album</a>
                 {/* <div className="dropdown">
                     <button className="dropdown-button">Group</button>
                     <div className="dropdown-content">

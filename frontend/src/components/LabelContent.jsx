@@ -91,7 +91,7 @@ export default function ImageContent() {
         setImageGroups(formattedGroups);
       } catch (error) {
         console.error('Failed to fetch images:', error);
-        // window.location.href = '/loginandsignup';
+        window.location.href = '/loginandsignup';
       }
     };
 
