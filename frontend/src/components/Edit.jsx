@@ -297,18 +297,19 @@ const Edit = () => {
               </ResizableBox>
             ))}
           </div>
-
-          <div className="removed-image-container">
-            <h2>처리된 이미지</h2>
-            {removedImages.map((removedImage, index) => (
-              <img
+          <div className='removed-image-container'>
+            <h2>스티커</h2>
+            <div className="removed-image-list">
+              {removedImages.map((removedImage, index) => (
+                <img
                 key={index}
                 src={`/img_0/${removedImage}`}
                 alt={`removedImage ${index}`}
                 className="removed-image"
                 draggable="true"
                 onDragStart={(e) => handleDragStart(e, removedImage)} />
-            ))}
+                ))}
+            </div>
           </div>
         </div>
 
