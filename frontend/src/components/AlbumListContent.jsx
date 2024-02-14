@@ -4,9 +4,18 @@ import { Html } from '@react-three/drei';
 import { ScrollControls, Scroll } from './AlbumListScrollControls';
 import bgImage from './content/background.jpg';
 import pageImage from './images/image.jpg';
+import './AlbumListContent.css';
 
-const PageCover = ({ children }) => (
-  <div style={{ width: '500px', height: '600px', backgroundColor: '#e3d0b5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '10px' }}>
+const PageCover = ({ children, title }) => (
+  <div className="page-cover">
+    <div className="image-container">
+      {/* 이미지 컨테이너 추가 */}
+      <img src={pageImage} alt="Page" className="cover-image"/>
+    </div>
+    <div className="title-container">
+      {/* 텍스트 컨테이너 추가 */}
+      <Text title={title} />
+    </div>
     {children}
   </div>
 );
@@ -21,7 +30,7 @@ function Page({ title, position }) {
       <Html>
         <group>
           <PageCover>
-            {/* <img src={pageImage} alt="Page" style={{ width: '100%', height: '100%' }} /> */}
+            {/* <img src={pageImage} alt="Page" style={{ width: '90%', height: '90%' }} /> */}
             <Text title={title} />
           </PageCover>
           {/* <Text title={title} /> */}
@@ -31,7 +40,7 @@ function Page({ title, position }) {
   );
 }
 
-export default function ImageContent() {
+export default function AlbumListContent() {
   const pages = Array.from({ length: 10 }).map((_, index) => {
     // 가로 1열로 배치하기 위해 y 위치를 고정하고, x 위치를 조정하여 각 페이지가 가로로 표시되도록 합니다.
     const x = index * 6.0 - 5.2; // 각 페이지 간의 가로 간격을 조정합니다.
