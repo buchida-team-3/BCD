@@ -24,7 +24,7 @@ class Image(Base):
     image_lable_rgb = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="image")
-    image_edited = Column(Boolean, default=False)
+    # image_edited = Column(Boolean, default=False)
     
     
 class Detection(Base):
