@@ -32,8 +32,8 @@ function Page({ m = 0.4, urls, ...props }) {
   const scale = [2, 2, 1]; // Adjust scale as needed
   const positions = [
     [-0.5, 0.5, 0], // Image 1 position
-    [0, 0, -0.1], // Image 2 position, slightly in front/behind the first
-    [0.5, -0.5, -0.2], // Image 3 position, slightly in front/behind the second
+    [0, 0, 0.1], // Image 2 position, slightly in front/behind the first
+    [0.5, -0.5, 0.2], // Image 3 position, slightly in front/behind the second
   ];
 
   return (
