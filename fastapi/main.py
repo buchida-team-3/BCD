@@ -11,6 +11,8 @@ from fastapi.responses import RedirectResponse
 from domain.user import user_router
 from domain.image import image_router
 
+import subprocess
+
 app = FastAPI()
 # templates = Jinja2Templates(directory="/Users/jiho/projects/buchida/yongjae/uploadBefore.html")
 
@@ -82,5 +84,11 @@ def gruop_select_page():
 def gruop_album_page():
     return RedirectResponse(url="http://localhost:3000")
 
-
 # TODO: watch_dog를 이용하여 파일이 생성되면 실행되는 함수
+@app.on_event("startup")
+async def startup_event():
+    print("FastAPI 서버 실행 중...")
+    print("watchdog_for_image.py 실행 중...")
+    subprocess.Popen(["python3", "domain/image/image_process/watchdog_for_image.py"])
+    
+    
