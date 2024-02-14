@@ -1,4 +1,4 @@
-.page-cover {
+.page-cover2 {
     width: 500px;
     height: 600px;
     background-color: #e3d0b5;
@@ -14,11 +14,11 @@
     overflow: hidden; /* 이미지 확대 시 넘치는 부분 숨김 */
   }
   
-  .page-cover:hover .cover-image {
+  .page-cover2:hover .cover-image {
     transform: scale(1.67); /* 이미지를 2/3 크기로 확대 */
   }
   
-  .page-cover:hover .title-container {
+  .page-cover2:hover .title-container {
     transform: translateY(100%); /* 텍스트를 아래로 이동 */
     transition: transform 0.5s ease;
   }

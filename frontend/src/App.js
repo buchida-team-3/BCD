@@ -26,13 +26,13 @@ function App() {
     
           <Route path="/edit" element={<Edit />} />
           
-          {/* 앨범페이지 데모페이지 */}
-          <Route path="/demo" element={<DemoBook />} />
+          {/* 앨범페이지(데모) */}
+          <Route path="/demobook" element={<DemoBook />} />
 
           {/* 필터링 페이지 */}
           <Route path="/labelpage" element={<LabelPage />} />
 
-          {/* 앨범리스트 페이지 */}
+          {/* 앨범목록 페이지 */}
           <Route path="/albumlist" element={<AlbumListPage />} />
         </Routes>
       </Router>
