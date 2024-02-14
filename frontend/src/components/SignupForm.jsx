@@ -81,7 +81,7 @@ function SignupForm() {
                 onChange={handleInputChange}
             />
             <div className="button-container">
-                <input type="submit" value="확인" className="button confirm-button"/>
+                <input type="submit" value="회원가입" className="button confirm-button"/>
             </div>
         </form>
     );

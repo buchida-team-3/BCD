@@ -60,15 +60,17 @@ args = vars(parser.parse_args())
 if args["verbose"]:
     logging.basicConfig(level=logging.INFO)
 
-# logging.info("이미지 스티칭 시작")
+logging.info("이미지 스티칭 시작")
 # logging.info("Gathering images...")
 # logging.info("이미지 모으는 중...")
 
 valid_images_extensions = {".jpg", ".png", ".bmp", ".jpeg"}
-
+data_dir = Path(args["data_dir"])
+#! image_paths 예외 처리 필요
+# print(data_dir.is_file())
 image_paths = [
     str(filepath) # filepath를 str로 변환
-    for filepath in args["data_dir"].iterdir() # for -> data_dir의 하위 디렉토리에 있는 파일들의 경로를 str로 변환
+    for filepath in data_dir.iterdir() # for -> data_dir의 하위 디렉토리에 있는 파일들의 경로를 str로 변환
     if filepath.suffix.lower() in valid_images_extensions # if -> 파일의 확장자가 valid_images_extensions에 포함되어 있으면
 ]
 

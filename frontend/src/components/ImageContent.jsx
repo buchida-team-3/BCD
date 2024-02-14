@@ -18,9 +18,9 @@ function Image(props) {
   // 클릭 이벤트 핸들러 추가
   const handleClick = () => {
       // URL에서 파일 이름 추출 ('/image1.jpeg' -> 'image1')
-      const imageName = props.url.split('/').pop().split('.').shift();
+      // const imageName = props.url.split('/').pop().split('.').shift();
       // 'edit/' 경로와 함께 리디렉션
-      window.location.href = `/edit/${imageName}`;
+      window.location.href = `/edit?selectedImage=${encodeURIComponent(props.url)}`;
   };
   return (
       <group ref={group}>
@@ -61,7 +61,8 @@ export default function ImageContent() {
       try {
         const response = await axios.get('http://localhost:8000/album', {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Label': 'img_label_0'
           }
         });
         // console.log(response.data);

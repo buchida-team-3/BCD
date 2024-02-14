@@ -4,6 +4,8 @@ import Navbar from './Navbar';
 import './Edit.css';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css'; 
+import editDefault from './content/edit_default.jpg'
+import bgImage from './content/background.jpg'
 
 const Edit = () => {
   const [images, setImages] = useState([]);
@@ -21,14 +23,31 @@ const Edit = () => {
 
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
+  const getQueryParams = () => {
+    const queryParams = new URLSearchParams(window.location.search);
+    return {
+        selectedImage: queryParams.get('selectedImage')
+    };
+};
+
   useEffect(() => {
+    const { selectedImage: querySelectedImage } = getQueryParams();
+
+    if (querySelectedImage) {
+      console.log(querySelectedImage);
+      setSelectedImage(decodeURIComponent(querySelectedImage));
+      console.log(selectedImage);
+    }
+    else {
+      setSelectedImage(editDefault);
+    }
     axios.get('http://localhost:8000/api/images')
-      .then(response => {
-        setImages(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching images:', error);
-      });
+    .then(response => {
+      setImages(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching images:', error);
+    });
   }, []);
 
   const handleClick = (imageName) => {
@@ -59,7 +78,7 @@ const Edit = () => {
     }
   };
 
-  const handleBackgroundRemoval = () => {
+  const handleCheckBox = () => {
     setShowCheckboxes(true);
   };
 
@@ -85,6 +104,26 @@ const Edit = () => {
     setShowCheckboxes(false);
     setCheckedImages([]);
   }
+
+  // "배경 붙이기" 버튼의 이벤트 핸들러
+  const handleStitchImages = async () => {
+    if (checkedImages.length === 0) {
+      alert("이미지를 선택해주세요.");
+      return;
+    }
+    try {
+      const response = await axios.post('http://localhost:8000/merge_images', {
+        images: checkedImages // 선택된 이미지들을 백엔드로 전송
+      });
+      // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
+      console.log("Stitched image:", response.data);
+      setSelectedImage(response.data);
+    } catch (error) {
+      console.error("Error stitching images:", error);
+    }
+  };
+
+
 
   // "처리된 이미지" 드래그 시작 처리
   const handleDragStart = (e, imageUrl) => {
@@ -172,14 +211,30 @@ const Edit = () => {
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <Navbar />
+      <img src={bgImage} alt="background" className="edit-background-image" />
       <div className='image-container'>
         
         <div className='image-container-list'>
         
           <div className='image-container-navbar'>
-            <h2>이미지 목록</h2>
-            <button onClick={handleBackgroundRemoval}>배경 제거</button>
-            <button onClick={handleMergeImages}>편집 저장</button>
+            {!showCheckboxes && (
+              <button onClick={handleCheckBox}>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                이미지선택
+                </button>
+            )}
+            {showCheckboxes && (
+              <button onClick={handleCancel}>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                취소
+              </button>
+            )}
           </div>
 
           <div>
@@ -190,28 +245,36 @@ const Edit = () => {
                 </div>
               ))}
             </ul>
-            {showCheckboxes && (
-            <div>
-              <button onClick={handleComplete}>완료</button>
-              <button onClick={handleCancel}>취소</button>
-            </div>
-            )}
+
           </div>
         </div>
 
         <div className='show-container'>
           <div className='edit-container' ref={overlayContainerRef} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-            <h2>선택된 이미지</h2>
+            <div className='selected-image-header'>
+              <button onClick={handleComplete}>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                배경 제거</button>
+              <button onClick={handleStitchImages}>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                배경 붙이기
+                </button>
+              <button onClick={handleMergeImages}>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                편집 저장
+                </button>
+            </div>
             {selectedImage && <img className='selected-image' src={selectedImage} alt="Selected" draggable="false" />}
             {overlayImages.map((img, index) => (
-              // <img  
-              //   key={index}
-              //   src={`/img_0/${img.imageUrl}`}
-              //   alt={`Overlay ${index}`}
-              //   className="overlay-image"
-              //   style={{ position: 'absolute', left: img.x_abs, top: img.y_abs }}
-              //   onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
-              // />
               <ResizableBox
                 key={index}
                 width={img.width}
