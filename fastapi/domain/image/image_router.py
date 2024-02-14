@@ -5,7 +5,10 @@ import os
 
 from domain.image import image_crud, image_schema
 from domain.image.image_crud import make_sample_dir, aws_upload, db_update
-from domain.image.clustering_image import image_clustering
+
+# from domain.image.clustering_image import image_clustering
+from domain.image.image_labeling_yolov8 import image_labeling_yolov8
+from domain.image.image_labeling_resnet50 import image_labeling_resnet50
 from domain.image.clustering_rgb import rgb_clustering
 
 from domain.user.user_router import get_current_user
@@ -48,10 +51,10 @@ class ImageMergeData(BaseModel):
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
     results = []
     results_aws = []
-    results_feature = []
+    yolo = []
+    results_yolo = {}
     results_rgb = []
-
-    result_for_db = []
+    results_for_db = []
 
     num_path, num = make_sample_dir(start_dir)
 
@@ -65,20 +68,26 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
 
-    results_feature = image_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_model.pkl")
+    yolo = image_labeling_yolov8(num_path)
+    for item in yolo:
+        if item['image_name'] in results_yolo:
+            if item['class_name'] not in results_yolo[item['image_name']]:
+                results_yolo[item['image_name']].append(item['class_name'])
+        else:
+            results_yolo[item['image_name']] = [item['class_name']]
+
     results_rgb = rgb_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_rgb_model.pkl")
 
     for i in range((len(results_aws))):
-        result_for_db = {
+        results_for_db ={
                             "image_path": results_aws[i], 
-                            "image_name": results_feature[i]['image_name'], 
-                            "image_lable_feature": results_feature[i]['image_label'],
+                            "image_name": results_aws[i].split('/')[-1],
+                            "class_name": results_yolo[results_aws[i].split('/')[-1]],
                             "image_lable_rgb": results_rgb[i]['image_label'],
-                            
                         }         
-        db_update(db, update_db=image_schema.ImageUpload(**result_for_db), user=current_user)
-
-    print(result_for_db)
+    
+        # print(results_for_db)
+        # db_update(db, update_db=image_schema.ImageUpload(**result_for_db), user=current_user)
     return JSONResponse(content = results)
 
 
