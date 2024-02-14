@@ -8,6 +8,7 @@ import UploadPage2 from './components/UploaePage2';
 import Edit from './components/Edit';
 import DemoBook from './components/DemoBook';
 import LabelPage from './components/LabelPage';
+import AlbumListPage from './components/AlbumListPage';
 
 function App() {
   return (
@@ -25,11 +26,14 @@ function App() {
     
           <Route path="/edit" element={<Edit />} />
           
-          {/* 앨범페이지 데모페이지 */}
-          <Route path="/demo" element={<DemoBook />} />
+          {/* 앨범페이지(데모) */}
+          <Route path="/demobook" element={<DemoBook />} />
 
           {/* 필터링 페이지 */}
           <Route path="/labelpage" element={<LabelPage />} />
+
+          {/* 앨범목록 페이지 */}
+          <Route path="/albumlist" element={<AlbumListPage />} />
         </Routes>
       </Router>
    
