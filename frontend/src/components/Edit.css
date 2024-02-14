@@ -132,17 +132,30 @@ button span:nth-child(4){
 }
 
 .selected-image {
-  width: 550px;
-  height: 400px;
+  width: 800px;
+  height: 800px;
 }
 
 .removed-image-container {
-  position: absolute;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+  margin-top: 80px;
+}
+
+.removed-image-list {
+  background-color: orange;
+  border-radius: 5px;
+  position: relative;
   display: flex;
   flex-direction: column; /* 컨테이너 내 요소를 세로로 나열 */
   align-items: center; /* 이미지들을 중앙 정렬 */
   gap: 10px; /* 이미지 사이의 간격 조정 */
   right: 10%;
+  min-width: 150px;
+  min-height: 800px;
+  overflow-y: auto;
 }
 
 .removed-image {
@@ -165,16 +178,16 @@ button span:nth-child(4){
 }
 
 .image-list {
-  background-color: white;
+  background-color: lightgreen;
   border-radius: 5px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly; /* 이미지 사이의 간격을 균등하게 조정 */
   align-items: flex-start; /* 각 행의 시작점을 기준으로 정렬 */
   width: 100%;
-  height: 400px;
+  height: 800px;
   overflow: auto;
-
+  padding-right: 30px;
 }
 
 /* 스크롤바의 전체 부분을 숨깁니다 (트랙 포함) */
