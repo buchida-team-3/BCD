@@ -10,14 +10,40 @@
     padding: 0 10px;
 }
 
+.link-button {
+    color: white;
+    background-color: transparent;
+}
+
 .navbar-logo {
     width: 50px;
     height: auto;
+    cursor: pointer;
+}
+
+@keyframes expandMenu {
+    from { max-height: 0; }
+    to { max-height: 500px; }
+}
+
+@keyframes collapseMenu {
+    from { max-height: 500px; }
+    to { max-height: 0; }
 }
 
 .navbar-menu {
     display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    max-width: 0; /* 초기 상태에서는 숨김 */
+    transition: max-height 0.5s ease-out; /* 전환 효과 적용 */
+}
+
+.navbar-menu.expanded {
+    display: flex;
     align-items: center;
+    max-width: 250px; /* 확장될 때의 최대 높이, 콘텐츠 크기에 맞게 조절 */
+    animation: expandMenu 0.5s ease-out forwards;
 }
 
 .dropdown {
