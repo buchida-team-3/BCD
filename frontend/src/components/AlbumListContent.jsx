@@ -7,7 +7,7 @@ import pageImage from './images/image.jpg';
 import './AlbumListContent.css';
 
 const PageCover = ({ children, title }) => (
-  <div className="page-cover">
+  <div className="page-cover2">
     <div className="image-container">
       {/* 이미지 컨테이너 추가 */}
       <img src={pageImage} alt="Page" className="cover-image"/>
