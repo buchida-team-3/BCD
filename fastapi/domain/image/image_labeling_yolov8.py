@@ -5,12 +5,13 @@ import json
 
 # images_path = './input_images'
 
-def image_labeling_yolov8(images_path):
+def image_labeling_yolov8(images_path, conf=0.7):
     """_summary_
     객체 탐지 모델인 YOLOv8n 사용하여 이미지 안의 객체 라벨링
     
     Args:
         images_path: 이 디렉토리에 있는 이미지들을 라벨링
+        conf: 신뢰도 임계값
         
     Returns:
         [
@@ -30,13 +31,13 @@ def image_labeling_yolov8(images_path):
         ]
     """
     
-    # Load a pretrained YOLOv8n model 
+    # Load a pretrained YOLOv8n model
     model = YOLO('yolov8n.pt')
-
+    
     # Function to process each image and get detection results
     def process_image(image_path):
         image = Image.open(image_path)
-        results = model(image)  # Run inference
+        results = model(image, conf=conf)  # Run inference
         return results
 
     # List to store results for each image
@@ -73,7 +74,7 @@ def image_labeling_yolov8(images_path):
                     'count': data['count'],
                     'average_confidence': data['total_confidence'] / data['count']
                 })
-
+    
     return overall_results
 
 # print(image_labeling_yolov8(images_path))
