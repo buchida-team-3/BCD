@@ -1,48 +1,65 @@
-import React, { useState, useEffect, useRef } from "react";
-import HTMLFlipBook from "react-pageflip";
+import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import HTMLFlipBook from 'react-pageflip';
 import "./DemoBook.css";
-import PageCover from "./PageCover";
-import Page from "./Page";
-import EditModal from "./EditModal";
+import axios from 'axios';
+import PageCover from './PageCover';
 
-function DemoBook(props) {
-  const [page, setPage] = useState(0);
-  const [totalPage, setTotalPage] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editTexts, setEditTexts] = useState({}); // 페이지 번호를 키로 하는 객체
+// Page 컴포넌트 정의
+const Page = React.forwardRef(({ number, text, imageUrl }, ref) => {
+  return (
+    <div className="page" ref={ref}>
+      <div className="page-content">
+        <h2 className="page-header">Page {number}</h2>
+        <img src={imageUrl} alt={`Page ${number}`} style={{ width: '100%', height: 'auto' }} />
+        <div className="page-text">{text}</div>
+        <div className="page-footer">{number}</div>
+      </div>
+    </div>
+  );
+});
+
+// DemoBook 컴포넌트 정의
+function DemoBook() {
+  const [pages, setPages] = useState([]);
   const flipBook = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const pageCount = flipBook.current?.pageFlip()?.getPageCount();
-    if (pageCount) {
-      setTotalPage(pageCount);
-    }
-  }, []);
+    const fetchImages = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/album', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            'Label': 'img_label_0'
+          }
+        });
+        // 받아온 이미지 URL을 페이지 배열로 설정
+        const newPages = response.data.map((url, index) => ({
+          number: index + 1,
+          text: `Page ${index + 1} Default Text`,
+          imageUrl: url
+        }));
+        setPages(newPages);
+      } catch (error) {
+        console.error('Failed to fetch images:', error);
+        navigate('/loginandsignup');
+      }
+    };
 
-  const nextButtonClick = () => {
-    flipBook.current?.pageFlip().flipNext();
-  };
+    fetchImages();
+  }, [navigate]);
 
-  const prevButtonClick = () => {
-    flipBook.current?.pageFlip().flipPrev();
-  };
-
-  const onPage = (e) => {
-    setPage(e.data);
-  };
-
-  const openEditModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const saveTexts = (leftText, rightText) => {
-    setEditTexts({ ...editTexts, [page]: leftText, [page + 1]: rightText });
-    setIsModalOpen(false);
+  // 앨범 리스트로 돌아가기
+  const goBackToAlbumList = () => {
+    navigate('/albumlist');
   };
 
   return (
     <div>
-      <button onClick={openEditModal}>Edit Text</button>
+      {/* Edit Text 버튼 추가, 기능은 구현하지 않음 */}
+      <button onClick={() => alert('Edit text feature is not implemented yet.')}>Edit Text</button>
+      <button onClick={goBackToAlbumList} style={{float: 'right'}}>BACK</button>
       <HTMLFlipBook
         width={620}
         height={580}
@@ -54,28 +71,20 @@ function DemoBook(props) {
         maxShadowOpacity={0.5}
         showCover={true}
         mobileScrollSupport={true}
-        onFlip={onPage}
         className="demo-book"
         ref={flipBook}
       >
-        <PageCover>BOOK TITLE</PageCover>
-        <Page number={1} text={editTexts[1] || "Page 1 Default Text"} />
-        <Page number={2} text={editTexts[2] || "Page 2 Default Text"} />
-        <Page number={3} text={editTexts[3] || "Page 3 Default Text"} />
-        <Page number={4} text={editTexts[4] || "Page 4 Default Text"} />
-        <Page number={5} text={editTexts[5] || "Page 5 Default Text"} />
-        <Page number={6} text={editTexts[6] || "Page 6 Default Text"} />
-        <PageCover>THE END</PageCover>
+        <PageCover>추억 앨범</PageCover>
+        {pages.map((page, index) => (
+          
+          <Page
+            key={index}
+            number={page.number}
+            text={page.text}
+            imageUrl={page.imageUrl}
+          />
+        ))}
       </HTMLFlipBook>
-
-      <EditModal
-        isOpen={isModalOpen}
-        leftPageText={editTexts[page] || ""}
-        rightPageText={editTexts[page + 1] || ""}
-        onSave={saveTexts}
-        onCancel={() => setIsModalOpen(false)}
-        currentPage={page} // 현재 페이지 번호 전달
-      />
     </div>
   );
 }
