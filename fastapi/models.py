@@ -27,3 +27,4 @@ class Image(Base):
     user = relationship("User", backref="image")
     image_edited = Column(Boolean, default=False)
     class_name = Column(String, nullable=True)
+    image_meta = Column(String, nullable=True)

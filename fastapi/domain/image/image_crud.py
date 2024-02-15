@@ -47,6 +47,7 @@ def db_update(db: Session, update_db: ImageUpload, user: User):
             image_lable_rgb = update_db.image_lable_rgb,
             user = user,
             class_name = update_db.class_name,
+            image_meta = update_db.image_meta,
             )
     db.add(db_image)
     db.commit()    
