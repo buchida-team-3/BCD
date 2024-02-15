@@ -17,20 +17,13 @@ class User(Base):
 
 class Image(Base):
     __tablename__ = "image"
+    
     id = Column(Integer, primary_key=True)
     image_path = Column(String, nullable=False)
     image_name = Column(String, nullable=False)
-    image_lable_feature = Column(Integer, nullable=True)
+    # image_lable_feature = Column(Integer, nullable=True)
     image_lable_rgb = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="image")
-    # image_edited = Column(Boolean, default=False)
-    
-    
-class Detection(Base):
-    __tablename__ = "detection"
-    id = Column(Integer, primary_key=True)
-    image_id = Column(Integer, ForeignKey("image.id"))
-    image = relationship("Image", backref="detection")
-    json_data = Column("data", JSON)
-    
+    image_edited = Column(Boolean, default=False)
+    class_name = Column(String, nullable=True)

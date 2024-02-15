@@ -7,7 +7,11 @@ import subprocess
 from domain.image import image_crud
 from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, ImageMergeData
 from domain.image.image_crud import make_sample_dir, aws_upload, db_update
-from domain.image.clustering_image import image_clustering
+
+# from domain.image.clustering_image import image_clustering
+from domain.image.get_location_and_date import get_location_and_date
+from domain.image.image_labeling_yolov8 import image_labeling_yolov8
+from domain.image.image_labeling_resnet50 import image_labeling_resnet50
 from domain.image.clustering_rgb import rgb_clustering
 
 from domain.user.user_router import get_current_user
@@ -23,12 +27,15 @@ from io import BytesIO
 from rembg import remove
 import numpy as np
 
+import boto3
+
 router = APIRouter(
     # prefix="/image",
 )
 
 
-start_dir = "../frontend/public/img"
+# start_dir = "../frontend/public/img"
+start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
 remove_dir = "../frontend/public/img_0"
 
 
@@ -36,10 +43,10 @@ remove_dir = "../frontend/public/img_0"
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
     results = []
     results_aws = []
-    results_feature = []
+    yolo = []
+    results_yolo = {}
     results_rgb = []
-
-    result_for_db = []
+    results_for_db = []
 
     num_path, num = make_sample_dir(start_dir)
 
@@ -52,18 +59,30 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
+        print(get_location_and_date(file_path))
 
-    results_feature = image_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_model.pkl")
+    yolo = image_labeling_yolov8(num_path)
+    for item in yolo:
+        if item['image_name'] in results_yolo:
+            if item['class_name'] not in results_yolo[item['image_name']]:
+                results_yolo[item['image_name']].append(item['class_name'])
+        else:
+            results_yolo[item['image_name']] = [item['class_name']]
+
     results_rgb = rgb_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_rgb_model.pkl")
 
     for i in range((len(results_aws))):
-        result_for_db = {"image_path": results_aws[i], 
-                         "image_name": results_feature[i]['image_name'], 
-                         "image_lable_feature": results_feature[i]['image_label'], # feature
-                         "image_lable_rgb": results_rgb[i]['image_label']}         # rgb
-        db_update(db, update_db=ImageUpload(**result_for_db), user=current_user)
-
+        results_for_db ={
+                            "image_path": results_aws[i], 
+                            "image_name": results_aws[i].split('/')[-1],
+                            "class_name": str(results_yolo.get(results_aws[i].split('/')[-1])),
+                            "image_lable_rgb": results_rgb[i]['image_label'],
+                        }         
+    
+        # print(results_for_db)    
+        db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
     return JSONResponse(content = results)
+
 
 @router.get("/album")
 async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -76,15 +95,43 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     return JSONResponse(content=album_list)
 
 @router.get("/api/images")
-def get_image_list():
+def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
-    image_files = os.listdir(start_dir)
+    # start_dir: s3 이미지 경로
+    #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
+    # image_files = os.listdir(start_dir)
+    SERVICE_NAME =  "s3"
+    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+    SECRET_KEY = "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"
+    REGION = "ap-northeast-2"
+    BUCKET_NAME = "jungle-buchida-s3"
+    
+    user_image = db.query(image_crud.Image).filter(
+        image_crud.Image.user_id == current_user.id
+        ).all().filter(image_crud.Image.image_path).all()
+
+    s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
+    
+    image_list = []
+    try:
+        image_files = s3.list_objects(Bucket="jungle-buchida-s3")
+        image_files = [i['Key'] for i in user_image['Contents']]
+        for image_file in image_files:
+            image_url = f"https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/{image_file}"
+            image_list.append(image_url)
+        # 여기까지 OK
+        return image_list
+    except Exception as e:
+        print(e)
+        return None #TODO: 500 에러 반환
+    
     return image_files
 
 @router.get("/api/images/{image_name}")
-def get_image(image_name: str):
+def get_image(image_name: str, current_user: User = Depends(get_current_user)):
     # 이미지 파일 경로 반환
-    return f"/img/{image_name}"
+    print(f"{start_dir}/{image_name}")
+    return f"{start_dir}/{image_name}"
 
 @router.post("/remove_background")
 async def remove_background(image_names: ImageNames):

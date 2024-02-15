@@ -22,8 +22,8 @@ function App() {
 
           <Route path="/imagepage" element={<ImagePage />} />
 
-          <Route path="/uploadpage" element={<UploadPage />} />
-          <Route path="/uploadpage2" element={<UploadPage2 />} />
+          {/* <Route path="/uploadpage" element={<UploadPage />} /> */}
+          {/* <Route path="/uploadpage2" element={<UploadPage2 />} /> */}
     
           <Route path="/edit" element={<Edit />} />
           
