@@ -1,4 +1,5 @@
 import React from 'react';
+import './Page.css';
 
 const Page = React.forwardRef(({ number, text }, ref) => {
   return (

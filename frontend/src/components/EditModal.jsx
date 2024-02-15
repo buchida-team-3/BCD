@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function EditModal({ isOpen, leftPageText, rightPageText, onSave, onCancel, currentPage }) {
+function EditModal({ isOpen, leftPageText, rightPageText, onSave, onCancel }) {
   const [leftText, setLeftText] = useState(leftPageText);
   const [rightText, setRightText] = useState(rightPageText);
+
+  // isOpen이 변경될 때마다 실행되어, 모달이 열릴 때마다 텍스트를 초기화합니다.
+  useEffect(() => {
+    setLeftText(leftPageText);
+    setRightText(rightPageText);
+  }, [isOpen, leftPageText, rightPageText]);
 
   if (!isOpen) {
     return null;
@@ -10,8 +16,6 @@ function EditModal({ isOpen, leftPageText, rightPageText, onSave, onCancel, curr
 
   const handleSave = () => {
     onSave(leftText, rightText);
-    setLeftText(""); // 저장 후 입력란 비우기
-    setRightText(""); // 저장 후 입력란 비우기
   };
 
   return (
