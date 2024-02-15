@@ -26,12 +26,15 @@ from io import BytesIO
 from rembg import remove
 import numpy as np
 
+import boto3
+
 router = APIRouter(
     # prefix="/image",
 )
 
 
-start_dir = "../frontend/public/img"
+# start_dir = "../frontend/public/img"
+start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
 remove_dir = "../frontend/public/img_0"
 
 
@@ -90,15 +93,43 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     return JSONResponse(content=album_list)
 
 @router.get("/api/images")
-def get_image_list():
+def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
-    image_files = os.listdir(start_dir)
+    # start_dir: s3 이미지 경로
+    #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
+    # image_files = os.listdir(start_dir)
+    SERVICE_NAME =  "s3"
+    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+    SECRET_KEY = "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"
+    REGION = "ap-northeast-2"
+    BUCKET_NAME = "jungle-buchida-s3"
+    
+    user_image = db.query(image_crud.Image).filter(
+        image_crud.Image.user_id == current_user.id
+        ).all().filter(image_crud.Image.image_path).all()
+
+    s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
+    
+    image_list = []
+    try:
+        image_files = s3.list_objects(Bucket="jungle-buchida-s3")
+        image_files = [i['Key'] for i in user_image['Contents']]
+        for image_file in image_files:
+            image_url = f"https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/{image_file}"
+            image_list.append(image_url)
+        # 여기까지 OK
+        return image_list
+    except Exception as e:
+        print(e)
+        return None #TODO: 500 에러 반환
+    
     return image_files
 
 @router.get("/api/images/{image_name}")
-def get_image(image_name: str):
+def get_image(image_name: str, current_user: User = Depends(get_current_user)):
     # 이미지 파일 경로 반환
-    return f"/img/{image_name}"
+    print(f"{start_dir}/{image_name}")
+    return f"{start_dir}/{image_name}"
 
 @router.post("/remove_background")
 async def remove_background(image_names: ImageNames):
