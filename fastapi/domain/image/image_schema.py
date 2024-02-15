@@ -11,6 +11,7 @@ class ImageUpload(BaseModel):
     image_name: str
     # image_lable_feature: int
     image_lable_rgb: int
+    class_name: str
 
 class ImageNames(BaseModel):
     images: List[str]
