@@ -9,6 +9,7 @@ from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, Ima
 from domain.image.image_crud import make_sample_dir, aws_upload, db_update
 
 # from domain.image.clustering_image import image_clustering
+from domain.image.get_location_and_date import get_location_and_date
 from domain.image.image_labeling_yolov8 import image_labeling_yolov8
 from domain.image.image_labeling_resnet50 import image_labeling_resnet50
 from domain.image.clustering_rgb import rgb_clustering
@@ -55,6 +56,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
+        print(get_location_and_date(file_path))
 
     yolo = image_labeling_yolov8(num_path)
     for item in yolo:
@@ -74,7 +76,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
                             "image_lable_rgb": results_rgb[i]['image_label'],
                         }         
     
-        print(results_for_db)    
+        # print(results_for_db)    
         db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
     return JSONResponse(content = results)
 
