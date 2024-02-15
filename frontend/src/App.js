@@ -27,7 +27,7 @@ function App() {
           <Route path="/edit" element={<Edit />} />
           
           {/* 앨범페이지(데모) */}
-          <Route path="/demobook" element={<DemoBook />} />
+          <Route path="/book" element={<DemoBook />} />
 
           {/* 필터링 페이지 */}
           <Route path="/labelpage" element={<LabelPage />} />
