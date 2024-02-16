@@ -83,57 +83,86 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
                             "image_meta": ', '.join(map(str, results_image_meta[i]))
                         }
         db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
-    return JSONResponse(content = results)
+    return JSONResponse(content=results)
 
 
-@router.get("/album")
+@router.get("/api/all")
 async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
-    album_list = []
-    album = db.query(image_crud.Image).filter(
+    image_list = []
+    images = db.query(image_crud.Image).filter(
         image_crud.Image.user_id == current_user.id
         ).all()
-    for index in album:
-        album_list.append([index.image_path, index.class_name, index.image_meta])
-    return JSONResponse(content=album_list)
+    
+    # 이미지 모델 직렬화
+    for image in images:
+        image_data = {
+            "id": image.id,
+            "image_path": image.image_path,
+            "image_name": image.image_name,
+            "image_lable_rgb": image.image_lable_rgb,
+            "user_id": image.user_id,
+            "image_edited": image.image_edited,
+            "class_name": image.class_name,
+            "image_meta": image.image_meta
+        }
+        image_list.append(image_data)
+        
+    return JSONResponse(content=image_list)
+
+@router.get("/api/filter")
+async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+    image_list = []
+    images = db.query(image_crud.Image).filter(
+        (image_crud.Image.user_id == current_user.id) &
+        (image_crud.Image.image_lable_rgb==2))
+    for i in images:
+        image_list.append(i.image_path)
+    return JSONResponse(content=image_list)
+
+# @router.get("/api/images")
+# def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+#     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
+#     # start_dir: s3 이미지 경로
+#     #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
+#     # image_files = os.listdir(start_dir)
+#     SERVICE_NAME =  "s3"
+#     ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+#     SECRET_KEY = "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"
+#     REGION = "ap-northeast-2"
+#     BUCKET_NAME = "jungle-buchida-s3"
+    
+#     user_image = db.query(image_crud.Image).filter(
+#         image_crud.Image.user_id == current_user.id
+#         ).all().filter(image_crud.Image.image_path).all()
+
+#     s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
+    
+#     image_list = []
+#     try:
+#         image_files = s3.list_objects(Bucket="jungle-buchida-s3")
+#         image_files = [i['Key'] for i in user_image['Contents']]
+#         for image_file in image_files:
+#             image_url = f"https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/{image_file}"
+#             image_list.append(image_url)
+#         # 여기까지 OK
+#         return image_list
+#     except Exception as e:
+#         print(e)
+#         return None #TODO: 500 에러 반환
+    
+#     return image_files
 
 @router.get("/api/images")
-def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_image_list():
     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
-    # start_dir: s3 이미지 경로
-    #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
-    # image_files = os.listdir(start_dir)
-    SERVICE_NAME =  "s3"
-    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
-    SECRET_KEY = "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"
-    REGION = "ap-northeast-2"
-    BUCKET_NAME = "jungle-buchida-s3"
-    
-    user_image = db.query(image_crud.Image).filter(
-        image_crud.Image.user_id == current_user.id
-        ).all().filter(image_crud.Image.image_path).all()
-
-    s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
-    
-    image_list = []
-    try:
-        image_files = s3.list_objects(Bucket="jungle-buchida-s3")
-        image_files = [i['Key'] for i in user_image['Contents']]
-        for image_file in image_files:
-            image_url = f"https://{BUCKET_NAME}.s3.{REGION}.amazonaws.com/{image_file}"
-            image_list.append(image_url)
-        # 여기까지 OK
-        return image_list
-    except Exception as e:
-        print(e)
-        return None #TODO: 500 에러 반환
-    
+    image_files = os.listdir(start_dir)
     return image_files
 
 @router.get("/api/images/{image_name}")
-def get_image(image_name: str, current_user: User = Depends(get_current_user)):
+def get_image(image_name: str):
     # 이미지 파일 경로 반환
     print(f"{start_dir}/{image_name}")
-    return f"{start_dir}/{image_name}"
+    return f"./img/{image_name}"
 
 @router.post("/remove_background")
 async def remove_background(image_names: ImageNames):

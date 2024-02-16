@@ -50,6 +50,6 @@ def db_update(db: Session, update_db: ImageUpload, user: User):
             image_meta = update_db.image_meta,
             )
     db.add(db_image)
-    db.commit()    
+    db.commit()
     
 

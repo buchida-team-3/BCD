@@ -242,7 +242,7 @@ const Edit = () => {
             <ul className='image-list'>
               {images.map(image => (
                 <div key={image} className={`image-checkbox ${checkedImages.includes(image) ? 'selected' : ''}`} onClick={() => handleClick(image)}>
-                  <img className='image-element' src={`${image}`} alt={image} />
+                  <img className='image-element' src={`./img/${image}`} alt={image} />
                 </div>
               ))}
             </ul>

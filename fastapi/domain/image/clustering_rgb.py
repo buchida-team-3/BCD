@@ -43,9 +43,12 @@ def rgb_clustering(new_image_path, folder_path=None, model_path=None, image_size
                 filenames.append(file)
         print("이미지 개수: ", len(images))
         return images, filenames
+    
+    
     #### 메인 함수 ####
     def main():
         print("rgb_clustering() 시작\n")
+        
         # images와 filenames를 빈 리스트로 초기화
         images = []
         if model_path is not None:
@@ -60,29 +63,36 @@ def rgb_clustering(new_image_path, folder_path=None, model_path=None, image_size
                 print("이미지 로드 완료\n")
             else:
                 print("!!!!!!!!!샘플 이미지 폴더 경로(folder_path)를 입력하세요!!!!!!!!!")
+                
             # 히스토그램 계산
             all_features = []
             for i in range(len(images)):
                 print("히스토그램 계산 중...", i+1, "/", len(images))
                 hue_hist = cv.calcHist([images[i]], [0], None, [256], [0, 256])
                 all_features.append(hue_hist.flatten())
+                
             # all_features를 numpy 배열로 변환하고, 필요하다면 2차원 형태로 조정
             all_features = np.array(all_features, dtype=np.float64)
             if all_features.ndim == 1:
                 all_features = all_features.reshape(-1, 1)
+                
             print("히스토그램 계산 완료\n")
             print("all_features:", all_features, "\n")
+            
             # K-평균 군집화
             print("K-평균 군집화 중...\n")
             kmeans = MiniBatchKMeans(n_clusters=cluster_num, random_state=22, batch_size=100).fit(all_features)
             print("모델:", kmeans, "\n")
             print("K-평균 군집화 완료\n")
+            
+            
         #### 새 이미지 처리 ####
         print("####새 이미지 처리 시작####\n")
         print("이미지 로드 중...\n")
         new_images, new_file_names = load_images(new_image_path)
         print("새로운 이미지 이름:", new_file_names, "\n")
         print("이미지 로드 완료\n")
+        
         # 각 이미지의 히스토그램 계산
         new_all_features = []
         for i in range(len(new_images)):
@@ -91,17 +101,21 @@ def rgb_clustering(new_image_path, folder_path=None, model_path=None, image_size
             new_all_features.append(hue_hist.flatten())
         print("히스토그램 계산 완료\n")
         print("새 이미지 처리 완료\n")
+        
         # 새로운 데이터에 대해 모델 업데이트
         print("모델 업데이트 중...\n")
         kmeans.partial_fit(new_all_features)
+        
         # 모델 저장
         dump(kmeans, 'kmeans_rgb_model.pkl')
         print("모델 저장 완료\n")
+        
         # 가장 가까운 군집 찾기
         print("가장 가까운 군집 찾기 중...\n")
         predict_cluster_label = kmeans.predict(new_all_features)
         print("가장 가까운 군집의 레이블 예측(predict_cluster_label)\n:", predict_cluster_label, "\n")
         print("가장 가까운 군집 찾기 완료\n")
+        
         print("####이미지 매칭 결과####\n")
         print("folder_path:", folder_path)
         print("image_size:", image_size)
@@ -114,4 +128,5 @@ def rgb_clustering(new_image_path, folder_path=None, model_path=None, image_size
                 "image_label": f'{predict_cluster_label[i]}'
             })
         return ret
+    
     return main()
