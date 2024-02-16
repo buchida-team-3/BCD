@@ -1,54 +1,73 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import HTMLFlipBook from 'react-pageflip';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios"; // axios 임포트
+import HTMLFlipBook from "react-pageflip";
+import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
 import "./DemoBook.css";
-import axios from 'axios';
-import PageCover from './PageCover';
+import PageCover from "./PageCover";
+import Page from "./Page";
+import EditModal from "./EditModal";
 
-// Page 컴포넌트 정의
-const Page = React.forwardRef(({ number, text, imageUrl }, ref) => {
-  return (
-    <div className="page" ref={ref}>
-      <div className="page-content">
-        <h2 className="page-header">Page {number}</h2>
-        <img src={imageUrl} alt={`Page ${number}`} style={{ width: '100%', height: 'auto' }} />
-        <div className="page-text">{text}</div>
-        <div className="page-footer">{number}</div>
-      </div>
-    </div>
-  );
-});
-
-// DemoBook 컴포넌트 정의
-function DemoBook() {
-  const [pages, setPages] = useState([]);
+function DemoBook(props) {
+  const [albumData, setAlbumData] = useState({ albumTitle: "", photos: [] }); // 앨범 데이터 상태 추가
+  const [page, setPage] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editTexts, setEditTexts] = useState({});
   const flipBook = useRef(null);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
+  // 서버로부터 앨범 데이터를 가져오는 useEffect
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchAlbumData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/album', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            'Label': 'img_label_0'
-          }
-        });
-        // 받아온 이미지 URL을 페이지 배열로 설정
-        const newPages = response.data.map((url, index) => ({
-          number: index + 1,
-          text: `Page ${index + 1} Default Text`,
-          imageUrl: url
-        }));
-        setPages(newPages);
+        const response = await axios.get('여기에 API URL 입력');
+        setAlbumData(response.data); // 서버로부터 받은 데이터를 상태에 저장
       } catch (error) {
-        console.error('Failed to fetch images:', error);
-        navigate('/loginandsignup');
+        console.error('Failed to fetch album data:', error);
       }
     };
 
-    fetchImages();
-  }, [navigate]);
+    fetchAlbumData();
+  }, []);
+
+  useEffect(() => {
+    const pageCount = flipBook.current?.pageFlip()?.getPageCount();
+    if (pageCount) {
+      setPage(pageCount);
+    }
+  }, [albumData]); // albumData 의존성 추가
+
+  const openEditModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const saveTexts = async (leftText, rightText) => {
+    // 변경된 텍스트를 서버로 전송하는 로직
+    const payload = {
+      page: page,
+      leftText: leftText,
+      rightText: rightText,
+    };
+  
+    try {
+      // 여기에 실제 업데이트를 위한 API 엔드포인트와 HTTP 메서드를 교체하세요.
+      // 이 예제에서는 PATCH 메서드를 사용하고, 페이지 번호와 텍스트를 전송합니다.
+      await axios.patch('여기에 실제 페이지 텍스트 업데이트 API URL 입력', payload);
+      alert('텍스트 업데이트 성공');
+  
+      // 성공적으로 서버에 데이터를 업데이트한 후, 프론트엔드 상태도 업데이트
+      setEditTexts({ ...editTexts, [page]: leftText, [page + 1]: rightText });
+    } catch (error) {
+      console.error('텍스트 업데이트 실패:', error);
+      alert('텍스트 업데이트 실패');
+    }
+  
+    setIsModalOpen(false);
+  };
+
+  // "Edit Image" 버튼 클릭 시 /edit 경로로 이동하는 함수
+  const navigateToEdit = () => {
+    navigate('/edit');
+  };
 
   // 앨범 리스트로 돌아가기
   const goBackToAlbumList = () => {
@@ -57,9 +76,9 @@ function DemoBook() {
 
   return (
     <div>
-      {/* Edit Text 버튼 추가, 기능은 구현하지 않음 */}
-      <button onClick={() => alert('Edit text feature is not implemented yet.')}>Edit Text</button>
-      <button onClick={goBackToAlbumList} style={{float: 'right'}}>BACK</button>
+      <button onClick={openEditModal}>Edit Text</button>
+      <button onClick={navigateToEdit}>Edit Image</button>
+      <button onClick={goBackToAlbumList} style={{float: 'right'}}>Album List</button>
       <HTMLFlipBook
         width={620}
         height={580}
@@ -71,20 +90,31 @@ function DemoBook() {
         maxShadowOpacity={0.5}
         showCover={true}
         mobileScrollSupport={true}
+        onFlip={(e) => setPage(e.data)}
         className="demo-book"
         ref={flipBook}
       >
-        <PageCover>추억 앨범</PageCover>
-        {pages.map((page, index) => (
-          
+        <PageCover>{albumData.albumTitle || "Loading Album..."}</PageCover>
+        {albumData.photos.map((photo, index) => (
           <Page
             key={index}
-            number={page.number}
-            text={page.text}
-            imageUrl={page.imageUrl}
+            number={index + 1}
+            text={editTexts[index + 1] || photo.text}
+            imageUrl={photo.imageUrl}
+            timestamp={photo.timestamp}
           />
         ))}
+        <PageCover>THE END</PageCover>
       </HTMLFlipBook>
+
+      <EditModal
+        isOpen={isModalOpen}
+        leftPageText={editTexts[page] || ""}
+        rightPageText={editTexts[page + 1] || ""}
+        onSave={saveTexts}
+        onCancel={() => setIsModalOpen(false)}
+        currentPage={page}
+      />
     </div>
   );
 }

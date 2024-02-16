@@ -38,7 +38,7 @@
 }
 
 .navbar-menu.expanded {
-    width: 30%; /* 확장될 때 메뉴의 너비를 100%로 설정 */
+    width: 45%; /* 확장될 때 메뉴의 너비를 100%로 설정 */
 }
 
 .logout-button {
