@@ -32,9 +32,11 @@ function Navbar() {
             <img src={bgImage} alt="background" className="background-image" />
             <img src={logo} className="navbar-logo" alt="Logo" onClick={toggleNav} />
             <div className={`navbar-menu ${isNavExpanded ? 'expanded' : 'collapsed'}`}>
+                <a className='link-button' href="/mainselect">Home</a>
+                <a className='link-button' href="/labelpage">Create</a>
+                <a className='link-button' href="/albumlist">List</a>
                 <a className='link-button' href="/edit">Edit</a>
                 <a className='link-button' href="/imagepage">View</a>
-                <a className='link-button' href="/uploadpage">List</a>
                 <a className='link-button' href="/book">Album</a>
                 {/* <div className="dropdown">
                     <button className="dropdown-button">Group</button>
