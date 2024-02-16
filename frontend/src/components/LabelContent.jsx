@@ -84,9 +84,11 @@ export default function ImageContent() {
             'Label': 'img_label_0'
           }
         });
+        // console.log(response)
         // Format or split the response data into groups of 3 URLs for each Page
         const formattedGroups = response.data.map((_, index, array) => 
-          index % 3 === 0 ? array.slice(index, index + 3) : null
+        
+        index % 3 === 0 ? array.slice(index, index + 3) : null
         ).filter(Boolean);
         setImageGroups(formattedGroups);
       } catch (error) {

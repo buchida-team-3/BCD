@@ -43,10 +43,10 @@ function LoginForm() {
 
             } else {
                 // 로그인 실패 처리
-                console.error('로그인 실패', response.data);
+                alert('로그인 실패', response.data);
             }
         } catch (error) {
-            console.error('로그인 중 에러 발생:', error);
+            alert('로그인 실패:', error);
         }
     };
 
