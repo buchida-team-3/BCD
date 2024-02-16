@@ -1,15 +1,15 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅을 임포트합니다.
 
-function LabelOverlay() {
-  const [filterLabel, setFilterLabel] = useState("Filtering");
+function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
+  // const [filterLabel, setFilterLabel] = useState("Filtering");
   const fileInputRef = useRef(null);
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수를 초기화합니다.
 
   // 필터 레이블 토글 함수
-  const toggleFilterLabel = () => {
-    setFilterLabel((currentLabel) => (currentLabel === "Filtering" ? "All" : "Filtering"));
-  };
+  // const toggleFilterLabel = () => {
+  //   setFilterLabel((currentLabel) => (currentLabel === "Filtering" ? "All" : "Filtering"));
+  // };
 
   // 파일 업로드 함수
   const uploadFiles = async () => {
@@ -19,7 +19,7 @@ function LabelOverlay() {
       fileInput.setAttribute("multiple", true);
       fileInput.click();
     }
-  };
+    };
 
   // 파일 선택 변경 이벤트 핸들러
   const handleChange = async (event) => {
@@ -86,7 +86,7 @@ function LabelOverlay() {
         업로드
       </button>
       <button
-        onClick={toggleFilterLabel} // 필터 토글 버튼 클릭 이벤트
+        onClick={onToggleFilterLabel} // 필터 토글 버튼 클릭 이벤트
         style={{ position: 'absolute', top: 40, left: 40, fontSize: '20px', color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}
       >
         {filterLabel}
