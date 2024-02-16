@@ -60,6 +60,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
+        # results_aws.append(file_path) # api 테스트용
         results_image_meta.append(get_location_and_date(file_path))
 
 
@@ -79,9 +80,8 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
                             "image_name": results_aws[i].split('/')[-1],
                             "class_name": str(results_yolo.get(results_aws[i].split('/')[-1])),
                             "image_lable_rgb": str(results_rgb[i]['image_label']),
-                            "image_meta": str(results_image_meta[i])
-                        }         
-        # print(results_for_db)    
+                            "image_meta": ', '.join(map(str, results_image_meta[i]))
+                        }
         db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
     return JSONResponse(content = results)
 
@@ -92,8 +92,8 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     album = db.query(image_crud.Image).filter(
         image_crud.Image.user_id == current_user.id
         ).all()
-    for i in album:
-        album_list.append(i.image_path)
+    for index in album:
+        album_list.append([index.image_path, index.class_name, index.image_meta])
     return JSONResponse(content=album_list)
 
 @router.get("/api/images")
