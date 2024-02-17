@@ -6,7 +6,7 @@ import bgImage from './content/background.jpg';
 function CreateAlbumPage() {
   const [albumTitle, setAlbumTitle] = useState('');
   const [selectedGroups, setSelectedGroups] = useState([]);
-  const groups = ['Car', 'Animal', 'Person', 'Dish', 'Inside', 'Vehicle', 'Electronics', 'Food', 'Sports', 'Others'];
+  const groups = ['Car', 'Inside', 'Animal', 'Vehicle', 'Person', 'Electronic', 'Dish', 'Food', 'Sport', 'Landscape', 'Accessory'];
   const navigate = useNavigate(); // useNavigate 훅으로 navigate 함수를 초기화합니다.
 
   const handleTitleChange = (e) => {
