@@ -28,3 +28,25 @@ class Image(Base):
     image_edited = Column(Boolean, default=False)
     class_name = Column(String, nullable=True)
     image_meta = Column(String, nullable=True)
+
+
+class Album(Base):
+    __tablename__ = "album"
+    
+    id = Column(Integer, primary_key=True)
+    album_title = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", backref="album")
+
+
+class AlbumArticle(Base):
+    __tablename__ = "album_article"
+    
+    id = Column(Integer, primary_key=True)
+    article_title = Column(String, nullable=False)
+    article_content = Column(Text, nullable=False)
+    ariticle_page = Column(Integer, nullable=False)
+    album_id = Column(Integer, ForeignKey("album.id"))
+    album = relationship("Album", backref="album_article")
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", backref="album_article")
