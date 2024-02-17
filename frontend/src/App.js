@@ -1,5 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ImageDataProvider } from './components/ImageContext';
+
 import MainPage from './components/MainPage';
 import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
@@ -10,9 +12,11 @@ import AlbumListPage from './components/AlbumListPage';
 import CreateAlbumPage from './components/CreateAlbumPage';
 import MainSelectPage from './components/MainSelectPage';
 
+
 function App() {
   return (
-    
+
+    <ImageDataProvider>
       <Router>
         <Routes>
           <Route path="/" element={<MainPage />} />
@@ -41,7 +45,7 @@ function App() {
           <Route path="/mainselect" element={<MainSelectPage />} />
         </Routes>
       </Router>
-   
+    </ImageDataProvider>
   );
 }
 
