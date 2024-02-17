@@ -29,6 +29,8 @@ import numpy as np
 
 import boto3
 
+from domain.image.theme_dict import theme
+
 router = APIRouter(
     # prefix="/image",
 )
@@ -65,12 +67,30 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
 
     yolo = image_labeling_yolov8(num_path)
+    
+    # for item in yolo:
+    #     if item['image_name'] in results_yolo:
+    #         if item['class_name'] not in results_yolo[item['image_name']]:
+    #             results_yolo[item['image_name']].append(item['class_name'])
+    #     else:
+    #         results_yolo[item['image_name']] = [item['class_name']]
+
     for item in yolo:
+    # 해당 class_name의 테마 찾기
+        class_theme = 'None'  # 기본값으로 'Other' 설정
+        for theme_key, classes in theme.items():
+            if item['class_name'] in classes:
+                class_theme = theme_key
+                break
+        
+        # 이미지 이름으로 딕셔너리에 저장, 테마를 리스트로 추가
         if item['image_name'] in results_yolo:
-            if item['class_name'] not in results_yolo[item['image_name']]:
-                results_yolo[item['image_name']].append(item['class_name'])
+            # 이미 리스트에 테마가 존재하면 추가하지 않음
+            if class_theme not in results_yolo[item['image_name']]:
+                results_yolo[item['image_name']].append(class_theme)
         else:
-            results_yolo[item['image_name']] = [item['class_name']]
+            # 이미지 이름이 사전에 없으면 새로운 키로 추가하고 테마를 리스트로 시작
+            results_yolo[item['image_name']] = [class_theme]
 
     results_rgb = rgb_clustering(new_image_path=num_path, folder_path=None, model_path="./kmeans_rgb_model.pkl")
 
