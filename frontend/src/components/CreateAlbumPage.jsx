@@ -25,21 +25,22 @@ function CreateAlbumPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // 서버가 요구하는 형식에 맞추어 데이터 구성
     const albumData = {
-      album_title: albumTitle, // Pydantic 모델에 정의된 필드명과 일치해야 함
-      album_filter: selectedGroups // 서버에서 이 필드를 처리할 수 있도록 정의되어 있다면 포함
+      album_title: albumTitle,
+      album_filter: selectedGroups // 'album_filter'로 필드 이름 변경
     };
   
     try {
-      // axios를 사용하여 서버에 POST 요청을 보냅니다. 헤더에 인증 토큰을 포함시킵니다.
-      const response = await axios.post('http://localhost:8000/api/album/create', { album_create: albumData }, { // 서버가 요구하는 형식에 맞게 데이터를 감싸서 보냄
+      // axios를 사용하여 서버에 POST 요청을 보냅니다.
+      const response = await axios.post('http://localhost:8000/api/album/create', albumData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('access_token')}` // 인증 토큰 포함
         }
       });
       console.log('서버 응답:', response.data);
-      navigate('/book');
+      navigate('/book'); // 요청 성공 후 페이지 이동
     } catch (error) {
       console.error('앨범 생성 실패:', error.response ? error.response.data : error);
     }
