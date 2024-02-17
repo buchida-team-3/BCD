@@ -14,7 +14,7 @@ function AlbumListOverlay() {
         style={{ position: 'absolute', bottom: 43, left: 80, fontSize: '20px', color: "white"}}>
         뒤로 가기
       </a>
-      <div style={{ position: 'absolute', top: 100, left: 40, fontSize: '20px', color: "white" }}>Album List</div>
+      <div style={{ position: 'absolute', top: 100, left: 40, fontSize: '20px', color: "white" }}>앨범 목록</div>
     </div>
   )
 }

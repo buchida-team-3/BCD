@@ -6,7 +6,7 @@ import MainPage from './components/MainPage';
 import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
 import Edit from './components/Edit';
-import DemoBook from './components/DemoBook';
+import BookPage from './components/BookPage';
 import LabelPage from './components/LabelPage';
 import AlbumListPage from './components/AlbumListPage';
 import CreateAlbumPage from './components/CreateAlbumPage';
@@ -31,8 +31,8 @@ function App() {
           {/* 이미지 편집 페이지 */}
           <Route path="/edit" element={<Edit />} />
           
-          {/* 앨범페이지(데모) */}
-          <Route path="/book" element={<DemoBook />} />
+          {/* 앨범페이지 */}
+          <Route path="/book" element={<BookPage />} />
 
           {/* 필터링 페이지 */}
           <Route path="/labelpage" element={<LabelPage />} />
@@ -43,7 +43,7 @@ function App() {
           <Route path="/createalbum" element={<CreateAlbumPage />} />
 
           {/* 메인 선택 페이지(로그인 후 첫 화면) */}
-          <Route path="/mainselect" element={<MainSelectPage />} />
+          <Route path="/home" element={<MainSelectPage />} />
         </Routes>
       </Router>
     </ImageDataProvider>

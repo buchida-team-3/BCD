@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios"; // axios 임포트
 import HTMLFlipBook from "react-pageflip";
 import { useNavigate } from "react-router-dom"; // useNavigate 훅 임포트
-import "./DemoBook.css";
+import "./BookPage.css";
 import PageCover from "./PageCover";
 import Page from "./Page";
 import EditModal from "./EditModal";
 
-function DemoBook(props) {
+function BookPage(props) {
   const [albumData, setAlbumData] = useState({ albumTitle: "", photos: [] }); // 앨범 데이터 상태 추가
   const [page, setPage] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,13 +19,17 @@ function DemoBook(props) {
   useEffect(() => {
     const fetchAlbumData = async () => {
       try {
-        const response = await axios.get('여기에 API URL 입력');
+        // localStorage에서 album_title을 가져옵니다.
+        const albumTitle = localStorage.getItem('album_title');
+        // album_title을 쿼리 파라미터로 추가하여 서버로 요청을 보냅니다.
+        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${albumTitle}`);
         setAlbumData(response.data); // 서버로부터 받은 데이터를 상태에 저장
       } catch (error) {
         console.error('Failed to fetch album data:', error);
+        alert('Failed to fetch album data:', error);
       }
     };
-
+  
     fetchAlbumData();
   }, []);
 
@@ -76,9 +80,9 @@ function DemoBook(props) {
 
   return (
     <div>
-      <button onClick={openEditModal}>Edit Text</button>
-      <button onClick={navigateToEdit}>Edit Image</button>
-      <button onClick={goBackToAlbumList} style={{float: 'right'}}>Album List</button>
+      <button className="book-button" onClick={openEditModal}>글 수정</button>
+      <button className="book-button" onClick={navigateToEdit}>이미지 수정</button>
+      <button className="book-button" onClick={goBackToAlbumList} style={{float: 'right'}}>앨범 목록</button>
       <HTMLFlipBook
         width={620}
         height={580}
@@ -119,4 +123,4 @@ function DemoBook(props) {
   );
 }
 
-export default DemoBook;
+export default BookPage;
