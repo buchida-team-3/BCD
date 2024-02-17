@@ -22,7 +22,8 @@ function BookPage(props) {
         // localStorage에서 album_title을 가져옵니다.
         const albumTitle = localStorage.getItem('album_title');
         // album_title을 쿼리 파라미터로 추가하여 서버로 요청을 보냅니다.
-        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${albumTitle}`);
+        // const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${albumTitle}`);
+        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${encodeURIComponent(albumTitle)}`);
         setAlbumData(response.data); // 서버로부터 받은 데이터를 상태에 저장
       } catch (error) {
         console.error('Failed to fetch album data:', error);
