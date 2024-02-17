@@ -1,9 +1,12 @@
 import * as THREE from 'three';
+import axios from 'axios';
+
 import { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Preload, Image as ImageImpl } from '@react-three/drei';
 import { ScrollControls, Scroll, useScroll } from './LabelScrollControls';
-import axios from 'axios';
+import { useImageData } from './ImageContext';
+
 import bgImage from './content/background.jpg';
 
 function Image(props) {
@@ -73,7 +76,10 @@ function Pages({ imageGroups }) {
 }
 
 export default function LabelContent({ filterLabel }) {
-  const [imageGroups, setImageGroups] = useState([]);
+  const [ imageGroups, setImageGroups ] = useState([]);
+
+  // imageData: 이미지 데이터 자체, setImageData: 이미지 데이터를 변경하는 함수
+  const { imageData, setImageData } = useImageData(); // Context API 사용을 위해 추가 -> 여기에서 이미 imageData를 사용할 준비가 됨
   
   console.log('filterLabel 변경:', filterLabel);
   useEffect(() => {
@@ -100,26 +106,31 @@ export default function LabelContent({ filterLabel }) {
         // image_path: "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_20/IMG_2206.jpeg",
         // user_id: 8
         // }
-        console.log('이미지 데이터:', response.data);
 
-        // 로컬 스토리지에 response.data 저장
-        localStorage.setItem('images', JSON.stringify(response.data));
+        // Context API: 이미지 데이터를 전역 상태로 관리
+        setImageData(response.data);
+
         
+        // 이미지 3장씩 그룹화, 전역으로 관리되는 이미지 데이터를 사용
         const image_path = response.data.map((image) => image.image_path);
-        
-        // 이미지 3장씩 그룹화
         const formattedGroups = image_path.map((_, index, array) => 
           index % 3 === 0 ? array.slice(index, index + 3) : null
         ).filter(Boolean);
+
         setImageGroups(formattedGroups);
+
       } catch (error) {
         console.error('Failed to fetch images:', error);
         window.location.href = '/loginandsignup';
       }
     };
 
-    fetchImages();
-  }, [filterLabel]);
+    // 이미지의 캐시 여부 확인
+    if (imageData.length === 0) {
+      fetchImages();
+    }
+
+  }, [ filterLabel, setImageData ]);
 
   return (
     <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} style={{ backgroundImage: `url(${bgImage})` }}>

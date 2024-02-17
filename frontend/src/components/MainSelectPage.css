@@ -1,0 +1,21 @@
+/* App.css 또는 해당 컴포넌트의 스타일시트 파일에 추가 */
+.select-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 전체 뷰포트 높이 */
+  }
+  
+  .select-button-group {
+    display: flex;
+    flex-direction: column; /* 버튼을 수직으로 쌓음 */
+    align-items: center; /* 수직 중앙 정렬 */
+    gap: 20px; /* 버튼 사이의 간격 */
+  }
+  
+  .select-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  

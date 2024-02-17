@@ -30,15 +30,15 @@ function SignupForm() {
             });
 
             if (response.ok) {
-                console.log('회원가입 성공');
+                alert('회원가입 성공');
                 // 성공 처리 로직 (예: 로그인 페이지로 리다이렉트)
                 window.location.href = '/loginandsignup';
             } else {
-                console.log('회원가입 실패');
+                alert('회원가입 실패');
                 // 실패 처리 로직
             }
         } catch (error) {
-            console.error('회원가입 중 에러 발생', error);
+            alert('회원가입 중 에러 발생', error);
         }
     };
 
