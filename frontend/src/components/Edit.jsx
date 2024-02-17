@@ -21,6 +21,9 @@ const Edit = () => {
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
 
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
   const getQueryParams = () => {
@@ -28,7 +31,7 @@ const Edit = () => {
     return {
         selectedImage: queryParams.get('selectedImage')
     };
-};
+  };
 
   useEffect(() => {
     const { selectedImage: querySelectedImage } = getQueryParams();
@@ -41,13 +44,41 @@ const Edit = () => {
     else {
       setSelectedImage(editDefault);
     }
-    axios.get('http://localhost:8000/api/images')
-    .then(response => {
-      setImages(response.data);
-    })
-    .catch(error => {
-      console.error('Error fetching images:', error);
-    });
+    const loadImages = async () => {
+      setLoading(true);
+      setProgress(0);
+      let progressInterval;
+  
+      // 프로그레스 바를 점진적으로 업데이트
+      const updateProgress = () => {
+        setProgress(prevProgress => {
+          if (prevProgress >= 100) {
+            clearInterval(progressInterval);
+            return 100;
+          }
+          return prevProgress + 10; // 예: 10%씩 증가
+        });
+      };
+
+      // 프로그레스 바 업데이트 시작
+      progressInterval = setInterval(updateProgress, 1000);
+        // 실제 이미지 로딩 로직 (예: axios 요청)
+        try {
+          await axios.get('http://localhost:8000/api/images')
+            .then(response => {
+              setImages(response.data);
+              // 이미지 로딩이 완료되면 프로그레스 바를 100%로 설정
+              setProgress(100);
+              // 잠시 후 로딩 상태를 false로 설정하여 프로그레스 바를 숨김
+              setTimeout(() => setLoading(false), 500);
+            });
+        } catch (error) {
+          console.error('Error fetching images:', error);
+          setLoading(false);
+        }
+      };
+      
+    loadImages();
   }, []);
 
   const handleClick = (imageName) => {
@@ -62,8 +93,8 @@ const Edit = () => {
       console.log(`${imageName} is selected.`);
       axios.get(`http://localhost:8000/api/images/${imageName}`)
         .then(response => {
-          setSelectedImage(response.data);
-          console.log(response.data);
+          setSelectedImage(response.data.replace('../frontend/public/', './'));
+          console.log(response.data.filename);
         })
         .catch(error => {
           console.error('Error fetching image:', error);
@@ -112,13 +143,14 @@ const Edit = () => {
       alert("이미지를 선택해주세요.");
       return;
     }
+    console.log(checkedImages);
     try {
       const response = await axios.post('http://localhost:8000/stitch_images', {
         images: checkedImages // 선택된 이미지들을 백엔드로 전송
       });
       // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
-      console.log("Stitched image:", response.data);
-      setSelectedImage(response.data);
+      console.log("Stitched image:", response.data.filename);
+      setSelectedImage(response.data.replace('../frontend/public/', './'));
     } catch (error) {
       console.error("Error stitching images:", error);
     }
@@ -209,10 +241,16 @@ const Edit = () => {
   };
 
 
+
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <Navbar />
       <img src={bgImage} alt="background" className="edit-background-image" />
+      {loading && (
+        <div className="progress-container">
+          <div className="progress-bar" style={{width: `${progress}%`}}></div>
+        </div>
+      )}
       <div className='image-container'>
         
         <div className='image-container-list'>

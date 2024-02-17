@@ -134,6 +134,8 @@ button span:nth-child(4){
 .selected-image {
   width: 800px;
   height: 800px;
+  object-fit: contain; /* 이미지 비율을 유지하면서 컨테이너에 맞춤 */
+
 }
 
 .removed-image-container {
@@ -164,8 +166,8 @@ button span:nth-child(4){
 }
 
 .overlay-image {
-  width: 100px;
-  height: 100px;
+  object-fit: contain; /* 이미지 비율을 유지하면서 컨테이너에 맞춤 */
+
 }
 
 
@@ -252,6 +254,21 @@ button span:nth-child(4){
   height: 50px; /* 고정 높이 예시 */
   /* 버튼 외형을 유지하기 위한 스타일 추가 필요 */
 }
+
+
+.progress-container {
+  width: 100%;
+  background-color: #eee;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 20px;
+  background-color: #4CAF50;
+  width: 0%;
+  transition: width 0.5s ease-in-out;
+}
+
 
 
 /* 반응형 미디어 쿼리 */

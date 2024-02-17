@@ -1,7 +1,7 @@
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi import APIRouter, HTTPException, File, UploadFile, Depends, BackgroundTasks
 from typing import List, Dict
-import os
+import os, cv2
 import subprocess
 
 from domain.image import image_crud
@@ -44,6 +44,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
     results = []
     results_aws = []
     results_image_meta = []
+    
     yolo = []
     results_yolo = {}
     results_rgb = []
@@ -60,6 +61,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
+
         # results_aws.append(file_path) # api 테스트용
         results_image_meta.append(get_location_and_date(file_path))
 
@@ -152,6 +154,29 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     
 #     return image_files
 
+# @router.get("/api/images")
+# def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+
+#     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
+#     # start_dir: s3 이미지 경로
+#     #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
+#     # image_files = os.listdir(start_dir)
+#     ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+#     SECRET_KEY = "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"
+#     SERVICE_NAME =  "s3"
+#     REGION = "ap-northeast-2"
+#     BUCKET_NAME = "jungle-buchida-s3"
+    
+#     user_image = db.query(image_crud.Image).filter(
+#         image_crud.Image.user_id == current_user.id
+#         ).all().filter(image_crud.Image.image_path).all()
+
+#     s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
+#     response = s3.list_objects_v2(Bucket=BUCKET_NAME)    
+
+#     image_files = [content['Key'] for content in response.get('Contents', []) if content['Key'].startswith('img/')]
+#     print(image_files)
+#     return image_files
 @router.get("/api/images")
 def get_image_list():
     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
@@ -162,6 +187,7 @@ def get_image_list():
 def get_image(image_name: str):
     # 이미지 파일 경로 반환
     print(f"{start_dir}/{image_name}")
+
     return f"./img/{image_name}"
 
 @router.post("/remove_background")
@@ -185,7 +211,7 @@ async def remove_background(image_names: ImageNames):
             image = Image.open(BytesIO(output_image))
 
             # 이미지 크기 조정
-            resized_image = image.resize((100, 100))
+            resized_image = image.resize((800, 800))
             
             # Image 객체를 바이트 데이터로 변환
             buf = BytesIO()
@@ -224,24 +250,30 @@ async def merge_images(data: ImageMergeData):
     return {"message": "Image merged successfully", "mergedImagePath": output_path}
 
 @router.post("/stitch_images")
-async def stitch_images():
-    # main.py 스크립트가 위치한 경로
-    script_path = "./image_process/main.py"
+async def stitch_images(image_names: ImageNames):
+    images = []
+    for name in image_names.images:
+        print('now image name: ', name)
+        filepath = os.path.join(start_dir, name)
+        if not os.path.exists(filepath):
+            raise HTTPException(status_code=404, detail=f"Image {name} not found")
+        image = cv2.imread(filepath)
+        if image is None:
+            raise HTTPException(status_code=500, detail=f"Failed to load image {name}")
+        images.append(image)
+
+    # OpenCV를 사용한 이미지 스티칭
+    stitcher = cv2.Stitcher_create()
+    (status, stitched) = stitcher.stitch(images)
     
-    # 스크립트 실행에 필요한 커맨드라인 인자
-    # 예: 이미지가 저장된 디렉토리 경로
-    images_directory = start_dir + '/results'
-    print('=========================pass========================')
-    # subprocess.run()을 사용하여 main.py 실행
-    # `subprocess.run(args, ...)`: args는 실행할 명령을 나타내는 문자열이나 리스트입니다.
-    result = subprocess.run(["python", script_path, images_directory], capture_output=True, text=True)
-    
-    if result.returncode == 0:
-        # 스크립트 실행 성공
-        print("Success:", result.stdout)    
+    if status == cv2.Stitcher_OK:
+        # 스티칭된 이미지를 임시 파일로 저장
+        stitched_filename = "stitched_result.jpg"
+        stitched_path = os.path.join(start_dir, stitched_filename)
+        cv2.imwrite(stitched_path, stitched)
+        
+        # 스티칭된 이미지의 경로나 URL 반환
+        return f"{start_dir}/{stitched_filename}"
+
     else:
-        # 스크립트 실행 실패
-        print("Error:", result.stderr)
-    
-    # 결과 반환 (예시)
-    return {"message": "Image stitching completed", "output": result.stdout}
+        raise HTTPException(status_code=500, detail="Could not stitch images. Make sure images have sufficient overlap.")
