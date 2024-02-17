@@ -11,7 +11,8 @@ def create_album(db: Session, album_create: AlbumCreate, user: User):
     """
     db_album = Album(
         album_title=album_create.album_title,
-        user = user
+        album_filter=album_create.album_filter,
+        user = user,
     )
     db.add(db_album)
     db.commit()

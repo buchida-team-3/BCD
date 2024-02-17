@@ -2,10 +2,12 @@
 필터링 기반으로 생성된 앨범 스키마
 """
 from pydantic import BaseModel
+from typing import List
 
 
 class AlbumCreate(BaseModel):
     album_title: str
+    album_filter: List[str]
     # user_id: 연결된 사용자의 id
 
 class AlbumArticleCreate(BaseModel):
@@ -14,6 +16,3 @@ class AlbumArticleCreate(BaseModel):
     article_page: int
     # album_id: 연결된 앨범의 id
     # user_id: 연결된 사용자의 id
-
-        
-

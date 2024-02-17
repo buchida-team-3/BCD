@@ -1,7 +1,7 @@
 """
 모델 클래스를 정의하는 파일
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, JSON
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, JSON, ARRAY
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -35,6 +35,7 @@ class Album(Base):
     
     id = Column(Integer, primary_key=True)
     album_title = Column(String, nullable=False)
+    album_filter = Column(ARRAY(String), nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="album")
 
