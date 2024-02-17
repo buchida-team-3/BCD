@@ -10,6 +10,7 @@ from fastapi.responses import RedirectResponse
 
 from domain.user import user_router
 from domain.image import image_router
+from domain.album import album_router
 
 import subprocess
 
@@ -34,6 +35,7 @@ app.add_middleware(
 # 라우터를 등록
 app.include_router(user_router.router)
 app.include_router(image_router.router)
+app.include_router(album_router.router)
 
 @app.get("/main")
 def main_page():
