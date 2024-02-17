@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import './MainSelectPage.css'; // CSS 파일 경로 확인
 import bgImage from './content/background.jpg';
+import Navbar from './Navbar';
 
 function MainSelectPage() {
   const navigate = useNavigate(); // useNavigate 훅 사용
@@ -17,7 +18,9 @@ function MainSelectPage() {
   };
 
   return (
-    <div className="select-container">
+    <div>
+      <Navbar />
+      <div className="select-container">
       <div className="select-button-group">
         <img src={bgImage} alt="background" className="background-image" />
         <button className="select-button" onClick={handleAlbumCreateClick}>
@@ -28,6 +31,8 @@ function MainSelectPage() {
         </button>
       </div>
     </div>
+    </div>
+    
   );
 }
 

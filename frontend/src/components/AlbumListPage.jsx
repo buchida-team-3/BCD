@@ -13,6 +13,7 @@ import './AlbumListPage.css'
 function AlbumListPage() {
     return (
         <>
+        <Navbar />
         <AlbumListContent />
         <AlbumListOverlay />
         </>

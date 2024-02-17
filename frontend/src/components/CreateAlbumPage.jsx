@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 임포트합니다.
-import './CreateAlbumPage.css'; // CSS 파일 임포트
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // axios 임포트
+import './CreateAlbumPage.css';
 import bgImage from './content/background.jpg';
 
 function CreateAlbumPage() {
   const [albumTitle, setAlbumTitle] = useState('');
   const [selectedGroups, setSelectedGroups] = useState([]);
   const groups = ['Car', 'Inside', 'Animal', 'Vehicle', 'Person', 'Electronic', 'Dish', 'Food', 'Sport', 'Landscape', 'Accessory'];
-  const navigate = useNavigate(); // useNavigate 훅으로 navigate 함수를 초기화합니다.
+  const navigate = useNavigate();
 
   const handleTitleChange = (e) => {
     setAlbumTitle(e.target.value);
@@ -22,13 +23,26 @@ function CreateAlbumPage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('앨범 제목:', albumTitle);
-    console.log('선택된 정렬 그룹:', selectedGroups);
-    // 여기에 앨범 생성 로직을 추가하세요.
-    // 폼 제출 후 /book 경로로 이동
-    navigate('/book');
+    const albumData = {
+      album_title: albumTitle, // Pydantic 모델에 정의된 필드명과 일치해야 함
+      // groups: selectedGroups // 서버에서 이 필드를 처리할 수 있도록 정의되어 있다면 포함
+    };
+  
+    try {
+      // axios를 사용하여 서버에 POST 요청을 보냅니다. 헤더에 인증 토큰을 포함시킵니다.
+      const response = await axios.post('http://localhost:8000/api/album/create', { album_create: albumData }, { // 서버가 요구하는 형식에 맞게 데이터를 감싸서 보냄
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` // 인증 토큰 포함
+        }
+      });
+      console.log('서버 응답:', response.data);
+      navigate('/book');
+    } catch (error) {
+      console.error('앨범 생성 실패:', error.response ? error.response.data : error);
+    }
   };
 
   return (
