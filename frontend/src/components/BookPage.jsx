@@ -55,9 +55,17 @@ function BookPage(props) {
     };
   
     try {
+      // 인증 토큰을 포함한 헤더를 설정합니다.
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` // 인증 토큰 추가
+        }
+      };
+
       // 여기에 실제 업데이트를 위한 API 엔드포인트와 HTTP 메서드를 교체하세요.
       // 이 예제에서는 PATCH 메서드를 사용하고, 페이지 번호와 텍스트를 전송합니다.
-      await axios.patch('여기에 실제 페이지 텍스트 업데이트 API URL 입력', payload);
+      await axios.patch('여기에 실제 페이지 텍스트 업데이트 API URL 입력', payload, config);
       alert('텍스트 업데이트 성공');
   
       // 성공적으로 서버에 데이터를 업데이트한 후, 프론트엔드 상태도 업데이트

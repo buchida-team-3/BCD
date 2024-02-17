@@ -34,7 +34,11 @@ export default function AlbumListContent() {
     const fetchAlbumData = async () => {
       const albumTitle = localStorage.getItem('album_title');
       try {
-        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${encodeURIComponent(albumTitle)}`);
+        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${encodeURIComponent(albumTitle)}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // 인증 토큰 추가
+          }
+        });
         const albumData = response.data.map((item, index) => ({
           title: item.albumTitle,
           position: [(index * 6.0) - 5.2, 3.1, 0],
