@@ -136,7 +136,12 @@ const Edit = () => {
       console.log("Stitched image:", response.data.filename);
       setSelectedImage(response.data.replace('../frontend/public/', './'));
     } catch (error) {
-      console.error("Error stitching images:", error);
+      // 에러 메시지 표시
+      if (error.response.data && error.response.data.detail) {
+        alert(error.response.data.detail);
+      } else {
+        alert("예기치 못한 오류가 발생했습니다.");
+      }
     }
   };
 
