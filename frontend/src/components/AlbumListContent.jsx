@@ -1,53 +1,54 @@
-import React, { Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { ScrollControls, Scroll } from './AlbumListScrollControls';
+import axios from 'axios'; // axios 임포트
 import bgImage from './content/background.jpg';
 import './AlbumListContent.css';
-import image1 from './images/image1.jpeg';
-import image2 from './images/image2.jpeg';
-import image3 from './images/image3.jpeg';
-import image4 from './images/image4.jpeg';
-import image5 from './images/image5.jpeg';
 
-const images = [image1, image2, image3, image4, image5];
-
-const PageCover = ({ children, title, image }) => (
+const PageCover = ({ title, image }) => (
   <div className="page-cover2">
     <div className="image-container">
-      <img src={image} alt="Page" className="cover-image"/>
+      <img src={image} alt={title} className="cover-image"/>
     </div>
     <div className="title-container">
-      <Text title={title} />
+      <h2 style={{ color: '#ffffff' }}>{title}</h2>
     </div>
-    {children}
   </div>
-);
-
-const Text = ({ title }) => (
-  <h2 style={{ color: '#ffffff' }}>{title}</h2>
 );
 
 function Page({ title, position, image }) {
   return (
     <group position={position}>
       <Html>
-        <group>
-          <PageCover image={image} title={title}>
-          </PageCover>
-        </group>
+        <PageCover title={title} image={image} />
       </Html>
     </group>
   );
 }
 
 export default function AlbumListContent() {
-  const pages = Array.from({ length: 5 }).map((_, index) => {
-    const image = images[index];
-    const x = index * 6.0 - 5.2;
-    const y = 3.1;
-    return {  position: [x, y, 0], image };
-  });
+  const [pages, setPages] = useState([]);
+
+  useEffect(() => {
+    const fetchAlbumData = async () => {
+      const albumTitle = localStorage.getItem('album_title');
+      try {
+        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${encodeURIComponent(albumTitle)}`);
+        const albumData = response.data.map((item, index) => ({
+          title: item.albumTitle,
+          position: [(index * 6.0) - 5.2, 3.1, 0],
+          image: item.imageUrl
+        }));
+        setPages(albumData);
+      } catch (error) {
+        console.error('Failed to fetch album data:', error);
+        alert('앨범 데이터를 불러오는데 실패했습니다.');
+      }
+    };
+
+    fetchAlbumData();
+  }, []);
 
   return (
     <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} style={{ backgroundImage: `url(${bgImage})`, width: '100%', height: '100vh' }}>

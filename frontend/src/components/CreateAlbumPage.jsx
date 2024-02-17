@@ -41,6 +41,7 @@ function CreateAlbumPage() {
       });
       console.log('서버 응답:', response.data);
       navigate('/book'); // 요청 성공 후 페이지 이동
+      localStorage.setItem('album_title', albumTitle); // 앨범 제목을 로컬 스토리지에 저장
     } catch (error) {
       console.error('앨범 생성 실패:', error.response ? error.response.data : error);
     }

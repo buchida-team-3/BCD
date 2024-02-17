@@ -21,6 +21,8 @@ const Edit = () => {
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
 
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
   const getQueryParams = () => {
@@ -28,7 +30,20 @@ const Edit = () => {
     return {
         selectedImage: queryParams.get('selectedImage')
     };
-};
+  };
+
+  const LoadingModal = ({ isLoading }) => {
+    if (!isLoading) return null;
+
+    return (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <h2>처리 중...</h2>
+          <progress className="progress-bar" max="100"></progress>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const { selectedImage: querySelectedImage } = getQueryParams();
@@ -62,8 +77,8 @@ const Edit = () => {
       console.log(`${imageName} is selected.`);
       axios.get(`http://localhost:8000/api/images/${imageName}`)
         .then(response => {
-          setSelectedImage(response.data);
-          console.log(response.data);
+          setSelectedImage(response.data.replace('../frontend/public/', './'));
+          console.log(response.data.filename);
         })
         .catch(error => {
           console.error('Error fetching image:', error);
@@ -112,13 +127,14 @@ const Edit = () => {
       alert("이미지를 선택해주세요.");
       return;
     }
+    console.log(checkedImages);
     try {
       const response = await axios.post('http://localhost:8000/stitch_images', {
         images: checkedImages // 선택된 이미지들을 백엔드로 전송
       });
       // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
-      console.log("Stitched image:", response.data);
-      setSelectedImage(response.data);
+      console.log("Stitched image:", response.data.filename);
+      setSelectedImage(response.data.replace('../frontend/public/', './'));
     } catch (error) {
       console.error("Error stitching images:", error);
     }
@@ -196,25 +212,29 @@ const Edit = () => {
     }
     console.log('select: ', selectedImage);
     console.log('overlay: ',overlayImages);
+    setIsLoading(true);
     try {
+      setTimeout(async () => {
       const response = await axios.post('http://localhost:8000/merge_images', {
-        baseImage: selectedImage.replace('/img/', '../frontend/public/img/'),
+        baseImage: selectedImage.replace('/img/', './frontend/public/img/'),
         overlayImages
       });
       console.log("Merged image:", response.data);
-      // 합성된 이미지를 처리하는 로직 (예: 합성된 이미지 표시)
-    } catch (error) {
+      setIsLoading(false); // 2초 후 로딩 종료
+    }, 2000);} catch (error) {
       console.error("Error merging images:", error);
+      setIsLoading(false); // 2초 후 로딩 종료
     }
   };
+
 
 
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <Navbar />
+      <LoadingModal isLoading={isLoading} /> {/* 모달 추가 */}
       <img src={bgImage} alt="background" className="edit-background-image" />
       <div className='image-container'>
-        
         <div className='image-container-list'>
         
           <div className='image-container-navbar'>

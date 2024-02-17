@@ -58,10 +58,10 @@ function MainSelectPage() {
       <div className="select-button-group">
         <img src={bgImage} alt="background" className="background-image" />
         <button className="select-button" onClick={handleAlbumCreateClick}>
-          Album Create
+          앨범 생성
         </button>
         <button className="select-button" onClick={handleAlbumListClick}>
-          Album list
+          앨범 리스트
         </button>
       </div>
     </div>
