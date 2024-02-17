@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // useNavigate 훅을 임포트합니다.
-import './CreateAlbumPage.css'; // CSS 파일 임포트
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // axios 임포트
+import './CreateAlbumPage.css';
 import bgImage from './content/background.jpg';
 
 function CreateAlbumPage() {
   const [albumTitle, setAlbumTitle] = useState('');
   const [selectedGroups, setSelectedGroups] = useState([]);
-  const groups = ['Car', 'Animal', 'Person', 'Dish', 'Inside', 'Vehicle', 'Electronics', 'Food', 'Sports', 'Others'];
-  const navigate = useNavigate(); // useNavigate 훅으로 navigate 함수를 초기화합니다.
+  const groups = ['Car', 'Inside', 'Animal', 'Vehicle', 'Person', 'Electronic', 'Dish', 'Food', 'Sport', 'Landscape', 'Accessory'];
+  const navigate = useNavigate();
 
   const handleTitleChange = (e) => {
     setAlbumTitle(e.target.value);
@@ -22,13 +23,27 @@ function CreateAlbumPage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('앨범 제목:', albumTitle);
-    console.log('선택된 정렬 그룹:', selectedGroups);
-    // 여기에 앨범 생성 로직을 추가하세요.
-    // 폼 제출 후 /book 경로로 이동
-    navigate('/book');
+    // 서버가 요구하는 형식에 맞추어 데이터 구성
+    const albumData = {
+      album_title: albumTitle,
+      album_filter: selectedGroups // 'album_filter'로 필드 이름 변경
+    };
+  
+    try {
+      // axios를 사용하여 서버에 POST 요청을 보냅니다.
+      const response = await axios.post('http://localhost:8000/api/album/create', albumData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` // 인증 토큰 포함
+        }
+      });
+      console.log('서버 응답:', response.data);
+      navigate('/book'); // 요청 성공 후 페이지 이동
+    } catch (error) {
+      console.error('앨범 생성 실패:', error.response ? error.response.data : error);
+    }
   };
 
   return (
