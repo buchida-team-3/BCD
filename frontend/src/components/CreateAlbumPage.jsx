@@ -7,7 +7,7 @@ import bgImage from './content/background.jpg';
 function CreateAlbumPage() {
   const [albumTitle, setAlbumTitle] = useState('');
   const [selectedGroups, setSelectedGroups] = useState([]);
-  const groups = ['Car', 'Inside', 'Animal', 'Vehicle', 'Person', 'Electronic', 'Dish', 'Food', 'Sport', 'Landscape', 'Accessory'];
+  const groups = ['Car', 'Inside', 'Animal', 'Vehicle', 'Person', 'Electronic', 'Dish', 'Food', 'Sport', 'Landscape', 'Accessory', 'ETC'];
   const navigate = useNavigate();
 
   const handleTitleChange = (e) => {
