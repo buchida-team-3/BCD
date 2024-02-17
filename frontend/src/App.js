@@ -15,15 +15,16 @@ function App() {
     
       <Router>
         <Routes>
+          {/* 첫 화면 */}
           <Route path="/" element={<MainPage />} />
 
+          {/* 로그인 및 회원가입 페이지 */}
           <Route path="/loginandsignup" element={<LoginSignup />} />
 
+          {/* 뷰잉 페이지 */}
           <Route path="/imagepage" element={<ImagePage />} />
-
-          {/* <Route path="/uploadpage" element={<UploadPage />} /> */}
-          {/* <Route path="/uploadpage2" element={<UploadPage2 />} /> */}
     
+          {/* 이미지 편집 페이지 */}
           <Route path="/edit" element={<Edit />} />
           
           {/* 앨범페이지(데모) */}
