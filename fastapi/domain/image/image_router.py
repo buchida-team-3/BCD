@@ -296,4 +296,4 @@ async def stitch_images(image_names: ImageNames):
         return f"{start_dir}/{stitched_filename}"
 
     else:
-        raise HTTPException(status_code=500, detail="Could not stitch images. Make sure images have sufficient overlap.")
+        raise HTTPException(status_code=500, detail="서로 붙일 수 없는 이미지를 선택했습니다. 다른 이미지를 선택해주세요.")
