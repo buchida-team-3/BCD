@@ -27,7 +27,7 @@ function CreateAlbumPage() {
     e.preventDefault();
     const albumData = {
       album_title: albumTitle, // Pydantic 모델에 정의된 필드명과 일치해야 함
-      // groups: selectedGroups // 서버에서 이 필드를 처리할 수 있도록 정의되어 있다면 포함
+      album_filter: selectedGroups // 서버에서 이 필드를 처리할 수 있도록 정의되어 있다면 포함
     };
   
     try {
