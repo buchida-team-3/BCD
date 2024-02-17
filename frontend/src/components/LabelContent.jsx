@@ -110,7 +110,6 @@ export default function LabelContent({ filterLabel }) {
         // Context API: 이미지 데이터를 전역 상태로 관리
         setImageData(response.data);
 
-        
         // 이미지 3장씩 그룹화, 전역으로 관리되는 이미지 데이터를 사용
         const image_path = response.data.map((image) => image.image_path);
         const formattedGroups = image_path.map((_, index, array) => 
@@ -125,12 +124,22 @@ export default function LabelContent({ filterLabel }) {
       }
     };
 
+    // 이미 로드된 이미지 데이터 가져오기
     // 이미지의 캐시 여부 확인
     if (imageData.length === 0) {
+      console.log('LabelContent.jsx: 이미지 데이터 캐시에 없음');
       fetchImages();
+    } else {
+      console.log('LabelContent.jsx: 이미지 데이터 캐시에 있음');
+      const image_path = imageData.map((image) => image.image_path);
+      const formattedGroups = image_path.map((_, index, array) => 
+        index % 3 === 0 ? array.slice(index, index + 3) : null
+      ).filter(Boolean);
+
+      setImageGroups(formattedGroups);
     }
 
-  }, [ filterLabel, setImageData ]);
+  }, [ filterLabel, setImageData, imageData ]);
 
   return (
     <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} style={{ backgroundImage: `url(${bgImage})` }}>

@@ -6,10 +6,6 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const fileInputRef = useRef(null);
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수를 초기화합니다.
 
-  // 필터 레이블 토글 함수
-  // const toggleFilterLabel = () => {
-  //   setFilterLabel((currentLabel) => (currentLabel === "Filtering" ? "All" : "Filtering"));
-  // };
 
   // 파일 업로드 함수
   const uploadFiles = async () => {
@@ -45,7 +41,9 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
             }
           );
           const responseData = await response.json();
-          console.log(responseData);
+          
+          console.log("LabelOverlay.jsx -> responseData:", responseData);
+          
           if (response.ok) {
             alert("파일 업로드 성공!");
             window.location.reload();
