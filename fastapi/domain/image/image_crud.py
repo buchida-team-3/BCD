@@ -43,11 +43,13 @@ def db_update(db: Session, update_db: ImageUpload, user: User):
     db_image = Image(
             image_path = update_db.image_path,
             image_name = update_db.image_name,
-            image_lable_feature = update_db.image_lable_feature,
+            # image_lable_feature = update_db.image_lable_feature,
             image_lable_rgb = update_db.image_lable_rgb,
-            user = user
+            user = user,
+            class_name = update_db.class_name,
+            image_meta = update_db.image_meta,
             )
     db.add(db_image)
-    db.commit()    
+    db.commit()
     
 

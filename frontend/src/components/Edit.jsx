@@ -90,6 +90,7 @@ const Edit = () => {
       }
     } else {
       // 배경 제거 모드가 아닌 경우의 기존 로직
+      console.log(`${imageName} is selected.`);
       axios.get(`http://localhost:8000/api/images/${imageName}`)
         .then(response => {
           setSelectedImage(response.data.replace('../frontend/public/', './'));
@@ -279,11 +280,10 @@ const Edit = () => {
             <ul className='image-list'>
               {images.map(image => (
                 <div key={image} className={`image-checkbox ${checkedImages.includes(image) ? 'selected' : ''}`} onClick={() => handleClick(image)}>
-                  <img className='image-element' src={`/img/${image}`} alt={image} />
+                  <img className='image-element' src={`./img/${image}`} alt={image} />
                 </div>
               ))}
             </ul>
-
           </div>
         </div>
 

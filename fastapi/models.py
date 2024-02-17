@@ -1,7 +1,7 @@
 """
 모델 클래스를 정의하는 파일
 """
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, JSON
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, JSON, ARRAY
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -17,20 +17,37 @@ class User(Base):
 
 class Image(Base):
     __tablename__ = "image"
+    
     id = Column(Integer, primary_key=True)
     image_path = Column(String, nullable=False)
     image_name = Column(String, nullable=False)
-    image_lable_feature = Column(Integer, nullable=True)
+    # image_lable_feature = Column(Integer, nullable=True)
     image_lable_rgb = Column(Integer, nullable=True)
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="image")
-    # image_edited = Column(Boolean, default=False)
+    image_edited = Column(Boolean, default=False)
+    class_name = Column(String, nullable=True)
+    image_meta = Column(String, nullable=True)
+
+
+class Album(Base):
+    __tablename__ = "album"
     
-    
-class Detection(Base):
-    __tablename__ = "detection"
     id = Column(Integer, primary_key=True)
-    image_id = Column(Integer, ForeignKey("image.id"))
-    image = relationship("Image", backref="detection")
-    json_data = Column("data", JSON)
+    album_title = Column(String, nullable=False)
+    album_filter = Column(ARRAY(String), nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", backref="album")
+
+
+class AlbumArticle(Base):
+    __tablename__ = "album_article"
     
+    id = Column(Integer, primary_key=True)
+    article_title = Column(String, nullable=False)
+    article_content = Column(Text, nullable=False)
+    ariticle_page = Column(Integer, nullable=False)
+    album_id = Column(Integer, ForeignKey("album.id"))
+    album = relationship("Album", backref="album_article")
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", backref="album_article")

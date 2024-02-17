@@ -1,12 +1,16 @@
 .navbar {
     width: 100%;
+    height: 60px; /* 네비바 높이 고정 */
     background-color: transparent;
     display: flex;
-    justify-content: center; /* 중앙 정렬 */
+    justify-content: left;
     align-items: center;
     padding: 10px;
-    position: relative;
-}
+    position: fixed; /* 네비바를 상단에 고정 */
+    top: 0; /* 상단에 위치 */
+    z-index: 100; /* 다른 요소 위에 표시 */
+  }
+  
 
 
 .link-button {
@@ -38,7 +42,7 @@
 }
 
 .navbar-menu.expanded {
-    width: 30%; /* 확장될 때 메뉴의 너비를 100%로 설정 */
+    width: 45%; /* 확장될 때 메뉴의 너비를 100%로 설정 */
 }
 
 .logout-button {

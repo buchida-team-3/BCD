@@ -1,9 +1,12 @@
 import * as THREE from 'three';
+import axios from 'axios';
+
 import { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Preload, Image as ImageImpl } from '@react-three/drei';
 import { ScrollControls, Scroll, useScroll } from './LabelScrollControls';
-import axios from 'axios';
+import { useImageData } from './ImageContext';
+
 import bgImage from './content/background.jpg';
 
 function Image(props) {
@@ -72,31 +75,71 @@ function Pages({ imageGroups }) {
   );
 }
 
-export default function ImageContent() {
-  const [imageGroups, setImageGroups] = useState([]);
+export default function LabelContent({ filterLabel }) {
+  const [ imageGroups, setImageGroups ] = useState([]);
 
+  // imageData: 이미지 데이터 자체, setImageData: 이미지 데이터를 변경하는 함수
+  const { imageData, setImageData } = useImageData(); // Context API 사용을 위해 추가 -> 여기에서 이미 imageData를 사용할 준비가 됨
+  
+  console.log('filterLabel 변경:', filterLabel);
   useEffect(() => {
     const fetchImages = async () => {
+      // filterLabel 상태에 따라 로직 변경
+      const endpoint = filterLabel === "Filtering" ? '/api/all' : '/api/filter';
       try {
-        const response = await axios.get('http://localhost:8000/album', {
+        const response = await axios.get(`http://localhost:8000${endpoint}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            'Label': 'img_label_0'
+            'Label': filterLabel
           }
         });
-        // Format or split the response data into groups of 3 URLs for each Page
-        const formattedGroups = response.data.map((_, index, array) => 
+        
+        // 이미지 데이터를 로컬 스토리지에 저장 -> 현재 response.data는 image의 모든 정보를 담고 있음
+        // 예시:
+        // {
+        // class_name: "['person']",
+        // id: 114,
+        // image_edited: false,
+        // image_lable_rgb: 2,
+        // image_meta: "('2023:04:09 10:41:58', 37.513930555555554, 127.10469166666667)",
+        // image_name: "IMG_2206.jpeg",
+        // image_path: "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_20/IMG_2206.jpeg",
+        // user_id: 8
+        // }
+
+        // Context API: 이미지 데이터를 전역 상태로 관리
+        setImageData(response.data);
+
+        // 이미지 3장씩 그룹화, 전역으로 관리되는 이미지 데이터를 사용
+        const image_path = response.data.map((image) => image.image_path);
+        const formattedGroups = image_path.map((_, index, array) => 
           index % 3 === 0 ? array.slice(index, index + 3) : null
         ).filter(Boolean);
+
         setImageGroups(formattedGroups);
+
       } catch (error) {
         console.error('Failed to fetch images:', error);
-        // window.location.href = '/loginandsignup';
+        window.location.href = '/loginandsignup';
       }
     };
 
-    fetchImages();
-  }, []);
+    // 이미 로드된 이미지 데이터 가져오기
+    // 이미지의 캐시 여부 확인
+    if (imageData.length === 0) {
+      console.log('LabelContent.jsx: 이미지 데이터 캐시에 없음');
+      fetchImages();
+    } else {
+      console.log('LabelContent.jsx: 이미지 데이터 캐시에 있음');
+      const image_path = imageData.map((image) => image.image_path);
+      const formattedGroups = image_path.map((_, index, array) => 
+        index % 3 === 0 ? array.slice(index, index + 3) : null
+      ).filter(Boolean);
+
+      setImageGroups(formattedGroups);
+    }
+
+  }, [ filterLabel, setImageData, imageData ]);
 
   return (
     <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} style={{ backgroundImage: `url(${bgImage})` }}>
