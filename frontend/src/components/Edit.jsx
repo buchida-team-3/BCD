@@ -21,8 +21,7 @@ const Edit = () => {
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
 
-  const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
@@ -31,6 +30,19 @@ const Edit = () => {
     return {
         selectedImage: queryParams.get('selectedImage')
     };
+  };
+
+  const LoadingModal = ({ isLoading }) => {
+    if (!isLoading) return null;
+
+    return (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <h2>처리 중...</h2>
+          <progress className="progress-bar" max="100"></progress>
+        </div>
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -44,41 +56,13 @@ const Edit = () => {
     else {
       setSelectedImage(editDefault);
     }
-    const loadImages = async () => {
-      setLoading(true);
-      setProgress(0);
-      let progressInterval;
-  
-      // 프로그레스 바를 점진적으로 업데이트
-      const updateProgress = () => {
-        setProgress(prevProgress => {
-          if (prevProgress >= 100) {
-            clearInterval(progressInterval);
-            return 100;
-          }
-          return prevProgress + 10; // 예: 10%씩 증가
-        });
-      };
-
-      // 프로그레스 바 업데이트 시작
-      progressInterval = setInterval(updateProgress, 1000);
-        // 실제 이미지 로딩 로직 (예: axios 요청)
-        try {
-          await axios.get('http://localhost:8000/api/images')
-            .then(response => {
-              setImages(response.data);
-              // 이미지 로딩이 완료되면 프로그레스 바를 100%로 설정
-              setProgress(100);
-              // 잠시 후 로딩 상태를 false로 설정하여 프로그레스 바를 숨김
-              setTimeout(() => setLoading(false), 500);
-            });
-        } catch (error) {
-          console.error('Error fetching images:', error);
-          setLoading(false);
-        }
-      };
-      
-    loadImages();
+    axios.get('http://localhost:8000/api/images')
+    .then(response => {
+      setImages(response.data);
+    })
+    .catch(error => {
+      console.error('Error fetching images:', error);
+    });
   }, []);
 
   const handleClick = (imageName) => {
@@ -228,15 +212,18 @@ const Edit = () => {
     }
     console.log('select: ', selectedImage);
     console.log('overlay: ',overlayImages);
+    setIsLoading(true);
     try {
+      setTimeout(async () => {
       const response = await axios.post('http://localhost:8000/merge_images', {
-        baseImage: selectedImage.replace('/img/', '../frontend/public/img/'),
+        baseImage: selectedImage.replace('/img/', './frontend/public/img/'),
         overlayImages
       });
       console.log("Merged image:", response.data);
-      // 합성된 이미지를 처리하는 로직 (예: 합성된 이미지 표시)
-    } catch (error) {
+      setIsLoading(false); // 2초 후 로딩 종료
+    }, 2000);} catch (error) {
       console.error("Error merging images:", error);
+      setIsLoading(false); // 2초 후 로딩 종료
     }
   };
 
@@ -245,14 +232,9 @@ const Edit = () => {
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <Navbar />
+      <LoadingModal isLoading={isLoading} /> {/* 모달 추가 */}
       <img src={bgImage} alt="background" className="edit-background-image" />
-      {loading && (
-        <div className="progress-container">
-          <div className="progress-bar" style={{width: `${progress}%`}}></div>
-        </div>
-      )}
       <div className='image-container'>
-        
         <div className='image-container-list'>
         
           <div className='image-container-navbar'>
