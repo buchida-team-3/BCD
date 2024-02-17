@@ -86,10 +86,10 @@ def gruop_select_page():
 def gruop_album_page():
     return RedirectResponse(url="http://localhost:3000")
 
-@app.on_event("startup")
-async def startup_event():
-    print("FastAPI 서버 실행 중...")
-    print("watchdog_for_image.py 실행 중...")
-    subprocess.Popen(["python3", "domain/image/image_process/watchdog_for_image.py"])
+# @app.on_event("startup")
+# async def startup_event():
+#     print("FastAPI 서버 실행 중...")
+#     print("watchdog_for_image.py 실행 중...")
+#     subprocess.Popen(["python3", "domain/image/image_process/watchdog_for_image.py"])
     
     
