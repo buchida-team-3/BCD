@@ -4,6 +4,7 @@
     "private": true,
     "dependencies": {
         "@pmndrs/assets": "^1.6.0",
+        "@pmndrs/branding": "^0.0.8",
         "@react-three/drei": "^9.97.0",
         "@testing-library/jest-dom": "^5.17.0",
         "@testing-library/react": "^13.4.0",

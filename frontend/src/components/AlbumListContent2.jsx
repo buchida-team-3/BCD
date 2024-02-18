@@ -12,13 +12,16 @@ import AlbumListOverlay2 from './AlbumListOverlay2.jsx'
 import AlbumListCard from './AlbumListCard.jsx'
 import AlbumListRig from './AlbumListRig.jsx'
 import AlbumListCarousel from './AlbumListCarousel.jsx'
-import AlbumListContent2 from './AlbumListContent2.jsx'
-import Navbar from './Navbar.jsx'
 
-export const AlbumListPage2 = () => (
-  <>
-  <Navbar />
-  <AlbumListContent2 />
-  <AlbumListOverlay2 />
-  </>
+export const AlbumListContent2 = () => (
+  <Canvas style={{ backgroundImage: `url(${bgImage})`, width: '100%', height: '100vh' }} camera={{ position: [0, 0, 100], fov: 15 }}>
+    <fog attach="fog" args={['#a79', 8.5, 12]} />
+    <ScrollControls pages={4} infinite>
+      <AlbumListRig rotation={[0, 0, 0.15]}>
+        <AlbumListCarousel />
+      </AlbumListRig>
+    </ScrollControls>
+  </Canvas>
 )
+
+export default AlbumListContent2;
