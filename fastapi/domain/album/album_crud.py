@@ -29,14 +29,39 @@ def get_album(db: Session, album_title: str):
     - return:
     """
     filter = db.query(Album).filter(Album.album_title == album_title).all()
-    
+
     char_list = filter[0].album_filter
     char_string = ''.join(char_list).replace('{', '').replace('}', '')
-    
     result_list = char_string.split(',')
+    # print(result_list)
 
-    print(album_title)
-    print(result_list)
+    album_dict = {"albumTitle": album_title}
+    photos_list = []
+    seen_timestamps = set()
+
+    for index in result_list:
+        q = db.query(Image).filter(Image.class_name.ilike(f'%{index}%')).all()
+
+        for i in q:
+            timestamp = i.image_meta.split(',')[0]
+
+            if timestamp not in seen_timestamps:
+                photos_list.append({
+                    "imageUrl": i.image_path,
+                    "text": "텍스트입니다.",
+                    "timestamp": timestamp
+                })
+                seen_timestamps.add(timestamp)
+
+    photos_list.sort(key=lambda x: x['timestamp'])
+
+    album_dict["photos"] = photos_list
+
+    return album_dict
+
+
+    
+    
     
     
     

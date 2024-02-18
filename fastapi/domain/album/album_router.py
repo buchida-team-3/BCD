@@ -25,6 +25,7 @@ async def album_create(_album_create: album_schema.AlbumCreate,
                        db=Depends(get_db),
                        current_user: User = Depends(get_current_user)):
     album_crud.create_album(db, album_create=_album_create, user=current_user)
+    return JSONResponse(content={"message": "앨범이 생성되었습니다."})
 
 
 @router.get("/api/album/data")
@@ -32,6 +33,6 @@ async def get_album(album_title: str,
                     db=Depends(get_db), 
                     current_user: User = Depends(get_current_user)):
     print("앨범조회요청받음")
-    album_crud.get_album(db, album_title=album_title)
-    return {"message": "앨범 조회 완료"}
+    result = album_crud.get_album(db, album_title=album_title)
+    return JSONResponse(content=result)
     
