@@ -13,140 +13,86 @@ export function useScroll() {
 export function ScrollControls({
   eps = 0.00001,
   enabled = true,
-  infinite,
-  horizontal,
+  infinite = false,
+  horizontal = false,
   pages = 1,
   distance = 1,
   damping = 4,
-  children
+  children,
 }) {
-  const { gl, size, invalidate, events, raycaster } = useThree();
+  const { gl, invalidate } = useThree();
   const el = useRef(document.createElement('div'));
   const fill = useRef(document.createElement('div'));
   const fixed = useRef(document.createElement('div'));
   const target = gl.domElement.parentNode;
   const scroll = useRef(0);
 
-  const state = useMemo(() => {
-    const state = {
-      el: el.current,
-      eps,
-      fill: fill.current,
-      fixed: fixed.current,
-      horizontal,
-      damping,
-      offset: 0,
-      delta: 0,
-      scroll,
-      pages,
-      range(from, distance, margin = 0) {
-        const start = from - margin;
-        const end = start + distance + margin * 2;
-        return this.offset < start ? 0 : this.offset > end ? 1 : (this.offset - start) / (end - start);
-      },
-      curve(from, distance, margin = 0) {
-        return Math.sin(this.range(from, distance, margin) * Math.PI);
-      },
-      visible(from, distance, margin = 0) {
-        const start = from - margin;
-        const end = start + distance + margin * 2;
-        return this.offset >= start && this.offset <= end;
-      }
-    };
-    return state;
-  }, [eps, damping, horizontal, pages]);
+  const state = useMemo(() => ({
+    el: el.current,
+    eps,
+    fill: fill.current,
+    fixed: fixed.current,
+    horizontal,
+    damping,
+    offset: 0,
+    delta: 0,
+    scroll,
+    pages,
+    range(from, distance, margin = 0) {
+      const start = from - margin;
+      const end = start + distance + margin * 2;
+      return this.offset < start ? 0 : this.offset > end ? 1 : (this.offset - start) / (end - start);
+    },
+    curve(from, distance, margin = 0) {
+      return Math.sin(this.range(from, distance, margin) * Math.PI);
+    },
+    visible(from, distance, margin = 0) {
+      const start = from - margin;
+      const end = start + distance + margin * 2;
+      return this.offset >= start && this.offset <= end;
+    },
+  }), [eps, damping, horizontal, pages]);
 
   useEffect(() => {
-    if (!target) return;
+    target.appendChild(el.current);
     el.current.style.position = 'absolute';
+    el.current.style.top = 0;
+    el.current.style.left = 0;
     el.current.style.width = '100%';
     el.current.style.height = '100%';
-    el.current.style[horizontal ? 'overflowX' : 'overflowY'] = 'auto';
-    el.current.style[horizontal ? 'overflowY' : 'overflowX'] = 'hidden';
-    el.current.style.top = '0px';
-    el.current.style.left = '0px';
+    el.current.style.overflow = horizontal ? 'auto' : 'scroll';
+    el.current.appendChild(fill.current);
+    el.current.appendChild(fixed.current);
+
+    fill.current.style.width = horizontal ? `${pages * 100}%` : '100%';
+    fill.current.style.height = horizontal ? '100%' : `${pages * 100}%`;
+    fill.current.style.pointerEvents = 'none';
 
     fixed.current.style.position = 'sticky';
-    fixed.current.style.top = '0px';
-    fixed.current.style.left = '0px';
+    fixed.current.style.top = 0;
+    fixed.current.style.left = 0;
     fixed.current.style.width = '100%';
     fixed.current.style.height = '100%';
     fixed.current.style.overflow = 'hidden';
-    el.current.appendChild(fixed.current);
 
-    fill.current.style.height = horizontal ? '100%' : `${pages * distance * 100}%`;
-    fill.current.style.width = horizontal ? `${pages * distance * 100}%` : '100%';
-    fill.current.style.pointerEvents = 'none';
-    el.current.appendChild(fill.current);
-    target.appendChild(el.current);
-
-    el.current[horizontal ? 'scrollLeft' : 'scrollTop'] = 1;
-
-    const oldTarget = typeof events.connected !== 'boolean' ? events.connected : gl.domElement;
-    requestAnimationFrame(() => events.connect?.(el.current));
-    const oldCompute = raycaster.computeOffsets;
-    raycaster.computeOffsets = ({ clientX, clientY }) => ({
-      offsetX: clientX - target.offsetLeft,
-      offsetY: clientY - target.offsetTop
-    });
-
-    return () => {
-      target.removeChild(el.current);
-      raycaster.computeOffsets = oldCompute;
-      events.connect?.(oldTarget);
-    };
-  }, [pages, distance, horizontal, target]);
-
-  useEffect(() => {
-    if (!el.current) return;
-    const containerLength = size[horizontal ? 'width' : 'height'];
-    const scrollLength = el.current[horizontal ? 'scrollWidth' : 'scrollHeight'];
-    const scrollThreshold = scrollLength - containerLength;
-
-    let current = 0;
-    let disableScroll = true;
-    let firstRun = true;
-
-    const onScroll = (e) => {
-      if (!enabled || firstRun) return;
-      invalidate();
-      current = el.current[horizontal ? 'scrollLeft' : 'scrollTop'];
-      scroll.current = current / scrollThreshold;
-      if (infinite) {
-        if (!disableScroll) {
-          if (scroll.current >= 1 - 0.001) {
-            const damp = 1 - state.offset;
-            el.current[horizontal ? 'scrollLeft' : 'scrollTop'] = 1;
-            scroll.current = state.offset = -damp;
-            disableScroll = true;
-          } else if (current <= 0) {
-            const damp = 1 + state.offset;
-            el.current[horizontal ? 'scrollLeft' : 'scrollTop'] = scrollLength;
-            scroll.current = state.offset = damp;
-            disableScroll = true;
-          }
-        }
-        if (disableScroll) setTimeout(() => (disableScroll = false), 40);
-      }
+    const onScroll = () => {
+      const scrollMax = el.current.scrollWidth - el.current.clientWidth;
+      scroll.current = el.current.scrollLeft / scrollMax;
     };
 
-    el.current.addEventListener('scroll', onScroll, { passive: true });
-    requestAnimationFrame(() => (firstRun = false));
-
-    const onWheel = (e) => (el.current.scrollLeft += e.deltaY / 2);
-    if (horizontal) el.current.addEventListener('wheel', onWheel, { passive: true });
+    el.current.addEventListener('scroll', onScroll);
 
     return () => {
       el.current.removeEventListener('scroll', onScroll);
-      if (horizontal) el.current.removeEventListener('wheel', onWheel);
+      if (target.contains(el.current)) {
+        target.removeChild(el.current);
+      }
     };
-  }, [el, size, infinite, state, invalidate, horizontal]);
+  }, [target, horizontal, pages, distance]);
 
-  let last = 0;
-  useFrame((_, delta) => {
-    state.offset = THREE.MathUtils.damp((last = state.offset), scroll.current, damping, delta);
-    state.delta = THREE.MathUtils.damp(state.delta, Math.abs(last - state.offset), damping, delta);
-    if (state.delta > eps) invalidate();
+  useFrame(() => {
+    const lerp = THREE.MathUtils.damp(state.offset, scroll.current, damping, 0.1);
+    state.offset = lerp;
   });
 
   return (
