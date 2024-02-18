@@ -33,7 +33,7 @@ const Edit = () => {
     // const selectedImageForEditPath = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_01/";
     return {
       // selectedImage: selectedImageForEditPath + queryParams.get("selectedImageForEdit") + `.jpg`,
-      selectedImage: queryParams.get("selectedImageForEdit"),
+      selectedImage: queryParams.get("selectedImage"),
     };
   };
 
