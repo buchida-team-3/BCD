@@ -174,41 +174,30 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     
 #     return image_files
 
-# @router.get("/api/images")
-# def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
-
-#     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
-#     # start_dir: s3 이미지 경로
-#     #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
-#     # image_files = os.listdir(start_dir)
-#     ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
-#     SECRET_KEY = "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"
-#     SERVICE_NAME =  "s3"
-#     REGION = "ap-northeast-2"
-#     BUCKET_NAME = "jungle-buchida-s3"
-    
-#     user_image = db.query(image_crud.Image).filter(
-#         image_crud.Image.user_id == current_user.id
-#         ).all().filter(image_crud.Image.image_path).all()
-
-#     s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
-#     response = s3.list_objects_v2(Bucket=BUCKET_NAME)    
-
-#     image_files = [content['Key'] for content in response.get('Contents', []) if content['Key'].startswith('img/')]
-#     print(image_files)
-#     return image_files
 @router.get("/api/images")
-def get_image_list():
+def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
+
     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
-    image_files = os.listdir(start_dir)
+    # start_dir: s3 이미지 경로
+    #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
+    # image_files = os.listdir(start_dir)
+    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+    SECRET_KEY = "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"
+    SERVICE_NAME =  "s3"
+    REGION = "ap-northeast-2"
+    BUCKET_NAME = "jungle-buchida-s3"
+    
+    user_image = db.query(image_crud.Image).filter(
+        image_crud.Image.user_id == current_user.id
+        ).all().filter(image_crud.Image.image_path).all()
+
+    s3 = boto3.client(SERVICE_NAME, aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY, region_name=REGION)
+    response = s3.list_objects_v2(Bucket=BUCKET_NAME)    
+
+    image_files = [content['Key'] for content in response.get('Contents', []) if content['Key'].startswith('img/')]
+    print(image_files)
     return image_files
 
-@router.get("/api/images/{image_name}")
-def get_image(image_name: str):
-    # 이미지 파일 경로 반환
-    print(f"{start_dir}/{image_name}")
-
-    return f"./img/{image_name}"
 
 @router.post("/remove_background")
 async def remove_background(image_names: ImageNames):
@@ -288,8 +277,17 @@ async def stitch_images(image_names: ImageNames):
     
     if status == cv2.Stitcher_OK:
         # 스티칭된 이미지를 임시 파일로 저장
-        stitched_filename = "stitched_result.jpg"
+        base_filename = "stitched_result"
+        file_extension = ".jpg"
+        index = 0
+        stitched_filename = f"{base_filename}{file_extension}"
         stitched_path = os.path.join(start_dir, stitched_filename)
+        
+        # 파일 이름이 중복되는 경우, 새로운 파일 이름 생성
+        while os.path.exists(stitched_path):
+            stitched_filename = f"{base_filename} ({index}){file_extension}"
+            stitched_path = os.path.join(start_dir, stitched_filename)
+            index += 1
         cv2.imwrite(stitched_path, stitched)
         
         # 스티칭된 이미지의 경로나 URL 반환

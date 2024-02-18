@@ -1,11 +1,30 @@
 import React, { useState } from 'react';
 import './Navbar.css';
+import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import logo from './content/logo.png';
 import bgImage from './content/background.jpg'
 
 function Navbar() {
     const [isNavExpanded, setIsNavExpanded] = useState(false); // 네비게이션바 확장 상태 관리
 
+    const navigate = useNavigate(); // useNavigate 훅 사용
+
+    const handleHomeClick = () => {
+        navigate('/home'); // /labelpage 경로로 이동
+    };
+
+    const handleEditClick = () => {
+        navigate('/edit'); // /labelpage 경로로 이동
+    };
+  
+    const handleAlbumListClick = () => {
+        navigate('/albumlist'); // /albumlist 경로로 이동
+    };
+        
+    const handleAlbumCreateClick = () => {
+        navigate('/createalbum'); // /albumlist 경로로 이동
+    };
+    
     // 로그아웃 처리 함수
     const handleLogout = () => {
         // localStorage에서 항목 삭제
@@ -32,21 +51,11 @@ function Navbar() {
             <img src={bgImage} alt="background" className="background-image" />
             <img src={logo} className="navbar-logo" alt="Logo" onClick={toggleNav} />
             <div className={`navbar-menu ${isNavExpanded ? 'expanded' : 'collapsed'}`}>
-                <a className='link-button' href="/home">Home</a>
-                <a className='link-button' href="/labelpage">Create</a>
-                <a className='link-button' href="/albumlist">List</a>
-                <a className='link-button' href="/edit">Edit</a>
-                <a className='link-button' href="/imagepage">View</a>
-                <a className='link-button' href="/book">Album</a>
-                {/* <div className="dropdown">
-                    <button className="dropdown-button">Group</button>
-                    <div className="dropdown-content">
-                        <a href="/uploadpage">Group 1</a>
-                        <a href="/uploadpage2">Group 2</a>
-                    </div>
-                </div> */}
-                {/* 로그아웃 버튼에 onClick 이벤트 핸들러 추가 */}
-                <button className="logout-button" onClick={handleLogout}>Logout</button>
+                <a className='link-button' onClick={handleHomeClick}>홈</a>
+                <a className='link-button' onClick={handleAlbumCreateClick}>모든 사진 보기</a>
+                <a className='link-button' onClick={handleAlbumListClick}>모든 앨범 보기</a>
+                <a className='link-button' onClick={handleEditClick}>사진 편집하기</a>
+                <button className="logout-button" onClick={handleLogout}>로그아웃</button>
             </div>
         </div>
     );
