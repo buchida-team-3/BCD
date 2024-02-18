@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from domain.album.album_schema import AlbumCreate, AlbumArticleCreate
-from models import Album, AlbumArticle, User
+
+from domain.user.user_router import get_current_user
+
+from models import Album, AlbumArticle, Image, User
 
 
 def create_album(db: Session, album_create: AlbumCreate, user: User):
@@ -18,9 +21,22 @@ def create_album(db: Session, album_create: AlbumCreate, user: User):
     db.commit()
 
 
-def create_album_article():
-    pass
+def get_album(db: Session, album_title: str):
+    """
+    앨범 조회 함수
+    - db: DB 세션 객체
+    - album_title: 앨범 제목
+    - return:
+    """
+    filter = db.query(Album).filter(Album.album_title == album_title).all()
+    
+    char_list = filter[0].album_filter
+    char_string = ''.join(char_list).replace('{', '').replace('}', '')
+    
+    result_list = char_string.split(',')
 
-
-def update_album_article():
-    pass
+    print(album_title)
+    print(result_list)
+    
+    
+    

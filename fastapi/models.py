@@ -51,3 +51,11 @@ class AlbumArticle(Base):
     album = relationship("Album", backref="album_article")
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="album_article")
+
+class Edited(Base):
+    __tablename__ = "edtied"
+
+    id = Column(Integer, primary_key=True)
+    image_path = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    user = relationship("User", backref="edited")
