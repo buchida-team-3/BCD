@@ -77,14 +77,6 @@ const Edit = () => {
     }
   };
 
-  const handleCheckboxChange = (imageName) => {
-    if (checkedImages.includes(imageName)) {
-      setCheckedImages(checkedImages.filter((img) => img !== imageName));
-    } else {
-      setCheckedImages([...checkedImages, imageName]);
-    }
-  };
-
   const handleCheckBox = () => {
     setShowCheckboxes(true);
   };
@@ -99,6 +91,7 @@ const Edit = () => {
         }
       );
       setRemovedImages(response.data);
+      console.log(response.data);
     } catch (error) {
       console.log("Error uploading images: ", error);
     }
@@ -120,13 +113,19 @@ const Edit = () => {
       return;
     }
     console.log(checkedImages);
+    
+    setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/stitch_images", {
-        images: checkedImages, // 선택된 이미지들을 백엔드로 전송
-      });
-      // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
-      console.log("Stitched image:", response.data.filename);
-      setSelectedImage(response.data.replace("../frontend/public/", "./"));
+      setTimeout(async () => {
+
+        const response = await axios.post("http://localhost:8000/stitch_images", {
+          images: checkedImages, // 선택된 이미지들을 백엔드로 전송
+        });
+        // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
+        console.log("Stitched image:", response.data.filename);
+        setSelectedImage(response.data);
+        setIsLoading(false); // 2초 후 로딩 종료
+      }, 2000)
     } catch (error) {
       // 에러 메시지 표시
       if (error.response.data && error.response.data.detail) {
@@ -134,6 +133,7 @@ const Edit = () => {
       } else {
         alert("예기치 못한 오류가 발생했습니다.");
       }
+      setIsLoading(false); // 2초 후 로딩 종료
     }
   };
 
@@ -373,7 +373,7 @@ const Edit = () => {
               {removedImages.map((removedImage, index) => (
                 <img
                   key={index}
-                  src={`/img_0/${removedImage}`}
+                  src={removedImage}
                   alt={`removedImage ${index}`}
                   className="removed-image"
                   draggable="true"
