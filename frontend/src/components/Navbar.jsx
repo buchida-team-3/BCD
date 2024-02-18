@@ -22,7 +22,7 @@ function Navbar() {
     };
         
     const handleAlbumCreateClick = () => {
-        navigate('/createalbum'); // /albumlist 경로로 이동
+        navigate('/labelpage'); // /albumlist 경로로 이동
     };
     
     // 로그아웃 처리 함수
