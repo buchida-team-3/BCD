@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Suspense, useRef, useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Preload, Image as ImageImpl } from "@react-three/drei";
 import { ScrollControls, Scroll, useScroll } from "./ScrollControls";
@@ -11,6 +12,7 @@ function Image(props) {
   const ref = useRef();
   const group = useRef();
   const data = useScroll();
+  const navigate = useNavigate();
   useFrame((state, delta) => {
     group.current.position.z = THREE.MathUtils.damp(
       group.current.position.z,
@@ -31,9 +33,9 @@ function Image(props) {
     // URL에서 파일 이름 추출 ('/image1.jpeg' -> 'image1')
     // const imageName = props.url.split('/').pop().split('.').shift();
     // 'edit/' 경로와 함께 리디렉션
-    window.location.href = `/edit?selectedImage=${encodeURIComponent(
+    navigate(`/edit?selectedImage=${encodeURIComponent(
       props.url
-    )}`;
+    )}`);
   };
   return (
     <group ref={group}>
