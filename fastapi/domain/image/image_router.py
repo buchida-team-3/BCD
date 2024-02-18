@@ -28,7 +28,8 @@ from rembg import remove
 import numpy as np
 
 import boto3
-
+from urllib.parse import urlparse
+import re
 from domain.image.theme_dict import theme
 
 router = APIRouter(
@@ -212,7 +213,7 @@ async def download_image_from_s3(s3_image_path):
     return obj['Body'].read()
 
 async def upload_image_to_s3(image_bytes, s3_image_path):
-    s3_client.put_object(Bucket=BUCKET_NAME, Key=s3_image_path, Body=image_bytes)
+    s3_client.put_object(Bucket=BUCKET_NAME, Key=s3_image_path, Body=image_bytes, ContentType='image/jpeg')
 
 @router.post("/remove_background")
 async def remove_background(image_names: ImageNames):
@@ -239,7 +240,7 @@ async def remove_background(image_names: ImageNames):
 
             # Image 객체를 바이트 데이터로 변환하여 S3에 업로드
             buf = BytesIO()
-            resized_image.save(buf, format='PNG')
+            resized_image.save(buf, format='jpg')
             resized_image_bytes = buf.getvalue()
 
             output_image_name = f'removed_{s3_image_path}'
@@ -251,24 +252,74 @@ async def remove_background(image_names: ImageNames):
 
     return processed_images
 
+
+
+
+async def generate_unique_filename(base_image_path, bucket_name):
+    # 기본 이미지 이름 추출
+    parsed_url = urlparse(base_image_path)
+    base_image_name = re.sub(r'\W+', '_', os.path.splitext(os.path.basename(parsed_url.path))[0])
+    
+    index = 0
+    while True:
+        # 파일명 생성
+        potential_name = f"overlay_{base_image_name}_{index}.jpg"
+        try:
+            s3_client.head_object(Bucket=bucket_name, Key=potential_name)
+            index += 1  # 파일이 존재하면 인덱스 증가
+        except:
+            return potential_name  # 중복되지 않는 파일명 반환
+        
 @router.post("/merge_images")
 async def merge_images(data: ImageMergeData):
-    base_image = Image.open(data.baseImage)
+    base_image_path = data.baseImage[data.baseImage.find('amazonaws.com') + len('amazonaws.com') + 1:]
+    base_image_bytes = await download_image_from_s3(base_image_path)
+    base_image = Image.open(BytesIO(base_image_bytes))
     base_image_resized = base_image.resize((400, 400))
-    for overlay in data.overlayImages:    
-        # 각 "처리된 이미지"를 열고, 지정된 위치에 붙입니다.
-        overlay_image_path = overlay.url.replace(f'{overlay.url}', f'{remove_dir}/{overlay.url}')
-        overlay_image = Image.open(overlay_image_path)
+
+    for overlay in data.overlayImages:
+        s3_image_path = overlay.url[overlay.url.find('amazonaws.com') + len('amazonaws.com') + 1:]
+        overlay_image_bytes = await download_image_from_s3(s3_image_path)
+        overlay_image = Image.open(BytesIO(overlay_image_bytes))
 
         # 새로운 크기로 이미지 크기 조정
         overlay_image_resized = overlay_image.resize((overlay.width, overlay.height))
 
-        base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized)
+        # 지정된 위치에 이미지를 붙입니다. 마지막 인자는 "마스크"로, 투명도가 있는 이미지를 올바르게 처리하기 위해 사용됩니다.
+        base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
+    # 합성된 이미지를 바이트로 변환
+    buffer = BytesIO()
+    base_image_resized.save(buffer, format="PNG")
+    merged_image_bytes = buffer.getvalue()
+
+    # 동적 파일명 생성 및 업로드
+    unique_filename = await generate_unique_filename(data.baseImage, BUCKET_NAME)
+    await upload_image_to_s3(merged_image_bytes, unique_filename)
+
+    print('========================================')
+    print('now : ', unique_filename)
+    print('========================================')
+    return {"message": "Image merged successfully", "mergedImagePath": f"https://{BUCKET_NAME}.s3.amazonaws.com/{unique_filename}"}
+
+
+# @router.post("/merge_images")
+# async def merge_images(data: ImageMergeData):
+#     base_image = Image.open(data.baseImage)
+#     base_image_resized = base_image.resize((400, 400))
+#     for overlay in data.overlayImages:    
+#         # 각 "처리된 이미지"를 열고, 지정된 위치에 붙입니다.
+#         overlay_image_path = overlay.url.replace(f'{overlay.url}', f'{remove_dir}/{overlay.url}')
+#         overlay_image = Image.open(overlay_image_path)
+
+#         # 새로운 크기로 이미지 크기 조정
+#         overlay_image_resized = overlay_image.resize((overlay.width, overlay.height))
+
+#         base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized)
     
-    # 합성된 이미지를 저장하거나 클라이언트에 직접 반환합니다.
-    output_path = f"{start_dir}/overlay_{overlay.url}"
-    base_image_resized.save(output_path)
-    return {"message": "Image merged successfully", "mergedImagePath": output_path}
+#     # 합성된 이미지를 저장하거나 클라이언트에 직접 반환합니다.
+#     output_path = f"{start_dir}/overlay_{overlay.url}"
+#     base_image_resized.save(output_path)
+#     return {"message": "Image merged successfully", "mergedImagePath": output_path}
 
 @router.post("/stitch_images")
 async def stitch_images(image_names: ImageNames, db=Depends(get_db)):

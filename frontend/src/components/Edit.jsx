@@ -224,7 +224,7 @@ const Edit = () => {
         const response = await axios.post(
           "http://localhost:8000/merge_images",
           {
-            baseImage: selectedImage.replace("/img/", "./frontend/public/img/"),
+            baseImage: selectedImage,
             overlayImages,
           }
         );
@@ -358,7 +358,7 @@ const Edit = () => {
                 }}
               >
                 <img
-                  src={`/img_0/${img.imageUrl}`}
+                  src={img.imageUrl}
                   alt={`Overlay ${index}`}
                   draggable={false} // 내부 이미지는 드래그 불가능하게 설정
                   style={{ width: "100%", height: "100%" }} // ResizableBox에 맞게 이미지 크기 조정
