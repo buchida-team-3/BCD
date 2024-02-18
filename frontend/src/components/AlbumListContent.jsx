@@ -32,9 +32,9 @@ export default function AlbumListContent() {
 
   useEffect(() => {
     const fetchAlbumData = async () => {
-      const albumTitle = localStorage.getItem('album_title');
+      
       try {
-        const response = await axios.get(`http://localhost:8000/api/album/data?album_title=${encodeURIComponent(albumTitle)}`, {
+        const response = await axios.get(`http://localhost:8000/api/album/data`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // 인증 토큰 추가
           }
