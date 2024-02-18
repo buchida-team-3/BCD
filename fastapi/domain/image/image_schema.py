@@ -27,3 +27,6 @@ class OverlayImage(BaseModel):
 class ImageMergeData(BaseModel):
     baseImage: str
     overlayImages: List[OverlayImage] # 예: [{"url": "image_url", "x": 100, "y": 200}, ...]
+
+class ImageStitch(BaseModel):
+    image_path: str
