@@ -18,12 +18,13 @@
     color: #fff; /* 밝은 글자색 */
     padding: 20px;
     border-radius: 8px;
-    width: 400px; /* 박스 크기 조절 */
+    width: 350px; /* 박스 크기 조절 */
+    height: 770px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 박스에 그림자 추가 */
   }
   
   .createAlbumModal-formGroup {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
   }
   
   .createAlbumModal-label {
