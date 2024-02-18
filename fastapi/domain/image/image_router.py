@@ -350,7 +350,7 @@ async def stitch_images(image_names: ImageNames, db=Depends(get_db), current_use
         os.remove(stitched_filename)
         # 스티칭된 이미지의 S3 URL 반환
         results_for_db ={
-                            "image_path": f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}"
+                            "image_path": f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}",
                         }
         db_edited_update(db, update_db=ImageStitch(**results_for_db), user=current_user)
 
