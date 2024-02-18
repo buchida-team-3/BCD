@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { React, Suspense, useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Preload, Image as ImageImpl, OrbitControls } from "@react-three/drei";
@@ -27,7 +27,8 @@ function Image(props) {
     // const imageName = props.url.split("/").pop().split(".").shift();
     const imageName = props.url;
     // window.location.href = `/edit/${imageName}`; // edit 페이지로 가되, 헤더에 이미지 이름을 넘겨줌
-    navigate(`/edit?selectedImageForEdit=${imageName}`);
+    // navigate(`/edit?selectedImageForEdit=${imageName}`);
+    navigate(`/imagepage?selectedTheme=${imageName}`); //! 쿼리스트링 수정 필요
   };
 
   return (
@@ -143,7 +144,7 @@ export default function LabelContent({ filterLabel }) {
           window.location.href = "/loginandsignup";
         }
       };
-      console.log("LabelContent.jsx: 이미지 데이터 로드 중...");
+      console.log("LabelContent.jsx: imageData 로드 중...");
 
       // 이미 로드된 이미지 데이터 가져오기
       // 이미지의 캐시 여부 확인
@@ -163,6 +164,7 @@ export default function LabelContent({ filterLabel }) {
         setImageGroups(formattedGroups);
       }
 
+      //! 전체 이미지 뷰잉 로직
       if (filterLabel === "All") {
         // const class_name = imageData.map((image) => image.class_name);
         // const id = imageData.map((image) => image.id);
@@ -206,7 +208,7 @@ export default function LabelContent({ filterLabel }) {
         const themePerson = imageData.filter((image) =>
           image.class_name.includes("Person")
         );
-        const themeElectronic= imageData.filter((image) =>
+        const themeElectronic = imageData.filter((image) =>
           image.class_name.includes("Electronic")
         );
         const themeDish = imageData.filter((image) =>
@@ -248,13 +250,18 @@ export default function LabelContent({ filterLabel }) {
         const themeAnimalPaths = themeAnimal.map((image) => image.image_path);
         const themeVehiclePaths = themeVehicle.map((image) => image.image_path);
         const themePersonPaths = themePerson.map((image) => image.image_path);
-        const themeElectronicPaths = themeElectronic.map((image) => image.image_path);
+        const themeElectronicPaths = themeElectronic.map(
+          (image) => image.image_path
+        );
         const themeDishPaths = themeDish.map((image) => image.image_path);
         const themeFoodPaths = themeFood.map((image) => image.image_path);
         const themeSportPaths = themeSport.map((image) => image.image_path);
-        const themeAccessoryPaths = themeAccessory.map((image) => image.image_path);
-        const themeLandscapePaths = themeLandscape.map((image) => image.image_path);
-
+        const themeAccessoryPaths = themeAccessory.map(
+          (image) => image.image_path
+        );
+        const themeLandscapePaths = themeLandscape.map(
+          (image) => image.image_path
+        );
 
         // 테마별로 대표 이미지 3장 선택하는 함수
         const selectTopThree = (images) => images.slice(0, 3);
