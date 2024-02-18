@@ -341,6 +341,7 @@ const Edit = () => {
                 편집 저장
               </button>
             </div>
+
             {/* {selectedImage && <img className='selected-image' src={selectedImage} alt="Selected" draggable="false" />} */}
             {/* {(selectedImageForEdit || selectedImage) && (
               <img

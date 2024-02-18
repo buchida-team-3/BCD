@@ -42,7 +42,7 @@ function Page({ m = 0.4, urls, ...props }) {
   const positions = [
     [-0.5, 0.5, 0], // Image 1 position
     [0, 0, 0.1], // Image 2 position, slightly in front/behind the first
-    [0.5, -0.5, 0.2], // Image 3 position, slightly in front/behind the second
+    [-0.5, -0.5, 0.2], // Image 3 position, slightly in front/behind the second
   ];
 
   return (
@@ -52,7 +52,7 @@ function Page({ m = 0.4, urls, ...props }) {
           key={index}
           position={positions[index]}
           // rotation={[0, 45*Math.PI/180, 0]} // 모든 이미지 y축에 대해 45도 회전
-          // opacity={0.5} transparent={true} // 투명도 조절 
+          // opacity={0.5} transparent={true} // 투명도 조절
           scale={scale}
           url={url}
         />
@@ -91,8 +91,8 @@ function Pages({ imageGroups }) {
 export default function LabelContent({ filterLabel }) {
   // imageData: 이미지 데이터 자체, setImageData: 이미지 데이터를 변경하는 함수
   const { imageData, setImageData } = useImageData(); // Context API 사용을 위해 추가 -> 여기에서 이미 imageData를 사용할 준비가 됨
-  const [ imageGroups, setImageGroups ] = useState([]);
-  const [ fetchAttempted, setFetchAttempted ] = useState(false);
+  const [imageGroups, setImageGroups] = useState([]);
+  const [fetchAttempted, setFetchAttempted] = useState(false);
 
   // filterLabel = all -> 정렬된 이미지 보임, filterLabel = Filtering -> 전체 이미지 보임
   console.log("filterLabel 변경:", filterLabel);
@@ -189,52 +189,70 @@ export default function LabelContent({ filterLabel }) {
         // console.log("rgb_2_paths:", rgb_2_paths);
 
         // 테마별로 이미지 그룹화 && 공간 별로 이미지 그룹화 추가해보자
-        const themeCarPaths = imageData.filter(
-          (image) => image.theme === "car"
+        const themeCar = imageData.filter((image) =>
+          image.class_name.includes("Car")
         );
-        const themeInsidePaths = imageData.filter(
-          (image) => image.theme === "inside"
+        const themeInside = imageData.filter((image) =>
+          image.class_name.includes("Inside")
         );
-        const themeAnimalPaths = imageData.filter(
-          (image) => image.theme === "animal"
+        const themeAnimal = imageData.filter((image) =>
+          image.class_name.includes("Animal")
         );
-        const themeVehiclePaths = imageData.filter(
-          (image) => image.theme === "vehicle"
+        const themeVehicle = imageData.filter((image) =>
+          image.class_name.includes("Vehicle")
         );
-        const themePersonPaths = imageData.filter(
-          (image) => image.theme === "person"
+        const themePerson = imageData.filter((image) =>
+          image.class_name.includes("Person")
         );
-        const themeElectronicPaths = imageData.filter(
-          (image) => image.theme === "electronic"
+        const themeElectronic= imageData.filter((image) =>
+          image.class_name.includes("Electronic")
         );
-        const themeDishPaths = imageData.filter(
-          (image) => image.theme === "dish"
+        const themeDish = imageData.filter((image) =>
+          image.class_name.includes("Dish")
         );
-        const themeFoodPaths = imageData.filter(
-          (image) => image.theme === "food"
+        const themeFood = imageData.filter((image) =>
+          image.class_name.includes("Food")
         );
-        const themeSportPaths = imageData.filter(
-          (image) => image.theme === "sport"
+        const themeSport = imageData.filter((image) =>
+          image.class_name.includes("Sport")
         );
-        const themeAccessoryPaths = imageData.filter(
-          (image) => image.theme === "accessory"
+        const themeAccessory = imageData.filter((image) =>
+          image.class_name.includes("Accessory")
         );
-        const themeLandscapePaths = imageData.filter(
-          (image) => image.theme === "landscape"
+        const themeLandscape = imageData.filter(
+          (image) =>
+            image.class_name === "None" ||
+            (Array.isArray(image.class_name) &&
+              image.class_name.includes("None"))
         );
 
-        // 로깅 -> 경로가 떠야하는데 안뜸
-        console.log("themeCarPaths:", themeCarPaths);
-        console.log("themeInsidePaths:", themeInsidePaths);
-        console.log("themeAnimalPaths:", themeAnimalPaths);
-        console.log("themeVehiclePaths:", themeVehiclePaths);
-        console.log("themePersonPaths:", themePersonPaths);
-        console.log("themeElectronicPaths:", themeElectronicPaths);
-        console.log("themeDishPaths:", themeDishPaths);
-        console.log("themeFoodPaths:", themeFoodPaths);
-        console.log("themeSportPaths:", themeSportPaths);
-        console.log("themeAccessoryPaths:", themeAccessoryPaths);
-        console.log("themeLandscapePaths:", themeLandscapePaths);
+        // 로깅 확인
+        console.log("themeCar:", themeCar);
+        console.log("themeInside:", themeInside);
+        console.log("themeAnimal:", themeAnimal);
+        console.log("themeVehicle:", themeVehicle);
+        console.log("themePerson:", themePerson);
+        console.log("themeElectronic:", themeElectronic);
+        console.log("themeDish:", themeDish);
+        console.log("themeFood:", themeFood);
+        console.log("themeSport:", themeSport);
+        console.log("themeAccessory:", themeAccessory);
+        console.log("themeLandscape:", themeLandscape);
+
+        // 테마별로 이미지 경로만 추출
+        // const themeCarPaths = themeCar.map((image) => image.image_path);
+        const themeCarPaths = themeCar.map((image) => image.image_path);
+        const themeInsidePaths = themeInside.map((image) => image.image_path);
+        const themeAnimalPaths = themeAnimal.map((image) => image.image_path);
+        const themeVehiclePaths = themeVehicle.map((image) => image.image_path);
+        const themePersonPaths = themePerson.map((image) => image.image_path);
+        const themeElectronicPaths = themeElectronic.map((image) => image.image_path);
+        const themeDishPaths = themeDish.map((image) => image.image_path);
+        const themeFoodPaths = themeFood.map((image) => image.image_path);
+        const themeSportPaths = themeSport.map((image) => image.image_path);
+        const themeAccessoryPaths = themeAccessory.map((image) => image.image_path);
+        const themeLandscapePaths = themeLandscape.map((image) => image.image_path);
+
 
         // 테마별로 대표 이미지 3장 선택하는 함수
         const selectTopThree = (images) => images.slice(0, 3);
