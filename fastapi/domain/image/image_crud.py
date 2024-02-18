@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from domain.image.image_schema import ImageUpload
+from domain.image.image_schema import ImageUpload, ImageStitch
 from models import Image, User
 
 import os
@@ -53,3 +53,12 @@ def db_update(db: Session, update_db: ImageUpload, user: User):
     db.commit()
     
 
+
+def db_edited_update(db: Session, update_db: ImageStitch, user: User):
+    db_image = Image(
+            image_path = update_db.image_path,
+            user = user,
+            )
+    db.add(db_image)
+    db.commit()
+    
