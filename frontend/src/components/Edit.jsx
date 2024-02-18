@@ -116,8 +116,6 @@ const Edit = () => {
     
     setIsLoading(true);
     try {
-      setTimeout(async () => {
-
         const response = await axios.post("http://localhost:8000/stitch_images", {
           images: checkedImages, // 선택된 이미지들을 백엔드로 전송
         });
@@ -125,9 +123,9 @@ const Edit = () => {
         console.log("Stitched image:", response.data.filename);
         setSelectedImage(response.data);
         setIsLoading(false); // 2초 후 로딩 종료
-      }, 2000)
     } catch (error) {
       // 에러 메시지 표시
+      console.log(`error : ${error.response.data.detail}`);
       if (error.response.data && error.response.data.detail) {
         alert(error.response.data.detail);
       } else {
