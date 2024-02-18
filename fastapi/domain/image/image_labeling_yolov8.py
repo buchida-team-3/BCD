@@ -5,7 +5,7 @@ import json
 
 # images_path = './input_images'
 
-def image_labeling_yolov8(images_path, conf=0.6):
+def image_labeling_yolov8(images_path, conf=0.5):
     """_summary_
     객체 탐지 모델인 YOLOv8n 사용하여 이미지 안의 객체 라벨링
     

@@ -1,11 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
-import axios from 'axios';
-import Navbar from './Navbar';
-import './Edit.css';
-import { ResizableBox } from 'react-resizable';
-import 'react-resizable/css/styles.css'; 
-import editDefault from './content/edit_default.jpg'
-import bgImage from './content/background.jpg'
+import React, { useRef, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import Navbar from "./Navbar";
+import "./Edit.css";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
+import editDefault from "./content/edit_default.jpg";
+import bgImage from "./content/background.jpg";
+import { useImageData } from "./ImageContext";
 
 const Edit = () => {
   const [images, setImages] = useState([]);
@@ -25,12 +27,23 @@ const Edit = () => {
 
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
+  const { imageData, setImageData } = useImageData();
+
+  console.log("imageData: ", imageData);
+
   const getQueryParams = () => {
     const queryParams = new URLSearchParams(window.location.search);
     return {
-        selectedImage: queryParams.get('selectedImage')
+      selectedImage: queryParams.get("selectedImage"),
     };
   };
+
+  // LabelContent.jsx에서 imageName 쿼리를 받는 코드
+  // -> 위의 코드와 통합해야 할 듯
+  const location = useLocation();
+  const queryParams2 = new URLSearchParams(location.search);
+  const selectedImageForEdit = queryParams2.get("selectedImageForEdit");
+  const selectedImageForEditPath = "";
 
   const LoadingModal = ({ isLoading }) => {
     if (!isLoading) return null;
@@ -46,49 +59,49 @@ const Edit = () => {
   };
 
   useEffect(() => {
+    console.log("imageData: ", imageData);
     const { selectedImage: querySelectedImage } = getQueryParams();
 
     if (querySelectedImage) {
-      console.log(querySelectedImage);
       setSelectedImage(decodeURIComponent(querySelectedImage));
-      console.log(selectedImage);
-    }
-    else {
+    } else {
       setSelectedImage(editDefault);
     }
-    axios.get('http://localhost:8000/api/images')
-    .then(response => {
-      setImages(response.data);
-    })
-    .catch(error => {
-      console.error('Error fetching images:', error);
-    });
-  }, []);
+    axios
+      .get("http://localhost:8000/api/images")
+      .then((response) => {
+        setImages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching images:", error);
+      });
+  }, [imageData]);
 
   const handleClick = (imageName) => {
     if (showCheckboxes) {
       if (checkedImages.includes(imageName)) {
-        setCheckedImages(checkedImages.filter(img => img !== imageName));
+        setCheckedImages(checkedImages.filter((img) => img !== imageName));
       } else {
         setCheckedImages([...checkedImages, imageName]);
       }
     } else {
       // 배경 제거 모드가 아닌 경우의 기존 로직
       console.log(`${imageName} is selected.`);
-      axios.get(`http://localhost:8000/api/images/${imageName}`)
-        .then(response => {
-          setSelectedImage(response.data.replace('../frontend/public/', './'));
+      axios
+        .get(`http://localhost:8000/api/images/${imageName}`)
+        .then((response) => {
+          setSelectedImage(response.data.replace("../frontend/public/", "./"));
           console.log(response.data.filename);
         })
-        .catch(error => {
-          console.error('Error fetching image:', error);
+        .catch((error) => {
+          console.error("Error fetching image:", error);
         });
     }
   };
 
   const handleCheckboxChange = (imageName) => {
     if (checkedImages.includes(imageName)) {
-      setCheckedImages(checkedImages.filter(img => img !== imageName));
+      setCheckedImages(checkedImages.filter((img) => img !== imageName));
     } else {
       setCheckedImages([...checkedImages, imageName]);
     }
@@ -98,17 +111,18 @@ const Edit = () => {
     setShowCheckboxes(true);
   };
 
-
   const handleComplete = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/remove_background', {
-        images: checkedImages
-      })
+      const response = await axios.post(
+        "http://localhost:8000/remove_background",
+        {
+          images: checkedImages,
+        }
+      );
       setRemovedImages(response.data);
-    }
-    catch (error) {
-      console.log('Error uploading images: ', error);
+    } catch (error) {
+      console.log("Error uploading images: ", error);
     }
     // setRemovedImages(response.data);
 
@@ -119,7 +133,7 @@ const Edit = () => {
   const handleCancel = () => {
     setShowCheckboxes(false);
     setCheckedImages([]);
-  }
+  };
 
   // "배경 붙이기" 버튼의 이벤트 핸들러
   const handleStitchImages = async () => {
@@ -129,12 +143,12 @@ const Edit = () => {
     }
     console.log(checkedImages);
     try {
-      const response = await axios.post('http://localhost:8000/stitch_images', {
-        images: checkedImages // 선택된 이미지들을 백엔드로 전송
+      const response = await axios.post("http://localhost:8000/stitch_images", {
+        images: checkedImages, // 선택된 이미지들을 백엔드로 전송
       });
       // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
       console.log("Stitched image:", response.data.filename);
-      setSelectedImage(response.data.replace('../frontend/public/', './'));
+      setSelectedImage(response.data.replace("../frontend/public/", "./"));
     } catch (error) {
       // 에러 메시지 표시
       if (error.response.data && error.response.data.detail) {
@@ -144,8 +158,6 @@ const Edit = () => {
       }
     }
   };
-
-
 
   // "처리된 이미지" 드래그 시작 처리
   const handleDragStart = (e, imageUrl) => {
@@ -157,20 +169,23 @@ const Edit = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     const imageUrl = e.dataTransfer.getData("imageUrl");
-    if ( !overlayContainerRef.current ) return;
+    if (!overlayContainerRef.current) return;
 
     const rect = overlayContainerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left; // 드롭된 위치의 X 좌표
     const y = e.clientY - rect.top; // 드롭된 위치의 Y 좌표
     const x_abs = e.clientX; // 드롭된 위치의 X 좌표
     const y_abs = e.clientY; // 드롭된 위치의 Y 좌표
-    console.log('handle Drag ', !!imageUrl)
+    console.log("handle Drag ", !!imageUrl);
 
-    if(!!imageUrl === false){
+    if (!!imageUrl === false) {
       return;
     }
-    
-    setOverlayImages(prev => [...prev, { imageUrl, x, y, x_abs, y_abs, width: 100, height: 100 }]);
+
+    setOverlayImages((prev) => [
+      ...prev,
+      { imageUrl, x, y, x_abs, y_abs, width: 100, height: 100 },
+    ]);
   };
 
   // 드래그 시작 처리
@@ -178,12 +193,12 @@ const Edit = () => {
     const rect = e.target.getBoundingClientRect();
     const offsetX = e.clientX - rect.left; // 마우스 위치와 이미지 왼쪽 상단 간 X 차이
     const offsetY = e.clientY - rect.top; // 마우스 위치와 이미지 왼쪽 상단 간 Y 차이
-  
+
     setDragging(true);
     setDraggingIndex(index);
     setOffsetX(offsetX);
     setOffsetY(offsetY);
-  
+
     e.stopPropagation(); // 이벤트 버블링 방지
   };
 
@@ -193,13 +208,21 @@ const Edit = () => {
     const rect = overlayContainerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left - offsetX; // offsetX를 고려하여 새로운 X 좌표 계산
     const y = e.clientY - rect.top - offsetY; // offsetY를 고려하여 새로운 Y 좌표 계산
-  
-    setOverlayImages(prev => prev.map((img, index) => {
-      if (index === draggingIndex) {
-        return { ...img, x, y, x_abs: e.clientX - offsetX, y_abs: e.clientY - offsetY };
-      }
-      return img;
-    }));
+
+    setOverlayImages((prev) =>
+      prev.map((img, index) => {
+        if (index === draggingIndex) {
+          return {
+            ...img,
+            x,
+            y,
+            x_abs: e.clientX - offsetX,
+            y_abs: e.clientY - offsetY,
+          };
+        }
+        return img;
+      })
+    );
   };
 
   // 드래그 종료 처리
@@ -215,34 +238,38 @@ const Edit = () => {
       alert("선택된 이미지가 없거나, 겹쳐진 이미지가 없습니다.");
       return;
     }
-    console.log('select: ', selectedImage);
-    console.log('overlay: ',overlayImages);
+    console.log("select: ", selectedImage);
+    console.log("overlay: ", overlayImages);
     setIsLoading(true);
     try {
       setTimeout(async () => {
-      const response = await axios.post('http://localhost:8000/merge_images', {
-        baseImage: selectedImage.replace('/img/', './frontend/public/img/'),
-        overlayImages
-      });
-      console.log("Merged image:", response.data);
-      setIsLoading(false); // 2초 후 로딩 종료
-    }, 2000);} catch (error) {
+        const response = await axios.post(
+          "http://localhost:8000/merge_images",
+          {
+            baseImage: selectedImage.replace("/img/", "./frontend/public/img/"),
+            overlayImages,
+          }
+        );
+        console.log("Merged image:", response.data);
+        setIsLoading(false); // 2초 후 로딩 종료
+      }, 2000);
+    } catch (error) {
       console.error("Error merging images:", error);
       setIsLoading(false); // 2초 후 로딩 종료
     }
   };
 
-
+  const imageToUse = selectedImageForEdit || selectedImage;
+  console.log("imageToUse: ", imageToUse);
 
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <Navbar />
       <LoadingModal isLoading={isLoading} /> {/* 모달 추가 */}
       <img src={bgImage} alt="background" className="edit-background-image" />
-      <div className='image-container'>
-        <div className='image-container-list'>
-        
-          <div className='image-container-navbar'>
+      <div className="image-container">
+        <div className="image-container-list">
+          <div className="image-container-navbar">
             {!showCheckboxes && (
               <button onClick={handleCheckBox}>
                 <span></span>
@@ -250,7 +277,7 @@ const Edit = () => {
                 <span></span>
                 <span></span>
                 이미지선택
-                </button>
+              </button>
             )}
             {showCheckboxes && (
               <button onClick={handleCancel}>
@@ -264,83 +291,126 @@ const Edit = () => {
           </div>
 
           <div>
-            <ul className='image-list'>
-              {images.map(image => (
-                <div key={image} className={`image-checkbox ${checkedImages.includes(image) ? 'selected' : ''}`} onClick={() => handleClick(image)}>
-                  <img className='image-element' src={`./img/${image}`} alt={image} />
+            <ul className="image-list">
+              {images.map((image) => (
+                <div
+                  key={image}
+                  className={`image-checkbox ${
+                    checkedImages.includes(image) ? "selected" : ""
+                  }`}
+                  onClick={() => handleClick(image)}
+                >
+                  <img
+                    className="image-element"
+                    src={`./img/${image}`}
+                    alt={image}
+                  />
                 </div>
               ))}
             </ul>
           </div>
         </div>
 
-        <div className='show-container'>
-          <div className='edit-container' ref={overlayContainerRef} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
-            <div className='selected-image-header'>
+        <div className="show-container">
+          <div
+            className="edit-container"
+            ref={overlayContainerRef}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+          >
+            <div className="selected-image-header">
               <button onClick={handleComplete}>
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
-                배경 제거</button>
+                배경 제거
+              </button>
               <button onClick={handleStitchImages}>
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
                 배경 붙이기
-                </button>
+              </button>
               <button onClick={handleMergeImages}>
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
                 편집 저장
-                </button>
+              </button>
             </div>
-            {selectedImage && <img className='selected-image' src={selectedImage} alt="Selected" draggable="false" />}
+            {/* {selectedImage && <img className='selected-image' src={selectedImage} alt="Selected" draggable="false" />} */}
+            {/* {(selectedImageForEdit || selectedImage) && (
+              <img
+                className="selected-image"
+                src={selectedImageForEdit || selectedImage}
+                alt="Selected"
+                draggable="false"
+              />
+            )} */}
+
+            <div>
+              <img
+                className="selected-image"
+                src={imageToUse}
+                alt="Selected"
+                draggable="false"
+              />
+              {console.log("사용된 이미지:", imageToUse)}
+            </div>
+
             {overlayImages.map((img, index) => (
               <ResizableBox
                 key={index}
                 width={img.width}
                 height={img.height}
                 onResizeStop={(e, { size }) => {
-                  setOverlayImages(prev =>
-                    prev.map((image, idx) => idx === index ? { ...image, width: size.width, height: size.height } : image)
+                  setOverlayImages((prev) =>
+                    prev.map((image, idx) =>
+                      idx === index
+                        ? { ...image, width: size.width, height: size.height }
+                        : image
+                    )
                   );
                 }}
                 className="overlay-image"
-                style={{ position: 'absolute', left: img.x_abs, top: img.y_abs }}
+                style={{
+                  position: "absolute",
+                  left: img.x_abs,
+                  top: img.y_abs,
+                }}
               >
-                <img  
+                <img
                   src={`/img_0/${img.imageUrl}`}
                   alt={`Overlay ${index}`}
                   draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                  style={{ width: '100%', height: '100%' }} // ResizableBox에 맞게 이미지 크기 조정
+                  style={{ width: "100%", height: "100%" }} // ResizableBox에 맞게 이미지 크기 조정
                   onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
                 />
               </ResizableBox>
             ))}
           </div>
-          <div className='removed-image-container'>
+          <div className="removed-image-container">
             <h2>스티커</h2>
             <div className="removed-image-list">
               {removedImages.map((removedImage, index) => (
                 <img
-                key={index}
-                src={`/img_0/${removedImage}`}
-                alt={`removedImage ${index}`}
-                className="removed-image"
-                draggable="true"
-                onDragStart={(e) => handleDragStart(e, removedImage)} />
-                ))}
+                  key={index}
+                  src={`/img_0/${removedImage}`}
+                  alt={`removedImage ${index}`}
+                  className="removed-image"
+                  draggable="true"
+                  onDragStart={(e) => handleDragStart(e, removedImage)}
+                />
+              ))}
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
-}
+};
 
-export default Edit;  
+export default Edit;

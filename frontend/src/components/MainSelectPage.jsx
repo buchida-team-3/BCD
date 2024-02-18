@@ -8,7 +8,7 @@ import { useImageData } from './ImageContext';
 import Navbar from './Navbar';
 
 function MainSelectPage() {
-  const [fetchAttempted, setFetchAttempted] = useState(false); // 요청 시도 상태 추가
+  const [ fetchAttempted, setFetchAttempted ] = useState(false); // 요청 시도 상태 추가
 
   const navigate = useNavigate(); // useNavigate 훅 사용
 
@@ -52,7 +52,6 @@ function MainSelectPage() {
       if (imageData.length === 0) {
         fetchImages();
       }
-      // fetchImages();
     }
   }, [ imageData, setImageData, fetchAttempted ]);
 
