@@ -36,9 +36,15 @@ router = APIRouter(
 )
 
 
-start_dir = "../frontend/public/img"
-# start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
+start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
 remove_dir = "../frontend/public/img_0"
+
+ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
+SECRET_KEY = "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"
+SERVICE_NAME =  "s3"
+REGION = "ap-northeast-2"
+BUCKET_NAME = "jungle-buchida-s3"
+s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
 
 @router.post("/group/album/upload")
@@ -181,11 +187,7 @@ def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_
     # start_dir: s3 이미지 경로
     #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
     # image_files = os.listdir(start_dir)
-    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
-    SECRET_KEY = "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"
-    SERVICE_NAME =  "s3"
-    REGION = "ap-northeast-2"
-    BUCKET_NAME = "jungle-buchida-s3"
+
     
     user_image = db.query(image_crud.Image).filter(
         image_crud.Image.user_id == current_user.id
@@ -198,42 +200,55 @@ def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_
     print(image_files)
     return image_files
 
+async def check_image_exists(s3_image_path):
+    try:
+        s3_client.head_object(Bucket=BUCKET_NAME, Key=s3_image_path)
+        return True  # 이미지가 존재함
+    except s3_client.exceptions.NoSuchKey:
+        return False  # 이미지가 존재하지 않음
+
+async def download_image_from_s3(s3_image_path):
+    obj = s3_client.get_object(Bucket=BUCKET_NAME, Key=s3_image_path)
+    return obj['Body'].read()
+
+async def upload_image_to_s3(image_bytes, s3_image_path):
+    s3_client.put_object(Bucket=BUCKET_NAME, Key=s3_image_path, Body=image_bytes)
 
 @router.post("/remove_background")
 async def remove_background(image_names: ImageNames):
-
     processed_images = []
-    for image_name in image_names.images:
+    for s3_image_url in image_names.images:
+        s3_image_path = s3_image_url[s3_image_url.find('amazonaws.com') + len('amazonaws.com') + 1:]
+        output_image_name = f'removed_{s3_image_path}'
+        
         # 이미 처리된 이미지가 있는지 확인
-        print('now : ', image_name)
-        if os.path.exists(f'{remove_dir}/removed_{image_name}'):
-            print(f"Image {image_name} already processed.")
-            processed_images.append(f'removed_{image_name}')
-            continue  # 이미 처리되었다면 다음 이미지로 넘어감
+        if await check_image_exists(output_image_name):
+            processed_images.append(f"https://{BUCKET_NAME}.s3.amazonaws.com/{output_image_name}")
+            continue
 
         try:
-            async with aiofiles.open(f'{start_dir}/{image_name}', 'rb') as image:
-                input_image = await image.read()
-            output_image = remove(input_image)
-            
+            # S3에서 이미지 다운로드
+            input_image = await download_image_from_s3(s3_image_path)
+            output_image = remove(input_image)  # 배경 제거 처리
+
             # 바이트 데이터를 Image 객체로 변환
             image = Image.open(BytesIO(output_image))
 
             # 이미지 크기 조정
             resized_image = image.resize((800, 800))
-            
-            # Image 객체를 바이트 데이터로 변환
+
+            # Image 객체를 바이트 데이터로 변환하여 S3에 업로드
             buf = BytesIO()
-            resized_image.save(buf, format='PNG')  # 저장 포맷을 지정 (원본 이미지의 포맷에 따라 변경 가능)
+            resized_image.save(buf, format='PNG')
             resized_image_bytes = buf.getvalue()
 
-            output_image_name = f'removed_{image_name}'
-            async with aiofiles.open(f'{remove_dir}/{output_image_name}', 'wb') as image:
-                await image.write(resized_image_bytes)
-            processed_images.append(output_image_name)
+            output_image_name = f'removed_{s3_image_path}'
+            await upload_image_to_s3(resized_image_bytes, output_image_name)
+            processed_images.append(f"https://{BUCKET_NAME}.s3.amazonaws.com/{output_image_name}")
+
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
-    print('end')
+
     return processed_images
 
 @router.post("/merge_images")
@@ -252,46 +267,45 @@ async def merge_images(data: ImageMergeData):
     
     # 합성된 이미지를 저장하거나 클라이언트에 직접 반환합니다.
     output_path = f"{start_dir}/overlay_{overlay.url}"
-    # if output_path:
-    #     cnt = 0
-    #     base_image.save(f'{output_path} ({cnt})')
     base_image_resized.save(output_path)
     return {"message": "Image merged successfully", "mergedImagePath": output_path}
 
 @router.post("/stitch_images")
-async def stitch_images(image_names: ImageNames):
+async def stitch_images(image_names: ImageNames, db=Depends(get_db)):
     images = []
-    for name in image_names.images:
-        print('now image name: ', name)
-        filepath = os.path.join(start_dir, name)
-        if not os.path.exists(filepath):
-            raise HTTPException(status_code=404, detail=f"Image {name} not found")
-        image = cv2.imread(filepath)
-        if image is None:
-            raise HTTPException(status_code=500, detail=f"Failed to load image {name}")
-        images.append(image)
 
-    # OpenCV를 사용한 이미지 스티칭
+    for s3_image_url in image_names.images:
+        # S3 경로와 로컬 경로 설정
+        s3_image_path = s3_image_url[s3_image_url.find('amazonaws.com') + len('amazonaws.com') + 1:]
+        local_image_path = s3_image_path.split('/')[-1]
+
+
+        # S3에서 이미지 다운로드
+        s3_client.download_file(BUCKET_NAME, s3_image_path, local_image_path)
+        image = cv2.imread(local_image_path)
+        if image is None:
+            raise HTTPException(status_code=500, detail=f"Failed to load image {s3_image_path}")
+        images.append(image)
+        # 로컬에 저장된 이미지 삭제
+        os.remove(local_image_path)
+
+    # 이미지 스티칭
     stitcher = cv2.Stitcher_create()
     (status, stitched) = stitcher.stitch(images)
-    
+
     if status == cv2.Stitcher_OK:
-        # 스티칭된 이미지를 임시 파일로 저장
-        base_filename = "stitched_result"
-        file_extension = ".jpg"
-        index = 0
-        stitched_filename = f"{base_filename}{file_extension}"
-        stitched_path = os.path.join(start_dir, stitched_filename)
+        # 스티칭된 이미지를 임시로 저장
+        stitched_filename = "stitched_result.jpg"
+        cv2.imwrite(stitched_filename, stitched)
+
+        # S3에 스티칭된 이미지 업로드
+        s3_stitched_image_path = f"stitched_images/{stitched_filename}"
+        s3_client.upload_file(stitched_filename, BUCKET_NAME, s3_stitched_image_path)
         
-        # 파일 이름이 중복되는 경우, 새로운 파일 이름 생성
-        while os.path.exists(stitched_path):
-            stitched_filename = f"{base_filename} ({index}){file_extension}"
-            stitched_path = os.path.join(start_dir, stitched_filename)
-            index += 1
-        cv2.imwrite(stitched_path, stitched)
-        
-        # 스티칭된 이미지의 경로나 URL 반환
-        return f"{start_dir}/{stitched_filename}"
+        # 임시 파일 삭제
+        os.remove(stitched_filename)
+        # 스티칭된 이미지의 S3 URL 반환
+        return f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}"
 
     else:
         raise HTTPException(status_code=500, detail="서로 붙일 수 없는 이미지를 선택했습니다. 다른 이미지를 선택해주세요.")
