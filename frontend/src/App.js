@@ -11,7 +11,8 @@ import LabelPage from './components/LabelPage';
 import AlbumListPage from './components/AlbumListPage';
 import CreateAlbumPage from './components/CreateAlbumPage';
 import MainSelectPage from './components/MainSelectPage';
-
+import { AlbumListPage2 } from './components/AlbumListPage2';
+import { CardPage } from './components/CardPage';
 
 function App() {
   return (
@@ -44,6 +45,10 @@ function App() {
 
           {/* 메인 선택 페이지(로그인 후 첫 화면) */}
           <Route path="/home" element={<MainSelectPage />} />
+
+          <Route path="/albumlist2" element={<AlbumListPage2 />} />
+
+          <Route path="/cardpage" element={<CardPage />} />
         </Routes>
       </Router>
     </ImageDataProvider>
