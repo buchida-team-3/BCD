@@ -29,10 +29,17 @@ async def album_create(_album_create: album_schema.AlbumCreate,
 
 
 @router.get("/api/album/data")
-async def get_album(album_title: str,
+async def album_get(album_title: str,
                     db=Depends(get_db), 
                     current_user: User = Depends(get_current_user)):
-    print("앨범조회요청받음")
-    result = album_crud.get_album(db, album_title=album_title)
+    result = album_crud.get_album(db, album_title=album_title, user=current_user)
     return JSONResponse(content=result)
+
+
+@router.get("/api/album/list")
+async def album_list_get(db=Depends(get_db),
+                         current_user: User = Depends(get_current_user)):
+    pass
+     
+    
     

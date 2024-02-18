@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from domain.album.album_schema import AlbumCreate, AlbumArticleCreate
 
-from domain.user.user_router import get_current_user
-
 from models import Album, AlbumArticle, Image, User
 
 
@@ -21,7 +19,7 @@ def create_album(db: Session, album_create: AlbumCreate, user: User):
     db.commit()
 
 
-def get_album(db: Session, album_title: str):
+def get_album(db: Session, album_title: str, user: User):
     """
     앨범 조회 함수
     - db: DB 세션 객체
@@ -58,6 +56,15 @@ def get_album(db: Session, album_title: str):
     album_dict["photos"] = photos_list
 
     return album_dict
+
+
+def get_album_list(db: Session, user: User):
+    """
+    앨범 리스트 조회 함수
+    - db: DB 세션 객체
+    - user: User 모델로 정의한 사용자 정보
+    """
+    return db.query(Album).filter(Album.user_id == user.id).all()
 
 
     
