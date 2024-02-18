@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import axios from "axios";
-
+import { useNavigate } from 'react-router-dom';
 import { React, Suspense, useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Preload, Image as ImageImpl, OrbitControls } from "@react-three/drei";
@@ -12,6 +12,7 @@ import bgImage from "./content/background.jpg";
 function Image(props) {
   const ref = useRef();
   const group = useRef();
+  const navigate = useNavigate();
 
   useFrame((state, delta) => {
     group.current.position.z = THREE.MathUtils.damp(
@@ -23,9 +24,10 @@ function Image(props) {
   });
 
   const handleClick = () => {
-    const imageName = props.url.split("/").pop().split(".").shift();
+    // const imageName = props.url.split("/").pop().split(".").shift();
+    const imageName = props.url;
     // window.location.href = `/edit/${imageName}`; // edit 페이지로 가되, 헤더에 이미지 이름을 넘겨줌
-    window.location.href = `/edit?selectedImageForEdit=${imageName}`;
+    navigate(`/edit?selectedImageForEdit=${imageName}`);
   };
 
   return (
@@ -126,7 +128,7 @@ export default function LabelContent({ filterLabel }) {
 
           // Context API: 이미지 데이터를 전역 상태로 관리
           setImageData(response.data);
-
+          console.log(`imageData : ${imageData}`);
           // 이미지 3장씩 그룹화, 전역으로 관리되는 이미지 데이터를 사용
           const image_path = response.data.map((image) => image.image_path);
           const formattedGroups = image_path

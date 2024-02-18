@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "./Edit.css";
@@ -29,21 +28,15 @@ const Edit = () => {
 
   const { imageData, setImageData } = useImageData();
 
-  console.log("imageData: ", imageData);
-
   const getQueryParams = () => {
     const queryParams = new URLSearchParams(window.location.search);
+    // const selectedImageForEditPath = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_01/";
     return {
-      selectedImage: queryParams.get("selectedImage"),
+      // selectedImage: selectedImageForEditPath + queryParams.get("selectedImageForEdit") + `.jpg`,
+      selectedImage: queryParams.get("selectedImageForEdit"),
     };
   };
 
-  // LabelContent.jsx에서 imageName 쿼리를 받는 코드
-  // -> 위의 코드와 통합해야 할 듯
-  const location = useLocation();
-  const queryParams2 = new URLSearchParams(location.search);
-  const selectedImageForEdit = queryParams2.get("selectedImageForEdit");
-  const selectedImageForEditPath = "";
 
   const LoadingModal = ({ isLoading }) => {
     if (!isLoading) return null;
@@ -59,43 +52,28 @@ const Edit = () => {
   };
 
   useEffect(() => {
-    console.log("imageData: ", imageData);
     const { selectedImage: querySelectedImage } = getQueryParams();
-
+    
     if (querySelectedImage) {
       setSelectedImage(decodeURIComponent(querySelectedImage));
     } else {
       setSelectedImage(editDefault);
     }
-    axios
-      .get("http://localhost:8000/api/images")
-      .then((response) => {
-        setImages(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching images:", error);
-      });
+    const imageUrls = imageData.map(img => img.image_path);
+    setImages(imageUrls); // 생성된 URL 목록을 상태에 저장
   }, [imageData]);
 
-  const handleClick = (imageName) => {
+  const handleClick = (image) => {
     if (showCheckboxes) {
-      if (checkedImages.includes(imageName)) {
-        setCheckedImages(checkedImages.filter((img) => img !== imageName));
+      if (checkedImages.includes(image)) {
+        setCheckedImages(checkedImages.filter((img) => img !== image));
       } else {
-        setCheckedImages([...checkedImages, imageName]);
+        setCheckedImages([...checkedImages, image]);
       }
     } else {
-      // 배경 제거 모드가 아닌 경우의 기존 로직
-      console.log(`${imageName} is selected.`);
-      axios
-        .get(`http://localhost:8000/api/images/${imageName}`)
-        .then((response) => {
-          setSelectedImage(response.data.replace("../frontend/public/", "./"));
-          console.log(response.data.filename);
-        })
-        .catch((error) => {
-          console.error("Error fetching image:", error);
-        });
+      // 서버 요청 없이 클라이언트 측에서 이미지 처리
+      console.log(`${image} is selected.`);
+      setSelectedImage(image); // 클릭한 이미지 URL을 selectedImage 상태에 저장
     }
   };
 
@@ -259,9 +237,6 @@ const Edit = () => {
     }
   };
 
-  const imageToUse = selectedImageForEdit || selectedImage;
-  console.log("imageToUse: ", imageToUse);
-
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
       <Navbar />
@@ -302,7 +277,7 @@ const Edit = () => {
                 >
                   <img
                     className="image-element"
-                    src={`./img/${image}`}
+                    src={image}
                     alt={image}
                   />
                 </div>
@@ -355,11 +330,10 @@ const Edit = () => {
             <div>
               <img
                 className="selected-image"
-                src={imageToUse}
+                src={selectedImage}
                 alt="Selected"
                 draggable="false"
               />
-              {console.log("사용된 이미지:", imageToUse)}
             </div>
 
             {overlayImages.map((img, index) => (
