@@ -127,6 +127,10 @@ const Edit = () => {
     try {
         const response = await axios.post("http://localhost:8000/stitch_images", {
           images: checkedImages, // 선택된 이미지들을 백엔드로 전송
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
         });
         // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
         console.log("Stitched image:", response.data.filename);
