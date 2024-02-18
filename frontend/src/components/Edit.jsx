@@ -81,8 +81,9 @@ const Edit = () => {
     setShowCheckboxes(true);
   };
 
-  const handleComplete = async (event) => {
+  const handleRemove = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8000/remove_background",
@@ -92,8 +93,16 @@ const Edit = () => {
       );
       setRemovedImages(response.data);
       console.log(response.data);
+      setIsLoading(false); // 2초 후 로딩 종료
     } catch (error) {
-      console.log("Error uploading images: ", error);
+      // 에러 메시지 표시
+      console.log(`error : ${error.response.data.detail}`);
+      if (error.response.data && error.response.data.detail) {
+        alert(error.response.data.detail);
+      } else {
+        alert("예기치 못한 오류가 발생했습니다.");
+      }
+      setIsLoading(false); // 2초 후 로딩 종료
     }
     // setRemovedImages(response.data);
 
@@ -118,6 +127,10 @@ const Edit = () => {
     try {
         const response = await axios.post("http://localhost:8000/stitch_images", {
           images: checkedImages, // 선택된 이미지들을 백엔드로 전송
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
         });
         // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
         console.log("Stitched image:", response.data.filename);
@@ -292,7 +305,7 @@ const Edit = () => {
             onDrop={handleDrop}
           >
             <div className="selected-image-header">
-              <button onClick={handleComplete}>
+              <button onClick={handleRemove}>
                 <span></span>
                 <span></span>
                 <span></span>

@@ -5,8 +5,8 @@ import os, cv2
 import subprocess
 
 from domain.image import image_crud
-from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, ImageMergeData
-from domain.image.image_crud import make_sample_dir, aws_upload, db_update
+from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, ImageMergeData, ImageStitch
+from domain.image.image_crud import make_sample_dir, aws_upload, db_update, db_edited_update
 
 # from domain.image.clustering_image import image_clustering
 from domain.image.get_location_and_date import get_location_and_date
@@ -28,6 +28,7 @@ from rembg import remove
 import numpy as np
 
 import boto3
+from botocore.exceptions import ClientError, NoCredentialsError, PartialCredentialsError
 from urllib.parse import urlparse
 import re
 from domain.image.theme_dict import theme
@@ -203,10 +204,19 @@ def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_
 
 async def check_image_exists(s3_image_path):
     try:
-        s3_client.head_object(Bucket=BUCKET_NAME, Key=s3_image_path)
-        return True  # 이미지가 존재함
-    except s3_client.exceptions.NoSuchKey:
-        return False  # 이미지가 존재하지 않음
+        response = s3_client.list_objects_v2(Bucket=BUCKET_NAME, Prefix=s3_image_path)
+        if 'Contents' in response and len(response['Contents']) > 0:
+            return True  # 이미지가 존재함
+        else:
+            return False  # 이미지가 존재하지 않음
+    except (NoCredentialsError, PartialCredentialsError) as e:
+        raise HTTPException(status_code=500, detail=f"Credentials issue: {str(e)}")
+    except ClientError as e:
+        error_code = e.response['Error']['Code']
+        if error_code == 'NoSuchBucket':
+            raise HTTPException(status_code=500, detail="Bucket does not exist.")
+        else:
+            raise HTTPException(status_code=500, detail=f"Unexpected S3 error: {str(e)}")
 
 async def download_image_from_s3(s3_image_path):
     obj = s3_client.get_object(Bucket=BUCKET_NAME, Key=s3_image_path)
@@ -226,7 +236,6 @@ async def remove_background(image_names: ImageNames):
         if await check_image_exists(output_image_name):
             processed_images.append(f"https://{BUCKET_NAME}.s3.amazonaws.com/{output_image_name}")
             continue
-
         try:
             # S3에서 이미지 다운로드
             input_image = await download_image_from_s3(s3_image_path)
@@ -240,7 +249,7 @@ async def remove_background(image_names: ImageNames):
 
             # Image 객체를 바이트 데이터로 변환하여 S3에 업로드
             buf = BytesIO()
-            resized_image.save(buf, format='JPEG')
+            resized_image.save(buf, format='PNG')
             resized_image_bytes = buf.getvalue()
 
             output_image_name = f'removed_{s3_image_path}'
@@ -271,7 +280,7 @@ async def generate_unique_filename(base_image_path, bucket_name):
             return potential_name  # 중복되지 않는 파일명 반환
         
 @router.post("/merge_images")
-async def merge_images(data: ImageMergeData):
+async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: User = Depends(get_current_user)):
     base_image_path = data.baseImage[data.baseImage.find('amazonaws.com') + len('amazonaws.com') + 1:]
     base_image_bytes = await download_image_from_s3(base_image_path)
     base_image = Image.open(BytesIO(base_image_bytes))
@@ -304,27 +313,9 @@ async def merge_images(data: ImageMergeData):
     return {"message": "Image merged successfully", "mergedImagePath": f"https://{BUCKET_NAME}.s3.amazonaws.com/{unique_filename}"}
 
 
-# @router.post("/merge_images")
-# async def merge_images(data: ImageMergeData):
-#     base_image = Image.open(data.baseImage)
-#     base_image_resized = base_image.resize((400, 400))
-#     for overlay in data.overlayImages:    
-#         # 각 "처리된 이미지"를 열고, 지정된 위치에 붙입니다.
-#         overlay_image_path = overlay.url.replace(f'{overlay.url}', f'{remove_dir}/{overlay.url}')
-#         overlay_image = Image.open(overlay_image_path)
-
-#         # 새로운 크기로 이미지 크기 조정
-#         overlay_image_resized = overlay_image.resize((overlay.width, overlay.height))
-
-#         base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized)
-    
-#     # 합성된 이미지를 저장하거나 클라이언트에 직접 반환합니다.
-#     output_path = f"{start_dir}/overlay_{overlay.url}"
-#     base_image_resized.save(output_path)
-#     return {"message": "Image merged successfully", "mergedImagePath": output_path}
 
 @router.post("/stitch_images")
-async def stitch_images(image_names: ImageNames, db=Depends(get_db)):
+async def stitch_images(image_names: ImageNames, db=Depends(get_db), current_user: User = Depends(get_current_user)):
     images = []
 
     for s3_image_url in image_names.images:
@@ -358,6 +349,11 @@ async def stitch_images(image_names: ImageNames, db=Depends(get_db)):
         # 임시 파일 삭제
         os.remove(stitched_filename)
         # 스티칭된 이미지의 S3 URL 반환
+        results_for_db ={
+                            "image_path": f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}",
+                        }
+        db_edited_update(db, update_db=ImageStitch(**results_for_db), user=current_user)
+
         return f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}"
 
     else:
