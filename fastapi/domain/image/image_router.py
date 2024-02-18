@@ -240,7 +240,7 @@ async def remove_background(image_names: ImageNames):
 
             # Image 객체를 바이트 데이터로 변환하여 S3에 업로드
             buf = BytesIO()
-            resized_image.save(buf, format='jpg')
+            resized_image.save(buf, format='JPEG')
             resized_image_bytes = buf.getvalue()
 
             output_image_name = f'removed_{s3_image_path}'
@@ -275,7 +275,7 @@ async def merge_images(data: ImageMergeData):
     base_image_path = data.baseImage[data.baseImage.find('amazonaws.com') + len('amazonaws.com') + 1:]
     base_image_bytes = await download_image_from_s3(base_image_path)
     base_image = Image.open(BytesIO(base_image_bytes))
-    base_image_resized = base_image.resize((400, 400))
+    # base_image_resized = base_image.resize((800, 800))
 
     for overlay in data.overlayImages:
         s3_image_path = overlay.url[overlay.url.find('amazonaws.com') + len('amazonaws.com') + 1:]
@@ -286,10 +286,12 @@ async def merge_images(data: ImageMergeData):
         overlay_image_resized = overlay_image.resize((overlay.width, overlay.height))
 
         # 지정된 위치에 이미지를 붙입니다. 마지막 인자는 "마스크"로, 투명도가 있는 이미지를 올바르게 처리하기 위해 사용됩니다.
-        base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
+        # base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
+        base_image.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
     # 합성된 이미지를 바이트로 변환
     buffer = BytesIO()
-    base_image_resized.save(buffer, format="PNG")
+    # base_image_resized.save(buffer, format="PNG")
+    base_image.save(buffer, format="JPEG")
     merged_image_bytes = buffer.getvalue()
 
     # 동적 파일명 생성 및 업로드
