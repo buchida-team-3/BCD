@@ -11,7 +11,7 @@ const Page = React.forwardRef(({ number, text, imageUrl, timestamp }, ref) => {
   return (
     <div className="page" ref={ref}>
       <div className="page-content">
-        <h2 className="page-header">Taken at: {new Date(timestamp).toLocaleString()}</h2>
+        <h2 className="page-header">{timestamp}</h2>
         <div className="page-image" style={backgroundImageStyle}></div>
         <div className="page-text">{text}</div>
         <div className="page-footer">{number}</div>
