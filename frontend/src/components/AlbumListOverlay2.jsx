@@ -1,16 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAlbumList } from './AlbumListContext';
 import CreateAlbumModal from "./CreateAlbumModal";
+import { useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom';
 
 function AlbumListOverlay() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
+  const navigate = useNavigate();
 
   const { hoveredCard } = useAlbumList();
   // 뒤로 가기 함수
   const goBack = () => {
-      window.history.back();
+      navigate(-1);
   };
 
   // 모달창 열기 수정
