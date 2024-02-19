@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from domain.image.image_schema import ImageUpload, ImageStitch
-from models import Image, User, Edited
+from domain.image.image_schema import ImageUpload, ImageRemoved
+from models import Image, User, ImageRemoved
 
 import os
 import boto3
@@ -46,6 +46,7 @@ def db_update(db: Session, update_db: ImageUpload, user: User):
             # image_lable_feature = update_db.image_lable_feature,
             image_lable_rgb = update_db.image_lable_rgb,
             user = user,
+            image_edited = update_db.image_edited,
             class_name = update_db.class_name,
             image_meta = update_db.image_meta,
             )
@@ -53,12 +54,11 @@ def db_update(db: Session, update_db: ImageUpload, user: User):
     db.commit()
     
 
-
-def db_edited_update(db: Session, update_db: ImageStitch, user: User):
-    db_image_edited = Edited(
+def db_removed_update(db: Session, update_db: ImageRemoved, user: User):
+    db_image_removed = ImageRemoved(
             image_path = update_db.image_path,
             user = user,
             )
-    db.add(db_image_edited)
+    db.add(db_image_removed)
     db.commit()
     
