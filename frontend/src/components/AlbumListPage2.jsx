@@ -8,6 +8,8 @@ import { easing } from 'maath'
 import './AlbumListUtil.jsx'
 import bgImage from './content/background.jpg';
 
+import { AlbumListProvider } from './AlbumListContext';
+
 import AlbumListOverlay2 from './AlbumListOverlay2.jsx'
 import AlbumListCard from './AlbumListCard.jsx'
 import AlbumListRig from './AlbumListRig.jsx'
@@ -17,8 +19,11 @@ import Navbar from './Navbar.jsx'
 
 export const AlbumListPage2 = () => (
   <>
-  <Navbar />
+  <AlbumListProvider>
+    <Navbar />
   <AlbumListContent2 />
   <AlbumListOverlay2 />
+  </AlbumListProvider>
+  
   </>
 )
