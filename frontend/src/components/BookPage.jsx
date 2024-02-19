@@ -6,6 +6,7 @@ import "./BookPage.css";
 import PageCover from "./PageCover";
 import Page from "./Page";
 import EditModal from "./EditModal";
+import bgImage from './content/background.jpg';
 
 function BookPage(props) {
   const [albumData, setAlbumData] = useState({ albumTitle: "", photos: [] });
@@ -129,7 +130,7 @@ const goBackToAlbumList = () => {
   }
 
   return (
-    <div>
+    <div style={{ backgroundImage: `url(${bgImage})`, width: '100%', height: '120vh' }}>
       <button className="book-button" onClick={openEditModal}>글 수정</button>
       <button className="book-button" onClick={navigateToEdit}>이미지 수정</button>
       <button className="book-button" onClick={goBackToAlbumList} style={{float: 'right'}}>앨범 목록</button>
