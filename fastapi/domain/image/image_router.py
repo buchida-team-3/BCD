@@ -112,7 +112,8 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
                             "image_name": results_aws[i].split('/')[-1],
                             "class_name": str(results_yolo.get(results_aws[i].split('/')[-1])),
                             "image_lable_rgb": str(results_rgb[i]['image_label']),
-                            "image_meta": ', '.join(map(str, results_image_meta[i]))
+                            "image_meta": ', '.join(map(str, results_image_meta[i])),
+                            "image_edited": False,
                         }
         db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
     return JSONResponse(content=results)

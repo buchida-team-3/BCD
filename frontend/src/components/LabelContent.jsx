@@ -310,7 +310,7 @@ export default function LabelContent({ filterLabel }) {
       dpr={[1, 1.5]}
       style={{ backgroundImage: `url(${bgImage})` }}
     >
-      <axesHelper scale={10} />
+      {/* <axesHelper scale={10} /> */}
       <OrbitControls />
       <Suspense fallback={null}>
         <ScrollControls
