@@ -2,7 +2,7 @@
 이미지 스키마
 """
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 class ImageUpload(BaseModel):
     # id: int
@@ -10,9 +10,10 @@ class ImageUpload(BaseModel):
     image_path: str
     image_name: str
     # image_lable_feature: int
-    image_lable_rgb: int
-    class_name: str
-    image_meta: str
+    image_lable_rgb: Optional[int] = None
+    image_edited: bool
+    class_name: Optional[str] = None
+    image_meta: Optional[str] = None
 
 class ImageNames(BaseModel):
     images: List[str]
@@ -28,5 +29,5 @@ class ImageMergeData(BaseModel):
     baseImage: str
     overlayImages: List[OverlayImage] # 예: [{"url": "image_url", "x": 100, "y": 200}, ...]
 
-class ImageStitch(BaseModel):
+class ImageRemoved(BaseModel):
     image_path: str

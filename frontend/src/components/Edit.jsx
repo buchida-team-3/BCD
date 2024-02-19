@@ -23,6 +23,8 @@ const Edit = () => {
   const [offsetY, setOffsetY] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  
+  const [ fetchAttempted, setFetchAttempted ] = useState(false); // 요청 시도 상태 추가
 
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
@@ -49,6 +51,29 @@ const Edit = () => {
         </div>
       </div>
     );
+  };
+
+  const fetchImages = async () => {
+    // 모든 이미지 미리 비동기로 로딩하기
+    const endpoint = '/api/all'
+    try {
+      const response = await axios.get(`http://localhost:8000${endpoint}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+          'Label': '/api/all'
+        }
+      });
+
+      console.log('/mainselect 이미지 데이터 로드:', response.data);
+      
+      // 이미지 데이터의 전역 상태 관리
+      setImageData(response.data);
+      setFetchAttempted(true); // 요청 실패 시에도 상태 업데이트
+
+    } catch (error) {
+      console.error('이미지 데이터 로드 중 오류 발생:', error);
+      setFetchAttempted(true); // 요청 실패 시에도 상태 업데이트
+    }
   };
 
   useEffect(() => {
@@ -89,6 +114,10 @@ const Edit = () => {
         "http://localhost:8000/remove_background",
         {
           images: checkedImages,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
         }
       );
       setRemovedImages(response.data);
@@ -231,17 +260,21 @@ const Edit = () => {
     console.log("overlay: ", overlayImages);
     setIsLoading(true);
     try {
-      setTimeout(async () => {
-        const response = await axios.post(
-          "http://localhost:8000/merge_images",
-          {
-            baseImage: selectedImage,
-            overlayImages,
+      const response = await axios.post(
+        "http://localhost:8000/merge_images",
+        {
+          baseImage: selectedImage,
+          overlayImages,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
           }
-        );
-        console.log("Merged image:", response.data);
-        setIsLoading(false); // 2초 후 로딩 종료
-      }, 2000);
+        }
+      );
+      console.log("Merged image:", response.data);
+      setIsLoading(false); // 2초 후 로딩 종료
+      setOverlayImages([]); // 새로운 이미지 합성 시 기존 이미지 초기화
+      fetchImages();
     } catch (error) {
       console.error("Error merging images:", error);
       setIsLoading(false); // 2초 후 로딩 종료

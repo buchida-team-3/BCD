@@ -5,8 +5,8 @@ import os, cv2
 import subprocess
 
 from domain.image import image_crud
-from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, ImageMergeData, ImageStitch
-from domain.image.image_crud import make_sample_dir, aws_upload, db_update, db_edited_update
+from domain.image.image_schema import ImageUpload, ImageNames, OverlayImage, ImageMergeData, ImageRemoved
+from domain.image.image_crud import make_sample_dir, aws_upload, db_update, db_removed_update
 
 # from domain.image.clustering_image import image_clustering
 from domain.image.get_location_and_date import get_location_and_date
@@ -32,6 +32,8 @@ from botocore.exceptions import ClientError, NoCredentialsError, PartialCredenti
 from urllib.parse import urlparse
 import re
 from domain.image.theme_dict import theme
+from datetime import datetime
+
 
 router = APIRouter(
     # prefix="/image",
@@ -226,7 +228,7 @@ async def upload_image_to_s3(image_bytes, s3_image_path):
     s3_client.put_object(Bucket=BUCKET_NAME, Key=s3_image_path, Body=image_bytes, ContentType='image/jpeg')
 
 @router.post("/remove_background")
-async def remove_background(image_names: ImageNames):
+async def remove_background(image_names: ImageNames, db=Depends(get_db), current_user: User = Depends(get_current_user)):
     processed_images = []
     for s3_image_url in image_names.images:
         s3_image_path = s3_image_url[s3_image_url.find('amazonaws.com') + len('amazonaws.com') + 1:]
@@ -256,9 +258,12 @@ async def remove_background(image_names: ImageNames):
             await upload_image_to_s3(resized_image_bytes, output_image_name)
             processed_images.append(f"https://{BUCKET_NAME}.s3.amazonaws.com/{output_image_name}")
 
+            results_for_db ={
+                                "image_path": f"https://{BUCKET_NAME}.s3.amazonaws.com/{output_image_name}",
+                            }
+            db_removed_update(db, update_db=ImageRemoved(**results_for_db), user=current_user)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
-
     return processed_images
 
 
@@ -296,7 +301,7 @@ async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: U
 
         # 지정된 위치에 이미지를 붙입니다. 마지막 인자는 "마스크"로, 투명도가 있는 이미지를 올바르게 처리하기 위해 사용됩니다.
         # base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
-        base_image.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
+        base_image.paste(overlay_image_resized, (int(overlay.x)-100, int(overlay.y)-300), overlay_image_resized.convert('RGBA'))
     # 합성된 이미지를 바이트로 변환
     buffer = BytesIO()
     # base_image_resized.save(buffer, format="PNG")
@@ -307,10 +312,17 @@ async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: U
     unique_filename = await generate_unique_filename(data.baseImage, BUCKET_NAME)
     await upload_image_to_s3(merged_image_bytes, unique_filename)
 
+    results_for_db ={
+                        "image_path": f"https://{BUCKET_NAME}.s3.amazonaws.com/{unique_filename}",
+                        "image_name": unique_filename,
+                        "image_edited": True,         
+                    }
+    db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
+
     print('========================================')
     print('now : ', unique_filename)
     print('========================================')
-    return {"message": "Image merged successfully", "mergedImagePath": f"https://{BUCKET_NAME}.s3.amazonaws.com/{unique_filename}"}
+    return f"https://{BUCKET_NAME}.s3.amazonaws.com/{unique_filename}"
 
 
 
@@ -338,21 +350,26 @@ async def stitch_images(image_names: ImageNames, db=Depends(get_db), current_use
     (status, stitched) = stitcher.stitch(images)
 
     if status == cv2.Stitcher_OK:
-        # 스티칭된 이미지를 임시로 저장
-        stitched_filename = "stitched_result.jpg"
+        # 현재 시간을 기반으로 고유한 파일명 생성
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        stitched_filename = f"stitched_result_{timestamp}.jpg"
         cv2.imwrite(stitched_filename, stitched)
 
         # S3에 스티칭된 이미지 업로드
         s3_stitched_image_path = f"stitched_images/{stitched_filename}"
-        s3_client.upload_file(stitched_filename, BUCKET_NAME, s3_stitched_image_path)
-        
+        s3_client.upload_file(stitched_filename, BUCKET_NAME, s3_stitched_image_path, ExtraArgs={'ContentType': 'image/jpeg', 'ContentDisposition': 'inline'})
+        print('===============================================================')    
+        print(f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}")
+        print('===============================================================')    
         # 임시 파일 삭제
         os.remove(stitched_filename)
         # 스티칭된 이미지의 S3 URL 반환
         results_for_db ={
                             "image_path": f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}",
+                            "image_name": s3_stitched_image_path,
+                            "image_edited": True,
                         }
-        db_edited_update(db, update_db=ImageStitch(**results_for_db), user=current_user)
+        db_update(db, update_db=ImageUpload(**results_for_db), user=current_user)
 
         return f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}"
 
