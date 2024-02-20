@@ -1,8 +1,22 @@
+// AlbumListOverlay2.jsx 수정
+
 import React, { useState, useRef, useEffect } from "react";
 import { useAlbumList } from './AlbumListContext';
 import CreateAlbumModal from "./CreateAlbumModal";
 import { useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom';
+
+// URL과 텍스트 매핑 객체 예시입니다. 실제 URL을 사용하도록 변경해주세요.
+const cardTexts = {
+  "/image1.jpeg": "첫 번째 이미지",
+  "/image2.jpeg": "두 번째 이미지",
+  "/image3.jpeg": "세 번째 이미지",
+  "/image4.jpeg": "네 번째 이미지",
+  "/image5.jpeg": "다섯 번째 이미지",
+  "/image6.jpeg": "여섯 번째 이미지",
+  "/image7.jpeg": "일곱 번째 이미지",
+  // 나머지 이미지에 대한 텍스트 추가...
+};
 
 function AlbumListOverlay() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,24 +24,21 @@ function AlbumListOverlay() {
   const navigate = useNavigate();
 
   const { hoveredCard } = useAlbumList();
-  // 뒤로 가기 함수
+
   const goBack = () => {
       navigate(-1);
   };
 
-  // 모달창 열기 수정
   const openModal = () => {
     document.body.style.overflow = 'hidden';
     setIsModalOpen(true);
   };
 
-  // 모달창 닫기 수정
   const closeModal = () => {
     document.body.style.overflow = 'auto';
     setIsModalOpen(false);
   };
 
- // 모달 외부 클릭 감지하여 닫기
  useEffect(() => {
   const handleClickOutside = (event) => {
     if (isModalOpen && modalRef.current && !modalRef.current.contains(event.target)) {
@@ -43,12 +54,12 @@ function AlbumListOverlay() {
     <div style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
       {hoveredCard && (
         <>
-          <div style={{ position: 'absolute', bottom: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '50px', color: "white" }}>
-            여기에 원하는 텍스트
+          <div style={{ position: 'absolute', bottom: '80%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '50px', color: "white" }}>
+            {cardTexts[hoveredCard] || "기본 텍스트"} {/* 호버된 카드에 해당하는 텍스트를 동적으로 표시 */}
           </div>
-          <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
+          {/* <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
             수정하기
-          </button>
+          </button> */}
         </>
       )}
       <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '80px', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>

@@ -38,7 +38,7 @@ function App() {
           <Route path="/book" element={<BookPage />} />
 
           {/* 필터링 페이지 */}
-          <Route path="/labelpage" element={<LabelPage />} />
+          <Route path="/home" element={<LabelPage />} />
 
           {/* 앨범목록 페이지 */}
           {/* <Route path="/albumlist" element={<AlbumListPage />} /> */}
@@ -46,7 +46,7 @@ function App() {
           <Route path="/createalbum" element={<CreateAlbumPage />} />
 
           {/* 메인 선택 페이지(로그인 후 첫 화면) */}
-          <Route path="/home" element={<MainSelectPage />} />
+          {/* <Route path="/home" element={<MainSelectPage />} /> */}
 
           <Route path="/albumlist" element={<AlbumListPage2 />} />
 

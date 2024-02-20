@@ -94,7 +94,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
       <input type="file" ref={fileInputRef} onChange={handleChange} style={{ display: "none" }} multiple />
       <button onClick={openModal} style={{ position: "absolute", bottom: 43, left: 80, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>앨범 생성</button>
       <button onClick={uploadFiles} style={{ position: "absolute", bottom: 43, right: 80, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>업로드</button>
-      <button onClick={onToggleFilterLabel} style={{ position: "absolute", top: 40, left: 40, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>{filterLabel === "All" ? "전체보기" : "정렬하기"}</button>
+      {/* <button onClick={onToggleFilterLabel} style={{ position: "absolute", top: 40, left: 40, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>{filterLabel === "All" ? "전체보기" : "정렬하기"}</button> */}
       {isModalOpen && ReactDOM.createPortal(
   <div ref={modalRef} onClick={(e) => e.stopPropagation()} style={{zIndex: 10000, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
     <CreateAlbumModal onClose={closeModal} />
