@@ -13,6 +13,10 @@ body,
   padding: 0;
 }
 
+html {
+  overflow: hidden;
+}
+
 body {
   overscroll-behavior: none;
   background: #efefef;
