@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './Navbar.css';
 import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import logo from './content/logo.png';
-import bgImage from './content/background.jpg'
 
 function Navbar() {
     const [isNavExpanded, setIsNavExpanded] = useState(false); // 네비게이션바 확장 상태 관리
@@ -48,7 +47,6 @@ function Navbar() {
     return (
         <div className="navbar">
             {/* 로고 클릭 시 handleLogoClick 함수 실행 */}
-            <img src={bgImage} alt="background" className="background-image" />
             <img src={logo} className="navbar-logo" alt="Logo" onClick={toggleNav} />
             <div className={`navbar-menu ${isNavExpanded ? 'expanded' : 'collapsed'}`}>
                 <a className='link-button' onClick={handleHomeClick}>홈</a>
