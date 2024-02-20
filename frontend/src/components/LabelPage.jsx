@@ -6,7 +6,9 @@ import { ScrollControls, Scroll, useScroll } from "./LabelScrollControls";
 
 import Navbar from "./Navbar";
 import LabelOverlay from "./LabelOverlay";
-import LabelContent from "./LabelContent";
+// import LabelContent from "./LabelContent";
+
+import LabelContent2 from "./LabelContent2";
 
 import "./LabelPage.css";
 
@@ -22,7 +24,8 @@ function LabelPage() {
   return (
     <>
       <Navbar />
-      <LabelContent filterLabel={filterLabel} />
+      {/* <LabelContent filterLabel={filterLabel} /> */}
+      <LabelContent2 filterLabel={filterLabel} />
       <LabelOverlay
         onToggleFilterLabel={toggleFilterLabel}
         filterLabel={filterLabel}
