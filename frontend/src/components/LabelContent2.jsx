@@ -79,9 +79,8 @@ export default function LabelContent({ filterLabel }) {
 
     // console.log("imageData:", imageData);
     // imageData.map((image) => console.log(image.image_path));
-    
   }, [filterLabel, setImageData, imageData]);
-  
+
   // const images = Array.from({ length: 50 }, (_, i) => ({
   //   src: `https://picsum.photos/id/${Math.round(Math.random() * 110)}/800/600`,
   //   alt: `Image ${i + 1}`,
@@ -89,10 +88,14 @@ export default function LabelContent({ filterLabel }) {
 
   const images = imageData.map((image, index) => ({
     src: image.image_path,
-    alt: `Image ${index + 1}`
-
+    alt: `Image ${index + 1}`,
   }));
-  console.log("images:", images);
 
-  return <Grid images={images} width={1800} height={1200} />;
+  return (
+    <>
+      <div className="grid-container">
+        <Grid images={images} width={1400} height={800} />
+      </div>
+    </>
+  );
 }
