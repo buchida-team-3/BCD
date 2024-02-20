@@ -5,7 +5,8 @@ import LoginForm from './LoginForm';
 function LoginContainer() {
     return (
         <div className="login-container">
-            <LoginForm />
+            <div className={'logo'}> 붙이다.</div>
+            <LoginForm/>
         </div>
     );
 }

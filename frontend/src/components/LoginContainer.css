@@ -1,7 +1,6 @@
 .login-container {
     width: 400px;
     height: 500px;
-    margin: 20px auto;
     padding: 25px;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -11,5 +10,14 @@
     align-items: center;
     justify-content: center;
     min-height: 30vh;
-    margin-top: 10vh;
+    margin: 10vh auto 20px;
+    background: white;
+}
+
+.logo {
+    margin-bottom: 20px;
+    color: black;
+    font-family: 'Cafe24Shiningstar', serif;
+    font-size: 3rem;
+    font-weight: 900;
 }

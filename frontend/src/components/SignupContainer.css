@@ -8,8 +8,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    /* 페이지 중앙 정렬을 위한 스타일 */
-    margin: auto;
-    margin-top: 10vh;
+    min-height: 30vh;
+    margin: 10vh auto 20px;
+    background: white;
 }

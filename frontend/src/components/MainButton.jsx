@@ -6,7 +6,7 @@ function MainButton() {
     const navigate = useNavigate();
     return (
         <button className="main-login-button" onClick={() => navigate('/loginandsignup')}>
-            로그인
+            시작하기
         </button>
     );
 }
