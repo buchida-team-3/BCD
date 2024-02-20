@@ -16,6 +16,10 @@ function MainSelectPage() {
   const handleAlbumCreateClick = () => {
     navigate('/labelpage'); // /labelpage 경로로 이동
   };
+  // cardpage2 개발중
+  // const handleAlbumCreateClick = () => {
+  //   navigate('/cardpage2'); // /labelpage 경로로 이동
+  // };
 
   // "Album List" 버튼 클릭 핸들러
   const handleAlbumListClick = () => {

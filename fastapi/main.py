@@ -40,7 +40,6 @@ app.include_router(album_router.router)
 @app.get("/main")
 def main_page():
     # html_file_path = "../yongjae/mainpage.html"
-    # TODO: index.html 파일을 읽어서 리턴
     try:
         # with open(html_file_path, "r") as f:
         #     return HTMLResponse(content=f.read(), status_code=200)
