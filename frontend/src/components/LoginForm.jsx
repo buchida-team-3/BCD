@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './LoginForm.css';
 
-function LoginForm() {
+function LoginForm(props) {
     const [credentials, setCredentials] = useState({
         username: '',
         password: ''
@@ -51,29 +51,32 @@ function LoginForm() {
     };
 
     return (
-        <form className='login-form' onSubmit={handleSubmit}>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="아이디"
-                className="login-input"
-                value={credentials.username}
-                onChange={handleInputChange}
-            />
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="비밀번호"
-                className="login-input"
-                value={credentials.password}
-                onChange={handleInputChange}
-            />
+        <>
+            <form className='login-form' onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="아이디"
+                    className="login-input"
+                    value={credentials.username}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="비밀번호"
+                    className="login-input"
+                    value={credentials.password}
+                    onChange={handleInputChange}
+                />
             <div className="button-link-container">
-                <input type="submit" value="로그인" className="login-confirm-button" />
+                <button type="submit" className="login-confirm-button">로그인</button>
+                <button type="button" className="login-confirm-button" onClick={props.mode}>회원가입</button>
             </div>
-        </form>
+            </form>
+        </>
     );
 }
 
