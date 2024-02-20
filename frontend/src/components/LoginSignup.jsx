@@ -20,7 +20,6 @@ function LoginSignup() {
   return (
     <div className="login-signup-container">
       <NavbarBefore />
-      <img src={bgImage} alt="background" className="background-image" />
       <div className={`login-signup ${isVisible ? "show" : ""}`}>
         $
         {mode === "login" ? (
