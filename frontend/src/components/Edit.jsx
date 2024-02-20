@@ -206,6 +206,27 @@ const Edit = () => {
     ]);
   };
 
+  const handleStickerClick = (imageUrl) => {
+    const image = new Image();
+    image.src = imageUrl;
+    image.onload = () => {
+      // 이미지 로드가 완료되면 이미지 크기를 얻을 수 있음
+      const stickerWidth = image.width;
+      const stickerHeight = image.height;
+  
+      // 선택된 이미지의 좌측 하단 모서리 위치를 기준으로 스티커의 위치를 설정
+      const selectedImageRect = overlayContainerRef.current.getBoundingClientRect();
+      const x = 0; // 선택된 이미지의 좌측 모서리에 맞춤
+      const y = selectedImageRect.height - stickerHeight; // 선택된 이미지의 하단 모서리에 맞춤
+      console.log(`selectedImageRect.height : ${selectedImageRect.height}`);
+      console.log(`stickerHeight : ${stickerHeight}`);
+      // 오버레이 이미지 목록에 새 이미지 추가
+      setOverlayImages((prev) => [
+        ...prev,
+        { imageUrl, x, y, width: stickerWidth, height: stickerHeight },
+      ]);
+    };
+  };
   // 드래그 시작 처리
   const handleDragImageStart = (e, index) => {
     const rect = e.target.getBoundingClientRect();
@@ -290,7 +311,7 @@ const Edit = () => {
         <div className="image-container-list">
           <div className="image-container-navbar">
             {!showCheckboxes && (
-              <button onClick={handleCheckBox}>
+              <button className="edit-button"  onClick={handleCheckBox}>
                 <span></span>
                 <span></span>
                 <span></span>
@@ -299,7 +320,7 @@ const Edit = () => {
               </button>
             )}
             {showCheckboxes && (
-              <button onClick={handleCancel}>
+              <button className="edit-button"  onClick={handleCancel}>
                 <span></span>
                 <span></span>
                 <span></span>
@@ -309,7 +330,7 @@ const Edit = () => {
             )}
           </div>
 
-          <div>
+          <div className="image-box">
             <ul className="image-list">
               {images.map((image) => (
                 <div
@@ -338,21 +359,21 @@ const Edit = () => {
             onDrop={handleDrop}
           >
             <div className="selected-image-header">
-              <button onClick={handleRemove}>
+              <button className="edit-button" onClick={handleRemove}>
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
                 배경 제거
               </button>
-              <button onClick={handleStitchImages}>
+              <button className="edit-button" onClick={handleStitchImages}>
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
                 배경 붙이기
               </button>
-              <button onClick={handleMergeImages}>
+              <button className="edit-button" onClick={handleMergeImages}>
                 <span></span>
                 <span></span>
                 <span></span>
@@ -421,6 +442,7 @@ const Edit = () => {
                   alt={`removedImage ${index}`}
                   className="removed-image"
                   draggable="true"
+                  onClick={() => handleStickerClick(removedImage)} // 클릭 이벤트에 핸들러 연결
                   onDragStart={(e) => handleDragStart(e, removedImage)}
                 />
               ))}
