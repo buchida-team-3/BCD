@@ -21,7 +21,7 @@ router = APIRouter(
     # prefix="/api/user",
 )
 
-@router.post("/signup/submit", status_code=status.HTTP_201_CREATED)
+@router.post("/signup/submit", status_code=status.HTTP_201_CREATED, tags=["user"])
 def user_create(_user_create: user_schema.UserCreate, db: Session = Depends(get_db)):
     
     # 중복 회원 예외 처리
@@ -32,7 +32,7 @@ def user_create(_user_create: user_schema.UserCreate, db: Session = Depends(get_
     user_crud.create_user(db, user_create=_user_create)
 
 # response_model: API의 응답값에 대한 스키마를 정의
-@router.post("/login", response_model=user_schema.Token)
+@router.post("/login", response_model=user_schema.Token, tags=["user"])
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), 
                            db: Session = Depends(get_db)):
 # 로그인 api의 입력항목인 username, password를 OAuth2PasswordRequestForm 통해 받아옴

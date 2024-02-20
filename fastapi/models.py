@@ -44,13 +44,14 @@ class AlbumArticle(Base):
     __tablename__ = "album_article"
     
     id = Column(Integer, primary_key=True)
-    article_title = Column(String, nullable=False)
-    article_content = Column(Text, nullable=False)
-    ariticle_page = Column(Integer, nullable=False)
+    article_title = Column(String, nullable=False) # 앨범 제목
+    article_content = Column(Text, nullable=True)
+    ariticle_page = Column(Integer, nullable=True)
     album_id = Column(Integer, ForeignKey("album.id"))
     album = relationship("Album", backref="album_article")
     user_id = Column(Integer, ForeignKey("user.id"))
     user = relationship("User", backref="album_article")
+    # image_path = Column(String, nullable=True)
 
 class ImageRemoved(Base):
     __tablename__ = "edited"

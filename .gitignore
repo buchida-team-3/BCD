@@ -19,3 +19,4 @@ frontend/public/img*
 fastapi/domain/image/myphotos
 fastapi/domain/image/image_process/samples/*
 fastapi/query_tester.py
+fastapi/https:
