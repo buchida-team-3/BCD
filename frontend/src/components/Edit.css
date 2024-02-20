@@ -130,6 +130,17 @@ button span:nth-child(4){
 .image-container-navbar {
   display: flex;
   justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.image-container-navbar button {
+  padding: 40px;
+  display: flex; /* Use flexbox to align text */
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
+  font-size: 25px; /* Keep the font size as is */
+  line-height: normal; /* Set line-height to normal for flexbox alignment */
+  /* Other styles remain the same */
 }
 
 .selected-image {
