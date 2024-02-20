@@ -16,6 +16,7 @@ import { CardPage } from './components/CardPage';
 // import { CardPage2 } from './components/CardPage2';
 import CardPage2 from './components/CardPage2';
 import LabelPage2 from './components/LabelPage2';
+import LabelPage3 from './components/LabelPage3';
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
           <Route path="/book" element={<BookPage />} />
 
           {/* 필터링 페이지 */}
-          <Route path="/home" element={<LabelPage />} />
+          <Route path="/album" element={<LabelPage />} />
 
           {/* 앨범목록 페이지 */}
           {/* <Route path="/albumlist" element={<AlbumListPage />} /> */}
@@ -56,6 +57,7 @@ function App() {
           <Route path="/cardpage2" element={<CardPage2 />} />
 
           <Route path="/labelpage2" element={<LabelPage2 />} />
+          <Route path="/aIbum" element={<LabelPage3 />} />
         </Routes>
       </Router>
     </ImageDataProvider>
