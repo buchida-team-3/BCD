@@ -9,6 +9,8 @@ images/*.png
 *.DS_Store
 frontend/node_modules
 frontend/public/*.jpeg
+frontend/src/mocks
+frontend/public/mockServiceWorker.js
 alembic/versions/*
 *.db
 fastapi/migrations/*
