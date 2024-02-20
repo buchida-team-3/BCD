@@ -1,21 +1,40 @@
+@font-face {
+    font-family: 'Cafe24Shiningstar';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Shiningstar.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     margin: 0;
     padding: 0;
 }
 
-.container {
-    position: relative;
-    width: 100%;
+.main-container {
+    display: flex;
+    flex-direction: column;
     height: 100vh;
-    overflow: hidden;
+    background-image: url("./content/background.jpg");
+    background-size: cover;
 }
 
-.background-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
+.title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20vh auto 0;
+}
+
+.title{
+    color: white;
+    font-family: 'Cafe24Shiningstar', serif;
+    font-size: 15rem;
+    font-weight: 900;
+}
+
+.subTitle{
+    color: white;
+    font-family: 'Cafe24Shiningstar', serif;
+    font-size: 4.5rem;
+    font-weight: 500;
 }

@@ -16,6 +16,10 @@ function MainSelectPage() {
   const handleAlbumCreateClick = () => {
     navigate('/labelpage'); // /labelpage 경로로 이동
   };
+  // cardpage2 개발중
+  // const handleAlbumCreateClick = () => {
+  //   navigate('/cardpage2'); // /labelpage 경로로 이동
+  // };
 
   // "Album List" 버튼 클릭 핸들러
   const handleAlbumListClick = () => {
@@ -60,16 +64,15 @@ function MainSelectPage() {
     <div>
       <Navbar />
       <div className="select-container">
-      <div className="select-button-group">
-        <img src={bgImage} alt="background" className="background-image" />
-        <button className="select-button" onClick={handleAlbumCreateClick}>
-          앨범 생성
-        </button>
-        <button className="select-button" onClick={handleAlbumListClick}>
-          앨범 리스트
-        </button>
+        <div className="select-button-group">
+          <button className="select-button" onClick={handleAlbumCreateClick}>
+            앨범 생성
+          </button>
+          <button className="select-button" onClick={handleAlbumListClick}>
+            앨범 리스트
+          </button>
+        </div>
       </div>
-    </div>
     </div>
     
   );

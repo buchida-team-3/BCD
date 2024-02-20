@@ -9,6 +9,8 @@ images/*.png
 *.DS_Store
 frontend/node_modules
 frontend/public/*.jpeg
+frontend/src/mocks
+frontend/public/mockServiceWorker.js
 alembic/versions/*
 *.db
 fastapi/migrations/*
@@ -19,4 +21,6 @@ frontend/public/img*
 fastapi/domain/image/myphotos
 fastapi/domain/image/image_process/samples/*
 fastapi/query_tester.py
+.idea/
+
 fastapi/https:

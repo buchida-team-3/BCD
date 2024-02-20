@@ -13,6 +13,11 @@ import CreateAlbumPage from './components/CreateAlbumPage';
 import MainSelectPage from './components/MainSelectPage';
 import { AlbumListPage2 } from './components/AlbumListPage2';
 import { CardPage } from './components/CardPage';
+// import { CardPage2 } from './components/CardPage2';
+import CardPage2 from './components/CardPage2';
+import LabelPage2 from './components/LabelPage2';
+import LabelPage3 from './components/LabelPage3';
+import ImagePage2 from './components/ImagePage2';
 
 function App() {
   return (
@@ -36,19 +41,26 @@ function App() {
           <Route path="/book" element={<BookPage />} />
 
           {/* 필터링 페이지 */}
-          <Route path="/labelpage" element={<LabelPage />} />
+          <Route path="/album" element={<LabelPage />} />
 
           {/* 앨범목록 페이지 */}
-          <Route path="/albumlist" element={<AlbumListPage />} />
+          {/* <Route path="/albumlist" element={<AlbumListPage />} /> */}
 
           <Route path="/createalbum" element={<CreateAlbumPage />} />
 
           {/* 메인 선택 페이지(로그인 후 첫 화면) */}
-          <Route path="/home" element={<MainSelectPage />} />
+          {/* <Route path="/home" element={<MainSelectPage />} /> */}
 
-          <Route path="/albumlist2" element={<AlbumListPage2 />} />
+          <Route path="/albumlist" element={<AlbumListPage2 />} />
 
+          {/* 샘플 페이지 */}          
           <Route path="/cardpage" element={<CardPage />} />
+          <Route path="/cardpage2" element={<CardPage2 />} />
+
+          <Route path="/labelpage2" element={<LabelPage2 />} />
+          <Route path="/aIbum" element={<LabelPage3 />} />
+
+          <Route path="/imagepage2" element={<ImagePage2 />} />
         </Routes>
       </Router>
     </ImageDataProvider>

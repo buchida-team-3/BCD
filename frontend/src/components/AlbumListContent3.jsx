@@ -3,10 +3,10 @@ import { Canvas } from '@react-three/fiber';
 import './AlbumListUtil.jsx';
 import bgImage from './content/background.jpg';
 import AlbumListRig from './AlbumListRig.jsx';
-import AlbumListCarousel from './AlbumListCarousel.jsx';
+import AlbumListCarousel3 from './AlbumListCarousel3.jsx';
 import { ScrollControls } from '@react-three/drei';
 
-export const AlbumListContent2 = () => (
+export const AlbumListContent3 = () => (
   <div style={{
     width: '100vw',
     height: '100vh',
@@ -18,11 +18,11 @@ export const AlbumListContent2 = () => (
       <fog attach="fog" args={['#a79', 8.5, 12]} />
       <ScrollControls pages={4} infinite>
         <AlbumListRig rotation={[0, 0, 0.15]}>
-          <AlbumListCarousel />
+          <AlbumListCarousel3 />
         </AlbumListRig>
       </ScrollControls>
     </Canvas>
   </div>
 );
 
-export default AlbumListContent2;
+export default AlbumListContent3;

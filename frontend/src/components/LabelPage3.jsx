@@ -11,7 +11,7 @@ import LabelOverlay from "./LabelOverlay";
 import LabelContent2 from "./LabelContent2";
 
 import "./LabelPage.css";
-import { AlbumListPage2 } from "./AlbumListPage2";
+import { AlbumListPage3 } from "./AlbumListPage3.jsx";
 
 import { AlbumListProvider } from './AlbumListContext';
 
@@ -21,7 +21,7 @@ import AlbumListRig from './AlbumListRig.jsx'
 import AlbumListCarousel from './AlbumListCarousel.jsx'
 import AlbumListContent2 from './AlbumListContent2.jsx'
 
-function LabelPage() {
+function LabelPage3() {
   const [filterLabel, setFilterLabel] = useState("Filtering");
 
   const toggleFilterLabel = () => {
@@ -36,7 +36,7 @@ function LabelPage() {
       <Navbar />
       {/* <LabelContent filterLabel={filterLabel} /> */}
       {/* <LabelContent2 filterLabel={filterLabel} /> */}
-      <AlbumListPage2 />
+      <AlbumListPage3 />
       {/* <LabelOverlay
         onToggleFilterLabel={toggleFilterLabel}
         filterLabel={filterLabel}
@@ -47,4 +47,4 @@ function LabelPage() {
   );
 }
 
-export default LabelPage;
+export default LabelPage3;
