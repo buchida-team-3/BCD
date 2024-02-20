@@ -1,5 +1,7 @@
 .login-signup-container {
   height: 100vh;
+  background-image: url("./content/background.jpg");
+  background-size: cover;
 }
 
 .login-signup {

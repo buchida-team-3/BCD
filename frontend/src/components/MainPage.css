@@ -13,14 +13,9 @@ body {
 .container {
     display: flex;
     flex-direction: column;
-}
-
-.background-image {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
+    height: 100vh;
+    background-image: url("./content/background.jpg");
+    background-size: cover;
 }
 
 .title-container {

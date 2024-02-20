@@ -9,7 +9,6 @@ function MainPage() {
     return (
         <div className="container">
             <NavbarBefore/>
-            <img src={bgImage} alt="background" className="background-image"/>
             <div className={'title-container'}>
                 <div className={'title'}> 붙이다. </div>
                 <div className={'subTitle'}> 우리의 추억을 만들어주는 서비스 </div>
