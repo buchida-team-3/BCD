@@ -9,8 +9,9 @@ import LabelOverlay from "./LabelOverlay";
 // import LabelContent from "./LabelContent";
 
 import LabelContent2 from "./LabelContent2";
-
 import "./LabelPage.css";
+
+import bgImage from "./content/background.jpg";
 
 function LabelPage2() {
   const [filterLabel, setFilterLabel] = useState("Filtering");
@@ -23,6 +24,7 @@ function LabelPage2() {
 
   return (
     <>
+      <img src={bgImage} alt="background" className="background-image" />
       <Navbar />
       {/* <LabelContent filterLabel={filterLabel} /> */}
       <LabelContent2 filterLabel={filterLabel} />

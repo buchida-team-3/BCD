@@ -7,11 +7,11 @@ import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
 import Edit from './components/Edit';
 import BookPage from './components/BookPage';
-import LabelPage from './components/LabelPage';
+import LabelPage2 from './components/LabelPage2';
 import AlbumListPage from './components/AlbumListPage';
 import CreateAlbumPage from './components/CreateAlbumPage';
 import MainSelectPage from './components/MainSelectPage';
-import { AlbumListPage2 } from './components/AlbumListPage2';
+// import AlbumListPage2 from './components/AlbumListPage2';
 import { CardPage } from './components/CardPage';
 // import { CardPage2 } from './components/CardPage2';
 import CardPage2 from './components/CardPage2';
@@ -38,7 +38,7 @@ function App() {
           <Route path="/book" element={<BookPage />} />
 
           {/* 필터링 페이지 */}
-          <Route path="/labelpage" element={<LabelPage />} />
+          <Route path="/labelpage2" element={<LabelPage2 />} />
 
           {/* 앨범목록 페이지 */}
           {/* <Route path="/albumlist" element={<AlbumListPage />} /> */}
@@ -48,7 +48,7 @@ function App() {
           {/* 메인 선택 페이지(로그인 후 첫 화면) */}
           <Route path="/home" element={<MainSelectPage />} />
 
-          <Route path="/albumlist" element={<AlbumListPage2 />} />
+          {/* <Route path="/albumlist" element={<AlbumListPage2 />} /> */}
 
           {/* 샘플 페이지 */}          
           <Route path="/cardpage" element={<CardPage />} />
