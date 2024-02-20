@@ -1,40 +1,39 @@
-.edit-button {
-  font-size: 25px;
+.main-container {
+  height: 100vh;
+  background-image: url("./content/background.jpg");
+  background-size: cover;
 }
 
+.content-title {
+  color: white;
+  font-size: 40px;
+}
 
-.edit-background-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: fill;
-  z-index: -1;
+.edit-button {
+  font-size: 25px;
+  width: fit-content;
+}
+
+.image-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.edit-title {
+  display: flex;
+  flex-direction: column;
 }
 
 .image-container {
-  display: flex;
-  justify-content: flex-start;
   color: white;
-  width: 80%;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
 }
 
 .image-container-navbar {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 30px;
-}
-
-.image-container-navbar button {
-  padding: 40px;
-  display: flex; /* Use flexbox to align text */
-  align-items: center; /* Center text vertically */
-  justify-content: center; /* Center text horizontally */
-  font-size: 25px; /* Keep the font size as is */
-  line-height: normal; /* Set line-height to normal for flexbox alignment */
-  /* Other styles remain the same */
+  flex-direction: column;
 }
 
 .selected-image {
@@ -45,24 +44,20 @@
 }
 
 .removed-image-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 30px;
-  margin-top: 80px;
 }
 
 .removed-image-list {
-  background-color: orange;
+  background-color: white;
   border-radius: 5px;
-  position: relative;
   display: flex;
   flex-direction: column; /* 컨테이너 내 요소를 세로로 나열 */
   align-items: center; /* 이미지들을 중앙 정렬 */
   gap: 10px; /* 이미지 사이의 간격 조정 */
   right: 10%;
   min-width: 150px;
-  min-height: 800px;
+  height: 800px;
   overflow-y: auto;
 }
 
@@ -93,8 +88,7 @@
   display: flex;
   flex-direction: column;
   width: 30%;
-  padding-left: 10px;
-  margin-right: 30px;
+  height: 80%;
 }
 
 .image-list {
@@ -161,17 +155,12 @@
   display: flex;
   justify-content: space-between;
   align-items: start;
-  gap: 20px; /* 컨테이너 사이의 간격 조정 필요 */
+  gap: 30px; /* 컨테이너 사이의 간격 조정 필요 */
+  height: 80%;
 }
 .edit-container {
-  flex: 1;
   max-width: 100%;
   min-height: 50%;
-}
-
-.image-container-navbar button {
-  height: 50px; /* 고정 높이 예시 */
-  /* 버튼 외형을 유지하기 위한 스타일 추가 필요 */
 }
 
 .modal-backdrop {
