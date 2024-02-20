@@ -26,6 +26,7 @@ function Image(props) {
   const handleClick = () => {
     // const imageName = props.url.split("/").pop().split(".").shift();
     const imageName = props.url;
+    console.log("props", props);
     // window.location.href = `/edit/${imageName}`; // edit 페이지로 가되, 헤더에 이미지 이름을 넘겨줌
     // navigate(`/edit?selectedImageForEdit=${imageName}`);
     navigate(`/imagepage?selectedTheme=${imageName}`); //! 쿼리스트링 수정 필요
@@ -33,7 +34,7 @@ function Image(props) {
 
   return (
     <group ref={group}>
-      <ImageImpl ref={ref} {...props} onClick={handleClick} />
+      <ImageImpl ref={ref} {...props} onClick={2} />
     </group>
   );
 }
@@ -164,7 +165,7 @@ export default function LabelContent({ filterLabel }) {
         setImageGroups(formattedGroups);
       }
 
-      //! 전체 이미지 뷰잉 로직
+      //! 테마별 뷰잉 로직
       if (filterLabel === "All") {
         // const class_name = imageData.map((image) => image.class_name);
         // const id = imageData.map((image) => image.id);
@@ -193,35 +194,52 @@ export default function LabelContent({ filterLabel }) {
         // console.log("rgb_2_paths:", rgb_2_paths);
 
         // 테마별로 이미지 그룹화 && 공간 별로 이미지 그룹화 추가해보자
-        const themeCar = imageData.filter((image) =>
-          image.class_name.includes("Car")
+        const themeCar = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) && image.class_name.includes("Car")
         );
-        const themeInside = imageData.filter((image) =>
-          image.class_name.includes("Inside")
+        const themeInside = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Inside")
         );
-        const themeAnimal = imageData.filter((image) =>
-          image.class_name.includes("Animal")
+        const themeAnimal = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Animal")
         );
-        const themeVehicle = imageData.filter((image) =>
-          image.class_name.includes("Vehicle")
+        const themeVehicle = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Vehicle")
         );
-        const themePerson = imageData.filter((image) =>
-          image.class_name.includes("Person")
+        const themePerson = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Person")
         );
-        const themeElectronic = imageData.filter((image) =>
-          image.class_name.includes("Electronic")
+        const themeElectronic = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Electronic")
         );
-        const themeDish = imageData.filter((image) =>
-          image.class_name.includes("Dish")
+        const themeDish = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) && image.class_name.includes("Dish")
         );
-        const themeFood = imageData.filter((image) =>
-          image.class_name.includes("Food")
+        const themeFood = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) && image.class_name.includes("Food")
         );
-        const themeSport = imageData.filter((image) =>
-          image.class_name.includes("Sport")
+        const themeSport = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Sport")
         );
-        const themeAccessory = imageData.filter((image) =>
-          image.class_name.includes("Accessory")
+        const themeAccessory = imageData.filter(
+          (image) =>
+            Array.isArray(image.class_name) &&
+            image.class_name.includes("Accessory")
         );
         const themeLandscape = imageData.filter(
           (image) =>
@@ -310,7 +328,7 @@ export default function LabelContent({ filterLabel }) {
       dpr={[1, 1.5]}
       style={{ backgroundImage: `url(${bgImage})` }}
     >
-      <axesHelper scale={10} />
+      {/* <axesHelper scale={10} /> */}
       <OrbitControls />
       <Suspense fallback={null}>
         <ScrollControls

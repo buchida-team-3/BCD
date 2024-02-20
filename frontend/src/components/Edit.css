@@ -13,12 +13,11 @@ button{
     letter-spacing: 4px;
     overflow: hidden;
     margin-right: 50px;
-   
 }
 button:hover{
     background: #03e9f4;
     font-weight: bold;
-    color: #050801;
+    color: transparent;
     box-shadow: 0 0 5px #03e9f4,
                 0 0 25px #03e9f4,
                 0 0 50px #03e9f4,
@@ -105,7 +104,9 @@ button span:nth-child(4){
     }
 }
 
-
+.edit-button {
+  font-size: 25px;
+}
 
 
 .edit-background-image {
@@ -129,6 +130,17 @@ button span:nth-child(4){
 .image-container-navbar {
   display: flex;
   justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.image-container-navbar button {
+  padding: 40px;
+  display: flex; /* Use flexbox to align text */
+  align-items: center; /* Center text vertically */
+  justify-content: center; /* Center text horizontally */
+  font-size: 25px; /* Keep the font size as is */
+  line-height: normal; /* Set line-height to normal for flexbox alignment */
+  /* Other styles remain the same */
 }
 
 .selected-image {
@@ -192,7 +204,8 @@ button span:nth-child(4){
 }
 
 .image-list {
-  background-color: lightgreen;
+  /* background-color: lightgreen; */
+  background-color: transparent;
   border-radius: 5px;
   display: flex;
   flex-wrap: wrap;
