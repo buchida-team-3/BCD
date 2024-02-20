@@ -15,6 +15,7 @@ import { AlbumListPage2 } from './components/AlbumListPage2';
 import { CardPage } from './components/CardPage';
 // import { CardPage2 } from './components/CardPage2';
 import CardPage2 from './components/CardPage2';
+import LabelPage2 from './components/LabelPage2';
 
 function App() {
   return (
@@ -53,6 +54,8 @@ function App() {
           {/* 샘플 페이지 */}          
           <Route path="/cardpage" element={<CardPage />} />
           <Route path="/cardpage2" element={<CardPage2 />} />
+
+          <Route path="/labelpage2" element={<LabelPage2 />} />
         </Routes>
       </Router>
     </ImageDataProvider>
