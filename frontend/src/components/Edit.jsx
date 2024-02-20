@@ -309,7 +309,7 @@ const Edit = () => {
       <div className="image-container">
         <div className="image-container-list">
           <div className="image-container-navbar">
-            <h className={'content-title'}>이미지</h>
+            <div className={'content-title'}>이미지</div>
             {!showCheckboxes && (
                 <button className="edit-button" onClick={handleCheckBox}>
                   선택
@@ -323,7 +323,7 @@ const Edit = () => {
           </div>
 
           <div className="image-box">
-            <ul className="image-list">
+            <div className="image-list">
               {images.map((image) => (
                   <div
                       key={image}
@@ -339,7 +339,7 @@ const Edit = () => {
                     />
                   </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
 
@@ -351,7 +351,7 @@ const Edit = () => {
               onDrop={handleDrop}
           >
             <div className={'edit-title'}>
-              <h className={'content-title'}>편집</h>
+              <div className={'content-title'}>편집</div>
               <div>
                 <button className="edit-button" onClick={handleRemove}>
                   배경 제거
@@ -416,7 +416,8 @@ const Edit = () => {
             ))}
           </div>
           <div className="removed-image-container">
-            <h className={'content-title'}>스티커</h>
+            <div className={'content-title'}>스티커</div>
+            <div className={'temp'}></div>
             <div className="removed-image-list">
               {removedImages.map((removedImage, index) => (
                   <img
