@@ -2,10 +2,11 @@ import React from "react";
 import "./SignupContainer.css";
 import SignupForm from "./SignupForm";
 
-function SignupContainer() {
+function SignupContainer(props) {
   return (
     <div className="signup-container">
-      <SignupForm />
+      <div className={"logo"}> 붙이다.</div>
+      <SignupForm mode={props.mode} />
     </div>
   );
 }
