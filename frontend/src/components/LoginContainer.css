@@ -1,6 +1,5 @@
 .login-container {
     width: 400px;
-    height: 500px;
     padding: 25px;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -9,9 +8,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 30vh;
-    margin: 10vh auto 20px;
     background: white;
+    margin: 0 auto 160px;
 }
 
 .logo {

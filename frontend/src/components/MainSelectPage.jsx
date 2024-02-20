@@ -60,16 +60,16 @@ function MainSelectPage() {
     <div>
       <Navbar />
       <div className="select-container">
-      <div className="select-button-group">
         <img src={bgImage} alt="background" className="background-image" />
-        <button className="select-button" onClick={handleAlbumCreateClick}>
-          앨범 생성
-        </button>
-        <button className="select-button" onClick={handleAlbumListClick}>
-          앨범 리스트
-        </button>
+        <div className="select-button-group">
+          <button className="select-button" onClick={handleAlbumCreateClick}>
+            앨범 생성
+          </button>
+          <button className="select-button" onClick={handleAlbumListClick}>
+            앨범 리스트
+          </button>
+        </div>
       </div>
-    </div>
     </div>
     
   );
