@@ -7,7 +7,7 @@ import NavbarBefore from './NavbarBefore';
 function MainPage() {
     
     return (
-        <div className="container">
+        <div className="main-container">
             <NavbarBefore/>
             <div className={'title-container'}>
                 <div className={'title'}> 붙이다. </div>

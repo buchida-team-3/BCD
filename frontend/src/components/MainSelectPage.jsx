@@ -64,7 +64,6 @@ function MainSelectPage() {
     <div>
       <Navbar />
       <div className="select-container">
-        <img src={bgImage} alt="background" className="background-image" />
         <div className="select-button-group">
           <button className="select-button" onClick={handleAlbumCreateClick}>
             앨범 생성
