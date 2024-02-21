@@ -93,8 +93,10 @@ export default function LabelContent2({ filterLabel }) {
 
   return (
     <>
-      <div className="grid-container">
-        <Grid images={images} width={1400} height={800} />
+      {/* <div className="grid-container" style={{overflow : 'hidden'}}>
+        <Grid images={images} width={1400} height={800}/> */}
+      <div className="grid-container" style={{width : '100vw'}}>
+        <Grid images={images} width={1770} height={800} showProgressBar = {false}/>
       </div>
     </>
   );

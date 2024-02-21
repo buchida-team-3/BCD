@@ -34,7 +34,7 @@ function App() {
           {/* 뷰잉 페이지 */}
           <Route path="/imagepage" element={<ImagePage />} />
     
-          {/* 이미지 편집 페이지 */}
+          {/* 이미지 편집 페이지 */} 
           <Route path="/edit" element={<Edit />} />
           
           {/* 앨범 페이지 -> 미사용 */}
@@ -58,7 +58,8 @@ function App() {
           <Route path="/cardpage2" element={<CardPage2 />} />
 
           <Route path="/labelpage2" element={<LabelPage2 />} />
-          <Route path="/aIbum" element={<LabelPage3 />} />
+          {/* <Route path="/aIbum" element={<LabelPage3 />} /> */}
+          <Route path="/home" element={<LabelPage3 />} />
 
           <Route path="/imagepage2" element={<ImagePage2 />} />
         </Routes>

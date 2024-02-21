@@ -44,7 +44,7 @@ function LabelPage() {
             }
           });
 
-          console.log('/mainselect 이미지 데이터 로드:', response.data);
+          console.log('/LablePage.jsx 이미지 데이터 로드:', response.data);
           
           // 이미지 데이터의 전역 상태 관리
           setImageData(response.data);

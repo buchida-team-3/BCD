@@ -8,13 +8,14 @@ import ImageContent from './ImageContent'
 
 import './ImagePage.css'
 
+
+
 function ImagePage() {
     return (
-        <>
+        <div className='image-page-container'>
         <ImageContent />
         <ImageOverlay />
-        </>
-        
+        </div>
     )
 }
 

@@ -4,6 +4,14 @@
   box-sizing: border-box;
 }
 
+.image-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-image: url("./content/background.jpg");
+  background-size: cover;
+}
+
 html,
 body,
 #root {
