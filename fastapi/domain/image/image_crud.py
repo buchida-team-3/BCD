@@ -21,8 +21,8 @@ def make_sample_dir(start_dir):
 
 def aws_upload(input, bucket, output):
     SERVICE_NAME =  "s3"
-    ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
-    SECRET_KEY = "jPM/tK4UCcOVHsmHFu7sGBIhNdI4Bf+PPO6HIyDZ"
+    ACCESS_KEY = "AKIAZPY2I4K5VTRVVVSA"
+    SECRET_KEY = "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"
     REGION = "ap-northeast-2"
     BUCKET_NAME = "jungle-buchida-s3"
 

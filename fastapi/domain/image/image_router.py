@@ -43,8 +43,8 @@ router = APIRouter(
 start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
 remove_dir = "../frontend/public/img_0"
 
-ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
-SECRET_KEY = "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"
+ACCESS_KEY = "AKIAZPY2I4K5VTRVVVSA"
+SECRET_KEY = "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"
 SERVICE_NAME =  "s3"
 REGION = "ap-northeast-2"
 BUCKET_NAME = "jungle-buchida-s3"
@@ -160,8 +160,8 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
 #     #TODO: s3 이미지 경로에서 이미지 파일 이름들을 가져오도록 수정
 #     # image_files = os.listdir(start_dir)
 #     SERVICE_NAME =  "s3"
-#     ACCESS_KEY = "AKIAZPY2I4K53QAFMVE7"
-#     SECRET_KEY = "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"
+#     ACCESS_KEY = "AKIAZPY2I4K5VTRVVVSA"
+#     SECRET_KEY = "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"
 #     REGION = "ap-northeast-2"
 #     BUCKET_NAME = "jungle-buchida-s3"
     
