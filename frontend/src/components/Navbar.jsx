@@ -4,16 +4,16 @@ import { useNavigate } from 'react-router-dom'; // useNavigate 훅 임포트
 import logo from './content/logo.png';
 
 function Navbar() {
-    const [isNavExpanded, setIsNavExpanded] = useState(false); // 네비게이션바 확장 상태 관리
+    const [isNavExpanded, setIsNavExpanded] = useState(true); // 네비게이션바 확장 상태 관리
 
     const navigate = useNavigate(); // useNavigate 훅 사용
 
     const handleHomeClick = () => {
-        navigate('/home'); // /labelpage 경로로 이동
+        navigate('/album');
     };
 
     const handleEditClick = () => {
-        navigate('/edit'); // /labelpage 경로로 이동
+        navigate('/edit');
     };
   
     const handleAlbumListClick = () => {
@@ -21,7 +21,7 @@ function Navbar() {
     };
         
     const handleAlbumCreateClick = () => {
-        navigate('/labelpage'); // /albumlist 경로로 이동
+        navigate('/labelpage2');
     };
     
     // 로그아웃 처리 함수
@@ -49,10 +49,10 @@ function Navbar() {
             {/* 로고 클릭 시 handleLogoClick 함수 실행 */}
             <img src={logo} className="navbar-logo" alt="Logo" onClick={toggleNav} />
             <div className={`navbar-menu ${isNavExpanded ? 'expanded' : 'collapsed'}`}>
-                <a className='link-button' onClick={handleHomeClick}>홈</a>
-                <a className='link-button' onClick={handleAlbumCreateClick}>모든 사진 보기</a>
-                <a className='link-button' onClick={handleAlbumListClick}>모든 앨범 보기</a>
-                <a className='link-button' onClick={handleEditClick}>사진 편집하기</a>
+                <a className='link-button' onClick={handleHomeClick}>앨범 목록</a>
+                <a className='link-button' onClick={handleAlbumCreateClick}>모든 사진</a>
+                {/* <a className='link-button' onClick={handleAlbumListClick}>앨범 목록</a> */}
+                <a className='link-button' onClick={handleEditClick}>사진 편집</a>
                 <button className="logout-button" onClick={handleLogout}>로그아웃</button>
             </div>
         </div>

@@ -51,7 +51,7 @@ BUCKET_NAME = "jungle-buchida-s3"
 s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
 
-@router.post("/group/album/upload")
+@router.post("/group/album/upload", tags=["image"])
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
     results = []
     results_aws = []
@@ -119,7 +119,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
     return JSONResponse(content=results)
 
 
-@router.get("/api/all")
+@router.get("/api/all", tags=["image"])
 async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
     image_list = []
     images = db.query(image_crud.Image).filter(
@@ -136,13 +136,14 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
             "user_id": image.user_id,
             "image_edited": image.image_edited,
             "class_name": image.class_name,
-            "image_meta": image.image_meta
+            "image_meta": image.image_meta,
+            "image_edited": False
         }
         image_list.append(image_data)
         
     return JSONResponse(content=image_list)
 
-@router.get("/api/filter")
+@router.get("/api/filter", tags=["image"])
 async def get_album(db=Depends(get_db), current_user: User = Depends(get_current_user)):
     image_list = []
     images = db.query(image_crud.Image).filter(
@@ -185,7 +186,7 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     
 #     return image_files
 
-@router.get("/api/images")
+@router.get("/api/images", tags=["image"])
 def get_image_list(db=Depends(get_db), current_user: User = Depends(get_current_user)):
 
     # 이미지 폴더에서 이미지 파일 이름들을 가져옴
@@ -228,7 +229,7 @@ async def download_image_from_s3(s3_image_path):
 async def upload_image_to_s3(image_bytes, s3_image_path):
     s3_client.put_object(Bucket=BUCKET_NAME, Key=s3_image_path, Body=image_bytes, ContentType='image/jpeg')
 
-@router.post("/remove_background")
+@router.post("/remove_background", tags=["image"])
 async def remove_background(image_names: ImageNames, db=Depends(get_db), current_user: User = Depends(get_current_user)):
     processed_images = []
     for s3_image_url in image_names.images:
@@ -285,7 +286,7 @@ async def generate_unique_filename(base_image_path, bucket_name):
         except:
             return potential_name  # 중복되지 않는 파일명 반환
         
-@router.post("/merge_images")
+@router.post("/merge_images", tags=["image"])
 async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: User = Depends(get_current_user)):
     base_image_path = data.baseImage[data.baseImage.find('amazonaws.com') + len('amazonaws.com') + 1:]
     base_image_bytes = await download_image_from_s3(base_image_path)
@@ -327,7 +328,7 @@ async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: U
 
 
 
-@router.post("/stitch_images")
+@router.post("/stitch_images", tags=["image"])
 async def stitch_images(image_names: ImageNames, db=Depends(get_db), current_user: User = Depends(get_current_user)):
     images = []
 

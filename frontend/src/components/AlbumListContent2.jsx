@@ -7,13 +7,6 @@ import AlbumListCarousel from './AlbumListCarousel.jsx';
 import { ScrollControls } from '@react-three/drei';
 
 export const AlbumListContent2 = () => (
-  <div style={{
-    width: '100vw',
-    height: '100vh',
-    backgroundImage: `url(${bgImage})`,
-    backgroundSize: '100% 100%', // 이미지를 가로 세로 100%로 설정
-    backgroundPosition: 'center center',
-  }}>
     <Canvas style={{ width: '100%', height: '100%' }} camera={{ position: [0, 0, 100], fov: 15 }}>
       <fog attach="fog" args={['#a79', 8.5, 12]} />
       <ScrollControls pages={4} infinite>
@@ -22,7 +15,6 @@ export const AlbumListContent2 = () => (
         </AlbumListRig>
       </ScrollControls>
     </Canvas>
-  </div>
 );
 
 export default AlbumListContent2;

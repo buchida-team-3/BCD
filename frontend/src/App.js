@@ -7,17 +7,17 @@ import LoginSignup from './components/LoginSignup';
 import ImagePage from './components/ImagePage';
 import Edit from './components/Edit';
 import BookPage from './components/BookPage';
-import LabelPage from './components/LabelPage';
+import LabelPage2 from './components/LabelPage2';
 import AlbumListPage from './components/AlbumListPage';
 import CreateAlbumPage from './components/CreateAlbumPage';
 import MainSelectPage from './components/MainSelectPage';
-import { AlbumListPage2 } from './components/AlbumListPage2';
+// import AlbumListPage2 from './components/AlbumListPage2';
 import { CardPage } from './components/CardPage';
 // import { CardPage2 } from './components/CardPage2';
 import CardPage2 from './components/CardPage2';
-import LabelPage2 from './components/LabelPage2';
 import LabelPage3 from './components/LabelPage3';
 import ImagePage2 from './components/ImagePage2';
+import LabelPage from './components/LabelPage';
 
 function App() {
   return (
@@ -37,10 +37,10 @@ function App() {
           {/* 이미지 편집 페이지 */}
           <Route path="/edit" element={<Edit />} />
           
-          {/* 앨범페이지 */}
-          <Route path="/book" element={<BookPage />} />
+          {/* 앨범 페이지 -> 미사용 */}
+          {/* <Route path="/book" element={<BookPage />} /> */}
 
-          {/* 필터링 페이지 */}
+          {/* 앨범 페이지 */}
           <Route path="/album" element={<LabelPage />} />
 
           {/* 앨범목록 페이지 */}
@@ -51,7 +51,7 @@ function App() {
           {/* 메인 선택 페이지(로그인 후 첫 화면) */}
           {/* <Route path="/home" element={<MainSelectPage />} /> */}
 
-          <Route path="/albumlist" element={<AlbumListPage2 />} />
+          {/* <Route path="/albumlist" element={<AlbumListPage2 />} /> */}
 
           {/* 샘플 페이지 */}          
           <Route path="/cardpage" element={<CardPage />} />

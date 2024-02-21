@@ -12,7 +12,7 @@ import bgImage from "./content/background.jpg";
 import "react-visual-grid/dist/react-visual-grid.css";
 import { Grid } from "react-visual-grid";
 
-export default function LabelContent({ filterLabel }) {
+export default function LabelContent2({ filterLabel }) {
   // imageData: 이미지 데이터 자체, setImageData: 이미지 데이터를 변경하는 함수
   const { imageData, setImageData } = useImageData(); // Context API 사용을 위해 추가 -> 여기에서 이미 imageData를 사용할 준비가 됨
   const [imageGroups, setImageGroups] = useState([]);
@@ -64,16 +64,16 @@ export default function LabelContent({ filterLabel }) {
           window.location.href = "/loginandsignup";
         }
       };
-      console.log("LabelContent.jsx: imageData 로드 중...");
+      console.log("labelcontent2.jsx: imageData 로드 중...");
 
       // 이미 로드된 이미지 데이터 가져오기
       // 이미지의 캐시 여부 확인
       if (imageData.length === 0) {
-        console.log("LabelContent.jsx: 이미지 데이터가 메모리에 없음");
+        console.log("labelcontent2.jsx: 이미지 데이터가 메모리에 없음");
         fetchImages();
         setFetchAttempted(true); // 무한 루프 방지
       } else {
-        console.log("LabelContent.jsx: 이미지 데이터가 메모리에 있음");
+        console.log("labelcontent2.jsx: 이미지 데이터가 메모리에 있음");
       }
     }
 
