@@ -9,7 +9,7 @@ function Navbar() {
     const navigate = useNavigate(); // useNavigate 훅 사용
 
     const handleHomeClick = () => {
-        navigate('/home'); // /labelpage 경로로 이동
+        navigate('/album'); // /labelpage 경로로 이동
     };
 
     const handleEditClick = () => {
