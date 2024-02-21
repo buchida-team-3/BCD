@@ -13,9 +13,25 @@ def create_album(db: Session, album_create: AlbumCreate, user: User):
     db_album = Album(
         album_title=album_create.album_title,
         album_filter=album_create.album_filter,
-        user = user,
+        user=user,
     )
     db.add(db_album)
+    db.commit()
+
+
+def create_album_article(db: Session, album_article_create: AlbumArticleCreate, user: User):
+    """
+    앨범 아티클 생성 함수
+    - db: DB 세션 객체
+    - album_article_create: AlbumArticleCreate 스키마로 정의한 앨범 아티클 생성 정보
+    """
+    db_album_article = AlbumArticle(
+        article_title=album_article_create.article_title,
+        article_content=album_article_create.article_content,
+        # article_page=album_article_create.article_page,
+        user=user,
+    )
+    db.add(db_album_article)
     db.commit()
 
 
