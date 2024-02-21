@@ -24,7 +24,7 @@ function AlbumListCard({ url, ...props }) {
   };
 
   const handleCardClick = () => {
-    navigate('/imagepage'); // 클릭 시 /album 경로로 이동
+    navigate('/imagepage2'); // 클릭 시 /album 경로로 이동
   };
 
   useFrame((state, delta) => {
