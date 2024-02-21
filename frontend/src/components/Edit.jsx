@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "./Edit.css";
-// import "./EditButton.css"
+import "./EditButton.css"
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import editDefault from "./content/edit_default.jpg";
