@@ -293,6 +293,22 @@ async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: U
     base_image = Image.open(BytesIO(base_image_bytes))
     # base_image_resized = base_image.resize((800, 800))
 
+    # 원본 이미지의 크기를 가져옵니다.
+    original_width, original_height = base_image.size
+
+    # 비율을 유지하면서 최대 길이 800px에 맞춰 리사이징합니다.
+    if original_width > original_height:
+        scale = 800 / original_width
+        new_height = int(original_height * scale)
+        new_size = (800, new_height)
+    else:
+        scale = 800 / original_height
+        new_width = int(original_width * scale)
+        new_size = (new_width, 800)
+    
+    # 새로운 크기로 이미지 리사이징, Image.ANTIALIAS 대신 Image.Resampling.LANCZOS 사용
+    base_image_resized = base_image.resize(new_size, Image.Resampling.LANCZOS)
+
     for overlay in data.overlayImages:
         s3_image_path = overlay.url[overlay.url.find('amazonaws.com') + len('amazonaws.com') + 1:]
         overlay_image_bytes = await download_image_from_s3(s3_image_path)
@@ -303,11 +319,11 @@ async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: U
 
         # 지정된 위치에 이미지를 붙입니다. 마지막 인자는 "마스크"로, 투명도가 있는 이미지를 올바르게 처리하기 위해 사용됩니다.
         # base_image_resized.paste(overlay_image_resized, (int(overlay.x), int(overlay.y)), overlay_image_resized.convert('RGBA'))
-        base_image.paste(overlay_image_resized, (int(overlay.x)-100, int(overlay.y)-300), overlay_image_resized.convert('RGBA'))
+        base_image_resized.paste(overlay_image_resized, (int(overlay.x)+50, int(overlay.y)+60), overlay_image_resized.convert('RGBA'))
     # 합성된 이미지를 바이트로 변환
     buffer = BytesIO()
     # base_image_resized.save(buffer, format="PNG")
-    base_image.save(buffer, format="JPEG")
+    base_image_resized.save(buffer, format="JPEG")
     merged_image_bytes = buffer.getvalue()
 
     # 동적 파일명 생성 및 업로드
