@@ -15,8 +15,9 @@ import MainSelectPage from './components/MainSelectPage';
 import { CardPage } from './components/CardPage';
 // import { CardPage2 } from './components/CardPage2';
 import CardPage2 from './components/CardPage2';
-import LabelPage2 from './components/LabelPage2';
 import LabelPage3 from './components/LabelPage3';
+import ImagePage2 from './components/ImagePage2';
+import LabelPage from './components/LabelPage';
 
 function App() {
   return (
@@ -58,6 +59,8 @@ function App() {
 
           <Route path="/labelpage2" element={<LabelPage2 />} />
           <Route path="/aIbum" element={<LabelPage3 />} />
+
+          <Route path="/imagepage2" element={<ImagePage2 />} />
         </Routes>
       </Router>
     </ImageDataProvider>

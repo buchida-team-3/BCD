@@ -303,83 +303,66 @@ const Edit = () => {
   };
 
   return (
-    <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+    <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} className={'main-container'}>
       <Navbar />
       <LoadingModal isLoading={isLoading} /> {/* 모달 추가 */}
-      <img src={bgImage} alt="background" className="edit-background-image" />
       <div className="image-container">
         <div className="image-container-list">
           <div className="image-container-navbar">
+            <div className={'content-title'}>이미지</div>
             {!showCheckboxes && (
-              <button className="edit-button"  onClick={handleCheckBox}>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                이미지선택
-              </button>
+                <button className="edit-button" onClick={handleCheckBox}>
+                  선택
+                </button>
             )}
             {showCheckboxes && (
-              <button className="edit-button"  onClick={handleCancel}>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                취소
-              </button>
+                <button className="edit-button" onClick={handleCancel}>
+                  취소
+                </button>
             )}
           </div>
 
           <div className="image-box">
-            <ul className="image-list">
+            <div className="image-list">
               {images.map((image) => (
-                <div
-                  key={image}
-                  className={`image-checkbox ${
-                    checkedImages.includes(image) ? "selected" : ""
-                  }`}
-                  onClick={() => handleClick(image)}
-                >
-                  <img
-                    className="image-element"
-                    src={image}
-                    alt={image}
-                  />
-                </div>
+                  <div
+                      key={image}
+                      className={`image-checkbox ${
+                          checkedImages.includes(image) ? "selected" : ""
+                      }`}
+                      onClick={() => handleClick(image)}
+                  >
+                    <img
+                        className="image-element"
+                        src={image}
+                        alt={image}
+                    />
+                  </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
 
         <div className="show-container">
           <div
-            className="edit-container"
-            ref={overlayContainerRef}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
+              className="edit-container"
+              ref={overlayContainerRef}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
           >
-            <div className="selected-image-header">
-              <button className="edit-button" onClick={handleRemove}>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                배경 제거
-              </button>
-              <button className="edit-button" onClick={handleStitchImages}>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                배경 붙이기
-              </button>
-              <button className="edit-button" onClick={handleMergeImages}>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                편집 저장
-              </button>
+            <div className={'edit-title'}>
+              <div className={'content-title'}>편집</div>
+              <div>
+                <button className="edit-button" onClick={handleRemove}>
+                  배경 제거
+                </button>
+                <button className="edit-button" onClick={handleStitchImages}>
+                  배경 붙이기
+                </button>
+                <button className="edit-button" onClick={handleMergeImages}>
+                  편집 저장
+                </button>
+              </div>
             </div>
 
             {/* {selectedImage && <img className='selected-image' src={selectedImage} alt="Selected" draggable="false" />} */}
@@ -394,57 +377,58 @@ const Edit = () => {
 
             <div>
               <img
-                className="selected-image"
-                src={selectedImage}
-                alt="Selected"
-                draggable="false"
+                  className="selected-image"
+                  src={selectedImage}
+                  alt="Selected"
+                  draggable="false"
               />
             </div>
 
             {overlayImages.map((img, index) => (
-              <ResizableBox
-                key={index}
-                width={img.width}
-                height={img.height}
-                onResizeStop={(e, { size }) => {
-                  setOverlayImages((prev) =>
-                    prev.map((image, idx) =>
-                      idx === index
-                        ? { ...image, width: size.width, height: size.height }
-                        : image
-                    )
-                  );
-                }}
-                className="overlay-image"
-                style={{
-                  position: "absolute",
-                  left: img.x_abs,
-                  top: img.y_abs,
-                }}
-              >
-                <img
-                  src={img.imageUrl}
-                  alt={`Overlay ${index}`}
-                  draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                  style={{ width: "100%", height: "100%" }} // ResizableBox에 맞게 이미지 크기 조정
-                  onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
-                />
-              </ResizableBox>
+                <ResizableBox
+                    key={index}
+                    width={img.width}
+                    height={img.height}
+                    onResizeStop={(e, {size}) => {
+                      setOverlayImages((prev) =>
+                          prev.map((image, idx) =>
+                              idx === index
+                                  ? {...image, width: size.width, height: size.height}
+                                  : image
+                          )
+                      );
+                    }}
+                    className="overlay-image"
+                    style={{
+                      position: "absolute",
+                      left: img.x_abs,
+                      top: img.y_abs,
+                    }}
+                >
+                  <img
+                      src={img.imageUrl}
+                      alt={`Overlay ${index}`}
+                      draggable={false} // 내부 이미지는 드래그 불가능하게 설정
+                      style={{width: "100%", height: "100%"}} // ResizableBox에 맞게 이미지 크기 조정
+                      onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
+                  />
+                </ResizableBox>
             ))}
           </div>
           <div className="removed-image-container">
-            <h2>스티커</h2>
+            <div className={'content-title'}>스티커</div>
+            <div className={'temp'}></div>
             <div className="removed-image-list">
               {removedImages.map((removedImage, index) => (
-                <img
-                  key={index}
-                  src={removedImage}
-                  alt={`removedImage ${index}`}
-                  className="removed-image"
-                  draggable="true"
-                  onClick={() => handleStickerClick(removedImage)} // 클릭 이벤트에 핸들러 연결
-                  onDragStart={(e) => handleDragStart(e, removedImage)}
-                />
+                  <img
+                      key={index}
+                      src={removedImage}
+                      alt={`removedImage ${index}`}
+                      className="removed-image"
+                      draggable="true"
+                      onClick={() => handleStickerClick(removedImage)} // 클릭 이벤트에 핸들러 연결
+                      onDragStart={(e) => handleDragStart(e, removedImage)}
+                  />
               ))}
             </div>
           </div>
