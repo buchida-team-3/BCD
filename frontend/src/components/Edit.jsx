@@ -5,7 +5,6 @@ import "./Edit.css";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import editDefault from "./content/edit_default.jpg";
-import bgImage from "./content/background.jpg";
 import { useImageData } from "./ImageContext";
 
 const Edit = () => {
@@ -306,7 +305,9 @@ const Edit = () => {
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} className={'main-container'}>
       <Navbar />
       <LoadingModal isLoading={isLoading} /> {/* 모달 추가 */}
+      {/*전체 컨테이너*/}
       <div className="image-container">
+        {/*좌측 컨테이너*/}
         <div className="image-container-list">
           <div className="image-container-navbar">
             <div className={'content-title'}>이미지</div>
@@ -343,7 +344,9 @@ const Edit = () => {
           </div>
         </div>
 
+        {/*우측 컨테이너*/}
         <div className="show-container">
+          {/*편집 파트*/}
           <div
               className="edit-container"
               ref={overlayContainerRef}
@@ -415,6 +418,8 @@ const Edit = () => {
                 </ResizableBox>
             ))}
           </div>
+
+          {/*스티커 파트*/}
           <div className="removed-image-container">
             <div className={'content-title'}>스티커</div>
             <div className={'temp'}></div>
