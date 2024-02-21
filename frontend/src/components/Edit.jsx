@@ -345,7 +345,6 @@ const Edit = () => {
         </div>
 
         {/*우측 컨테이너*/}
-        <div className="show-container">
           {/*편집 파트*/}
           <div
               className="edit-container"
@@ -438,7 +437,6 @@ const Edit = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };
