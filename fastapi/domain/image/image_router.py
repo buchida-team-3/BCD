@@ -40,7 +40,8 @@ router = APIRouter(
 )
 
 
-start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
+# start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
+start_dir = f"../frontend/public/aws_upload/{datetime.now().strftime('%Y-%m-%-d')}"
 remove_dir = "../frontend/public/img_0"
 
 ACCESS_KEY = "AKIAZPY2I4K5VTRVVVSA"
@@ -50,6 +51,7 @@ REGION = "ap-northeast-2"
 BUCKET_NAME = "jungle-buchida-s3"
 s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
 
+import datetime
 
 @router.post("/group/album/upload", tags=["image"])
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -73,10 +75,10 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
+        print(file_path)
 
         # results_aws.append(file_path) # api 테스트용
         results_image_meta.append(get_location_and_date(file_path))
-
 
     yolo = image_labeling_yolov8(num_path)
     

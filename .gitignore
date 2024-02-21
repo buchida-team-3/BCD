@@ -22,5 +22,5 @@ fastapi/domain/image/myphotos
 fastapi/domain/image/image_process/samples/*
 fastapi/query_tester.py
 .idea/
-
 fastapi/https:
+frontend/public/aws_upload
