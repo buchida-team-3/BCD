@@ -51,13 +51,12 @@
 }
 
 .removed-image-list {
-  background-color: #ADA9B1;
+  background-color: #F5EFF5;
   border-radius: 5px;
   display: flex;
   flex-direction: column; /* 컨테이너 내 요소를 세로로 나열 */
   align-items: center; /* 이미지들을 중앙 정렬 */
   gap: 10px; /* 이미지 사이의 간격 조정 */
-  right: 10%;
   min-width: 200px;
   height: 700px;
   overflow-y: auto;
