@@ -6,6 +6,7 @@ import './MainSelectPage.css'; // CSS 파일 경로 확인
 import bgImage from './content/background.jpg';
 import { useImageData } from './ImageContext';
 import Navbar from './Navbar';
+import AlbumListPage2 from './AlbumListPage2';
 
 function MainSelectPage() {
   const [ fetchAttempted, setFetchAttempted ] = useState(false); // 요청 시도 상태 추가
@@ -74,7 +75,6 @@ function MainSelectPage() {
         </div>
       </div>
     </div>
-    
   );
 }
 

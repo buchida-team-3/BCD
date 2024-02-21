@@ -151,11 +151,11 @@ export default function CardContent2() {
         position={[-1.15, 0, 0]}
         rotation={[0, 0, 0]}
 
-        // onDoubleClick={(e) => {
-        //   e.stopPropagation();
+        onDoubleClick={(e) => {
+          e.stopPropagation();
         // 여기에 페이지 이동 로직 추가
-        //   window.location.href = "/";
-        // }}
+          window.location.href = "/";
+        }}
       >
         {/* <Gltf
         src="pickles_3d_version_of_hyuna_lees_illustration-transformed.glb"
