@@ -41,7 +41,7 @@ router = APIRouter(
 
 
 # start_dir = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com"
-start_dir = f"../frontend/public/aws_upload/{datetime.now().strftime('%Y-%m-%-d')}"
+start_dir = "../frontend/public/aws_upload/"
 remove_dir = "../frontend/public/img_0"
 
 ACCESS_KEY = "AKIAZPY2I4K5VTRVVVSA"
