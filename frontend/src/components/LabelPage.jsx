@@ -63,7 +63,7 @@ function LabelPage() {
   }, [ imageData, setImageData, fetchAttempted ]);
 
   return (
-  
+  <div className="label-page-container">
     <AlbumListProvider>
       <Navbar />
       {/* <LabelContent filterLabel={filterLabel} /> */}
@@ -74,8 +74,7 @@ function LabelPage() {
         filterLabel={filterLabel}
       /> */}
     </AlbumListProvider>
-      
-   
+  </div>
   );
 }
 

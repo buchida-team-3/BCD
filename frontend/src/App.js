@@ -37,10 +37,10 @@ function App() {
           {/* 이미지 편집 페이지 */}
           <Route path="/edit" element={<Edit />} />
           
-          {/* 앨범페이지 */}
-          <Route path="/book" element={<BookPage />} />
+          {/* 앨범 페이지 -> 미사용 */}
+          {/* <Route path="/book" element={<BookPage />} /> */}
 
-          {/* 필터링 페이지 */}
+          {/* 앨범 페이지 */}
           <Route path="/album" element={<LabelPage />} />
 
           {/* 앨범목록 페이지 */}

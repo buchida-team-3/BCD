@@ -9,11 +9,11 @@ function Navbar() {
     const navigate = useNavigate(); // useNavigate 훅 사용
 
     const handleHomeClick = () => {
-        navigate('/album'); // /labelpage 경로로 이동
+        navigate('/album');
     };
 
     const handleEditClick = () => {
-        navigate('/edit'); // /labelpage 경로로 이동
+        navigate('/edit');
     };
   
     const handleAlbumListClick = () => {
@@ -21,7 +21,7 @@ function Navbar() {
     };
         
     const handleAlbumCreateClick = () => {
-        navigate('/labelpage2'); // /albumlist 경로로 이동
+        navigate('/labelpage2');
     };
     
     // 로그아웃 처리 함수

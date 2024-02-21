@@ -31,7 +31,7 @@ function LabelPage3() {
   };
 
   return (
-  
+    <div className="label-page-container">
     <AlbumListProvider>
       <Navbar />
       {/* <LabelContent filterLabel={filterLabel} /> */}
@@ -42,8 +42,7 @@ function LabelPage3() {
         filterLabel={filterLabel}
       /> */}
     </AlbumListProvider>
-      
-   
+    </div>      
   );
 }
 

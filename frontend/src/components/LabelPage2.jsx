@@ -23,8 +23,7 @@ function LabelPage2() {
   };
 
   return (
-    <>
-      <img src={bgImage} alt="background" className="background-image" />
+    <div className="label-page-container">
       <Navbar />
       {/* <LabelContent filterLabel={filterLabel} /> */}
       <LabelContent2 filterLabel={filterLabel} />
@@ -32,7 +31,7 @@ function LabelPage2() {
         onToggleFilterLabel={toggleFilterLabel}
         filterLabel={filterLabel}
       />
-    </>
+    </div>
   );
 }
 
