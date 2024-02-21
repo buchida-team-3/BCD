@@ -7,7 +7,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Preload, Image as ImageImpl } from '@react-three/drei'
 
 import { ScrollControls2 as ScrollControls, Scroll, useScroll } from './ScrollControls2'
-
+import bgImage from './content/background.jpg';
 
 
 
@@ -23,7 +23,7 @@ function Image(props) {
 
       group.current.position.z = THREE.MathUtils.damp(group.current.position.z, Math.max(0, data.delta * 50), 4, delta)
 
-      ref.current.material.grayscale = THREE.MathUtils.damp(ref.current.material.grayscale, Math.max(0, 1 - data.delta * 1000), 4, delta)
+      ref.current.material.grayscale = THREE.MathUtils.damp(ref.current.material.grayscale, Math.max(0, 0 - data.delta * 1000), 4, delta)
 
     })
 
@@ -110,8 +110,14 @@ function Image(props) {
   export default function ImageContent2() {
 
     return (
-      
-      <Canvas gl={{ antialias: false }} dpr={[1, 1.5]}>
+      <div style={{
+        width: '100vw',
+        height: '100vh',
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: '100% 100%', // 이미지를 가로 세로 100%로 설정
+        backgroundPosition: 'center center',
+      }}>
+        <Canvas style={{ width: '100%', height: '100%' }} gl={{ antialias: false }} dpr={[1, 1.5]}>
 
         <Suspense fallback={null}>
 
@@ -158,6 +164,8 @@ function Image(props) {
 
       </Canvas>
 
+      </div>
+      
     )
 
   }

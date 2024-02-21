@@ -20,7 +20,7 @@ export function ScrollControls2({
   damping = 4,
   children
 }) {
-  const { gl, size, invalidate, events, raycaster } = useThree();
+  const { gl, size, invalidate, events } = useThree();
   const el = useRef(document.createElement('div'));
   const fill = useRef(document.createElement('div'));
   const fixed = useRef(document.createElement('div'));
@@ -81,20 +81,25 @@ export function ScrollControls2({
 
     el.current[horizontal ? 'scrollLeft' : 'scrollTop'] = 1;
 
-    const oldTarget = typeof events.connected !== 'boolean' ? events.connected : gl.domElement;
-    requestAnimationFrame(() => events.connect?.(el.current));
-    const oldCompute = raycaster.computeOffsets;
-    raycaster.computeOffsets = ({ clientX, clientY }) => ({
-      offsetX: clientX - target.offsetLeft,
-      offsetY: clientY - target.offsetTop
-    });
+    // Updated part: Reassign the connected property to the created div element.
+    const oldTarget = events.connected;
+    events.connected = el.current;
+    const oldCompute = gl.domElement.raycaster?.computeOffsets;
+    if (gl.domElement.raycaster) {
+      gl.domElement.raycaster.computeOffsets = ({ clientX, clientY }) => ({
+        offsetX: clientX - el.current.getBoundingClientRect().left,
+        offsetY: clientY - el.current.getBoundingClientRect().top,
+      });
+    }
 
     return () => {
       target.removeChild(el.current);
-      raycaster.computeOffsets = oldCompute;
-      events.connect?.(oldTarget);
+      if (oldCompute) {
+        gl.domElement.raycaster.computeOffsets = oldCompute;
+      }
+      events.connected = oldTarget;
     };
-  }, [pages, distance, horizontal, target]);
+  }, [events, gl.domElement, pages, distance, horizontal, target]);
 
   useEffect(() => {
     const containerLength = size[horizontal ? 'width' : 'height'];
@@ -131,19 +136,20 @@ export function ScrollControls2({
     el.current.addEventListener('scroll', onScroll, { passive: true });
     requestAnimationFrame(() => (firstRun = false));
 
-    const onWheel = (e) => (el.current.scrollLeft += e.deltaY / 2);
+    const onWheel = (e) => (el.current.scrollLeft += e.deltaY / 1);
     if (horizontal) el.current.addEventListener('wheel', onWheel, { passive: true });
 
     return () => {
       el.current.removeEventListener('scroll', onScroll);
       if (horizontal) el.current.removeEventListener('wheel', onWheel);
     };
-  }, [el, size, infinite, state, invalidate, horizontal]);
+  }, [enabled, infinite, size, horizontal, pages, distance, invalidate, state]);
 
   let last = 0;
   useFrame((_, delta) => {
-    state.offset = THREE.MathUtils.damp((last = state.offset), scroll.current, damping, delta);
+    state.offset = THREE.MathUtils.damp(last, scroll.current, damping, delta);
     state.delta = THREE.MathUtils.damp(state.delta, Math.abs(last - state.offset), damping, delta);
+    last = state.offset;
     if (state.delta > eps) invalidate();
   });
 
