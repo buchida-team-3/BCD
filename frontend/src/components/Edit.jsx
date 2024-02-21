@@ -81,11 +81,37 @@ const Edit = () => {
     
     if (querySelectedImage) {
       setSelectedImage(decodeURIComponent(querySelectedImage));
-    } else {
-      setSelectedImage(editDefault);
+    } else if (imageData.length > 0 && !selectedImage) {
+        setSelectedImage(editDefault);
     }
+    
     const imageUrls = imageData.map(img => img.image_path);
     setImages(imageUrls); // 생성된 URL 목록을 상태에 저장
+
+    // 스크롤 바 설정
+    const imageList = document.querySelector('.image-list');
+
+    const showScrollbar = () => imageList.classList.add('scrolling');
+    const hideScrollbar = () => imageList.classList.remove('scrolling');
+  
+    imageList.addEventListener('mouseover', showScrollbar);
+    imageList.addEventListener('mouseleave', hideScrollbar);
+    imageList.addEventListener('scroll', showScrollbar);
+  
+    // 스크롤바가 일정 시간 후에 자동으로 사라지도록 설정
+    let scrollTimeout;
+    imageList.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(hideScrollbar, 500); // 0.5초 후 스크롤바 숨김
+    });
+  
+    return () => {
+      imageList.removeEventListener('mouseover', showScrollbar);
+      imageList.removeEventListener('mouseleave', hideScrollbar);
+      imageList.removeEventListener('scroll', showScrollbar);
+      clearTimeout(scrollTimeout);
+    };
+
   }, [imageData]);
 
   const handleClick = (image) => {
@@ -183,26 +209,22 @@ const Edit = () => {
     e.dataTransfer.setData("imageUrl", imageUrl);
   };
 
-  // "선택된 이미지" 컨테이너에 드롭 처리
   const handleDrop = (e) => {
     e.preventDefault();
     const imageUrl = e.dataTransfer.getData("imageUrl");
     if (!overlayContainerRef.current) return;
-
+  
     const rect = overlayContainerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left; // 드롭된 위치의 X 좌표
-    const y = e.clientY - rect.top; // 드롭된 위치의 Y 좌표
-    const x_abs = e.clientX; // 드롭된 위치의 X 좌표
-    const y_abs = e.clientY; // 드롭된 위치의 Y 좌표
-    console.log("handle Drag ", !!imageUrl);
-
+    const x = (e.clientX - rect.left) / rect.width; // X 위치를 비율로 변환
+    const y = (e.clientY - rect.top) / rect.height; // Y 위치를 비율로 변환
+  
     if (!!imageUrl === false) {
       return;
     }
-
+  
     setOverlayImages((prev) => [
       ...prev,
-      { imageUrl, x, y, x_abs, y_abs, width: 100, height: 100 },
+      { imageUrl, x, y, width: 100, height: 100 }, // 절대 좌표 대신 비율 저장
     ]);
   };
 
@@ -210,60 +232,69 @@ const Edit = () => {
     const image = new Image();
     image.src = imageUrl;
     image.onload = () => {
-      // 이미지 로드가 완료되면 이미지 크기를 얻을 수 있음
-      const stickerWidth = image.width;
-      const stickerHeight = image.height;
+      const stickerWidth = 200;
+      const stickerHeight = 400;
   
-      // 선택된 이미지의 좌측 하단 모서리 위치를 기준으로 스티커의 위치를 설정
+      // Get the dimensions and position of the selectedImage container
       const selectedImageRect = overlayContainerRef.current.getBoundingClientRect();
-      const x = 0; // 선택된 이미지의 좌측 모서리에 맞춤
-      const y = selectedImageRect.height - stickerHeight; // 선택된 이미지의 하단 모서리에 맞춤
-      console.log(`selectedImageRect.height : ${selectedImageRect.height}`);
-      console.log(`stickerHeight : ${stickerHeight}`);
-      // 오버레이 이미지 목록에 새 이미지 추가
+      
+      // Calculate the center position of the sticker relative to the selectedImage
+      // The x and y coordinates should represent the top-left corner of the sticker
+      // so that when the sticker's center is aligned to the selectedImage's center
+      const xCenter = selectedImageRect.width / selectedImageRect.width;
+      const yCenter = selectedImageRect.height / selectedImageRect.height;
+      
+      // Adjust the sticker position to be a percentage of the selectedImage dimensions
+      const x = xCenter - 2 * stickerWidth / selectedImageRect.width - 2 * xCenter / stickerWidth;
+      const y = yCenter - stickerHeight / selectedImageRect.height;
+      
       setOverlayImages((prev) => [
         ...prev,
-        { imageUrl, x, y, width: stickerWidth, height: stickerHeight },
+        {
+          imageUrl,
+          x, // X position as a percentage of the selectedImage width
+          y, // Y position as a percentage of the selectedImage height
+          width: stickerWidth,
+          height: stickerHeight,
+        },
       ]);
     };
   };
-  // 드래그 시작 처리
-  const handleDragImageStart = (e, index) => {
-    const rect = e.target.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left; // 마우스 위치와 이미지 왼쪽 상단 간 X 차이
-    const offsetY = e.clientY - rect.top; // 마우스 위치와 이미지 왼쪽 상단 간 Y 차이
 
+  // 드래그 시작 시 상대적 위치를 계산하는 로직
+  const handleDragImageStart = (e, index) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
     setDragging(true);
     setDraggingIndex(index);
+
+    const rect = overlayContainerRef.current.getBoundingClientRect();
+    const offsetX = (e.clientX - rect.left) / rect.width - overlayImages[index].x;
+    const offsetY = (e.clientY - rect.top) / rect.height - overlayImages[index].y;
+
+    // 계산된 오프셋을 상태에 저장합니다.
     setOffsetX(offsetX);
     setOffsetY(offsetY);
-
-    e.stopPropagation(); // 이벤트 버블링 방지
   };
 
-  // 이미지 이동 처리
   const handleMouseMove = (e) => {
-    if (!dragging || draggingIndex === null) return;
+    if (!dragging || draggingIndex === null || !overlayContainerRef.current) return;
+  
     const rect = overlayContainerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - offsetX; // offsetX를 고려하여 새로운 X 좌표 계산
-    const y = e.clientY - rect.top - offsetY; // offsetY를 고려하여 새로운 Y 좌표 계산
-
+    // 드래그 시작 시점에서의 마우스 포인터와 이미지 위치 사이의 오프셋을 고려하여 새 위치 계산
+    const newX = ((e.clientX - rect.left) / rect.width) - offsetX;
+    const newY = ((e.clientY - rect.top) / rect.height) - offsetY;
+  
+    // 이미지의 새 위치를 상태에 저장
     setOverlayImages((prev) =>
       prev.map((img, index) => {
         if (index === draggingIndex) {
-          return {
-            ...img,
-            x,
-            y,
-            x_abs: e.clientX - offsetX,
-            y_abs: e.clientY - offsetY,
-          };
+          return { ...img, x: newX, y: newY };
         }
         return img;
       })
     );
   };
-
+  
   // 드래그 종료 처리
   const handleMouseUp = (e) => {
     if (!dragging) return;
@@ -285,7 +316,13 @@ const Edit = () => {
         "http://localhost:8000/merge_images",
         {
           baseImage: selectedImage,
-          overlayImages,
+          overlayImages: overlayImages.map(img => ({
+            imageUrl: img.imageUrl,
+            x: img.x, // 상대적 X 위치
+            y: img.y, // 상대적 Y 위치
+            width: img.width,
+            height: img.height
+          })),
         }, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
@@ -293,9 +330,11 @@ const Edit = () => {
         }
       );
       console.log("Merged image:", response.data);
+      const mergedUrl = response.data;
+      await fetchImages();
+      setSelectedImage(mergedUrl);
       setIsLoading(false); // 2초 후 로딩 종료
       setOverlayImages([]); // 새로운 이미지 합성 시 기존 이미지 초기화
-      fetchImages();
     } catch (error) {
       console.error("Error merging images:", error);
       setIsLoading(false); // 2초 후 로딩 종료
@@ -388,34 +427,35 @@ const Edit = () => {
             </div>
 
             {overlayImages.map((img, index) => (
-                <ResizableBox
-                    key={index}
-                    width={img.width}
-                    height={img.height}
-                    onResizeStop={(e, {size}) => {
-                      setOverlayImages((prev) =>
-                          prev.map((image, idx) =>
-                              idx === index
-                                  ? {...image, width: size.width, height: size.height}
-                                  : image
-                          )
-                      );
-                    }}
-                    className="overlay-image"
-                    style={{
-                      position: "absolute",
-                      left: img.x_abs,
-                      top: img.y_abs,
-                    }}
-                >
-                  <img
-                      src={img.imageUrl}
-                      alt={`Overlay ${index}`}
-                      draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                      style={{width: "100%", height: "100%"}} // ResizableBox에 맞게 이미지 크기 조정
-                      onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
-                  />
-                </ResizableBox>
+              <ResizableBox
+                key={index}
+                width={img.width}
+                height={img.height}
+                onResizeStop={(e, { size }) => {
+                  setOverlayImages((prev) =>
+                    prev.map((image, idx) =>
+                      idx === index
+                        ? { ...image, width: size.width, height: size.height }
+                        : image
+                    )
+                  );
+                }}
+                className="overlay-image"
+                style={{
+                  position: "absolute",
+                  left: `${img.x * 100}%`, // 저장된 X 비율을 사용
+                  top: `${img.y * 100}%`, // 저장된 Y 비율을 사용
+                  transform: "translate(-50%, -50%)", // 이미지 중심을 기준으로 위치 조정
+                }}
+              >
+                <img
+                  src={img.imageUrl}
+                  alt={`Overlay ${index}`}
+                  draggable={false} // 내부 이미지는 드래그 불가능하게 설정
+                  style={{ width: "100%", height: "100%" }} // ResizableBox에 맞게 이미지 크기 조정
+                  onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
+                />
+              </ResizableBox>
             ))}
           </div>
 

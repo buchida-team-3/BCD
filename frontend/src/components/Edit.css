@@ -69,7 +69,7 @@
 
 .overlay-image {
   object-fit: contain; /* 이미지 비율을 유지하면서 컨테이너에 맞춤 */
-
+  z-index: 500;
 }
 
 .react-resizable-handle {
@@ -116,17 +116,18 @@
   background: transparent; /* 트랙 부분 배경 투명 */
 }
 
-/* 스크롤바 막대(썸) 부분의 스타일을 정의합니다 */
 .image-list::-webkit-scrollbar-thumb {
-  background: #888; /* 막대의 배경색 */
+  background: transparent; /* 초기에는 스크롤바를 투명하게 설정 */
   border-radius: 6px; /* 모서리를 둥글게 */
 }
 
-/* 스크롤바 막대(썸)에 호버될 때의 스타일을 정의합니다 */
-.image-list::-webkit-scrollbar-thumb:hover {
-  background: #555; /* 호버 시 막대의 배경색 */
+.image-list.scrolling::-webkit-scrollbar-thumb {
+  background: #888; /* 스크롤 중에는 스크롤바를 보이게 설정 */
 }
 
+.image-list.scrolling::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 .selected {
   border: 3px solid blue; /* 선택된 이미지를 표시하기 위한 테두리 */
 }
