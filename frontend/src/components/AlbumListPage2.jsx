@@ -17,13 +17,15 @@ import AlbumListCarousel from './AlbumListCarousel.jsx'
 import AlbumListContent2 from './AlbumListContent2.jsx'
 import Navbar from './Navbar.jsx'
 
-export const AlbumListPage2 = () => (
+const AlbumListPage2 = () => (
   <>
   <AlbumListProvider>
-    <Navbar />
+    {/* <Navbar /> */}
   <AlbumListContent2 />
   <AlbumListOverlay2 />
   </AlbumListProvider>
   
   </>
 )
+
+export default AlbumListPage2 ;

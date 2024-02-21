@@ -54,6 +54,7 @@ function MainSelectPage() {
       };
 
       if (imageData.length === 0) {
+        console.log("imageData", imageData);
         fetchImages();
       }
     }
@@ -63,7 +64,7 @@ function MainSelectPage() {
   return (
     <div>
       <Navbar />
-      <div className="select-container">
+      <div className="sel-container">
         <div className="select-button-group">
           <button className="select-button" onClick={handleAlbumCreateClick}>
             앨범 생성

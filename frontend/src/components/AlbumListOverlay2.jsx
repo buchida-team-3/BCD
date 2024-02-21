@@ -62,9 +62,9 @@ function AlbumListOverlay() {
           </button> */}
         </>
       )}
-      <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '80px', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
+      {/* <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '80px', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
         뒤로 가기
-      </button>
+      </button> */}
       <button onClick={openModal} style={{ position: 'absolute', bottom: '43px', right: '80px', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
         앨범 생성
       </button>
