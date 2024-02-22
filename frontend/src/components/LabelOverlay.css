@@ -1,3 +1,25 @@
+.upload-button {
+  font-size: 35px;
+  font-weight: bold;
+  /* width: fit-content; */
+  width: 200px;
+  height: 60px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  background-color: black;
+  border-radius: 5px;
+  border-color: goldenrod;
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+  position: absolute;
+  bottom: 40px;
+  right: 80px;
+  pointer-events: auto;
+  z-index: 10000;
+}
+
 .modal-backdrop {
   position: fixed; /* 화면에 고정 */
   top: 0;

@@ -5,7 +5,6 @@ import { Preload, Image as ImageImpl } from '@react-three/drei'
 import { ScrollControls, Scroll, useScroll } from './ScrollControls'
 import ImageOverlay from './ImageOverlay'
 import ImageContent from './ImageContent'
-
 import './ImagePage.css'
 
 

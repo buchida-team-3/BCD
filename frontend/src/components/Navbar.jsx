@@ -47,13 +47,14 @@ function Navbar() {
     return (
         <div className="navbar">
             {/* 로고 클릭 시 handleLogoClick 함수 실행 */}
-            <img src={logo} className="navbar-logo" alt="Logo" onClick={toggleNav} />
+            {/* <img src={logo} className="navbar-logo" alt="Logo" onClick={toggleNav} /> */}
             <div className={`navbar-menu ${isNavExpanded ? 'expanded' : 'collapsed'}`}>
+                {/* <a className='link-button' onClick={handleHomeClick}>앨범 목록</a> */}
                 <a className='link-button' onClick={handleHomeClick}>앨범 목록</a>
                 <a className='link-button' onClick={handleAlbumCreateClick}>모든 사진</a>
                 {/* <a className='link-button' onClick={handleAlbumListClick}>앨범 목록</a> */}
                 <a className='link-button' onClick={handleEditClick}>사진 편집</a>
-                <button className="logout-button" onClick={handleLogout}>로그아웃</button>
+                <a className="link-button" onClick={handleLogout}>로그아웃</a>
             </div>
         </div>
     );

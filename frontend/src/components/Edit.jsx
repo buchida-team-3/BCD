@@ -404,7 +404,7 @@ const Edit = () => {
                   배경 제거
                 </button>
                 <button className="edit-button" onClick={handleStitchImages}>
-                  배경 붙이기
+                  사진 붙이기
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
