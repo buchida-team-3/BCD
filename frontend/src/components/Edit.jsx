@@ -29,6 +29,7 @@ const Edit = () => {
 
   const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
+  const fullScreenRef = useRef(null);
 
   // 이미지를 추가하는 함수
   const handleMergeImages = () => {
@@ -191,6 +192,16 @@ const Edit = () => {
   const handleCancel = () => {
     setShowCheckboxes(false);
     setCheckedImages([]);
+  };
+
+  const handleFullScreen = () => {
+    if (fullScreenRef.current.requestFullscreen) {
+      fullScreenRef.current.requestFullscreen();
+    } else if (fullScreenRef.current.webkitRequestFullscreen) { /* Safari */
+      fullScreenRef.current.webkitRequestFullscreen();
+    } else if (fullScreenRef.current.msRequestFullscreen) { /* IE11 */
+      fullScreenRef.current.msRequestFullscreen();
+    }
   };
 
   // "배경 붙이기" 버튼의 이벤트 핸들러
@@ -390,6 +401,9 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
                 </button>
+                <button className="edit-button" onClick={handleFullScreen}>
+                  전체화면
+                </button>
               </div>
             </div>
 
@@ -403,7 +417,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
               />
             )} */}
 
-            <div>
+            <div ref={fullScreenRef}>
               <img
                   className="selected-image"
                   src={selectedImage}
@@ -429,7 +443,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   src={img.imageUrl}
                   alt={`Overlay ${index}`}
                   draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                  style={{ width: '100%', height: '100%' }} // ResizableBox에 맞게 이미지 크기 조정
+                  style={{ width: '600%', height: '600%' }} // ResizableBox에 맞게 이미지 크기 조정
                   onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
                 />
               </ResizableBox>
