@@ -45,9 +45,25 @@ export default function LabelContent2({ filterLabel }) {
     alt: `Image ${index + 1}`,
   }));
 
-  return (
+const defaultImageSizes = {
+    "1X": {
+      width: 120,
+      height: 100,
+    },
+    "2X": {
+      width: 200,
+      height: 180,
+    },
+    "3X": {
+      // width: 320,
+      width: 500,
+      height: 400,
+    },
+  };
+
+ return (
     <div className="grid-container" style={{ width: "100vw" }}>
-      <Grid images={images} width={1770} height={920} showProgressBar={false} />
+      <Grid images={images} width={1770} height={920} showProgressBar={false} imageSizes={defaultImageSizes} />
     </div>
   );
 }
