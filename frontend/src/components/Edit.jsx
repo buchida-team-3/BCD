@@ -483,7 +483,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   src={img.imageUrl}
                   alt={`Overlay ${index}`}
                   draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                  style={{ width: '600%', height: '600%' }} // ResizableBox에 맞게 이미지 크기 조정
+                  style={{ width: '100%', height: '100%' }} // ResizableBox에 맞게 이미지 크기 조정
                   onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
                 />
               </ResizableBox>
