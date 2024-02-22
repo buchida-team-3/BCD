@@ -140,7 +140,6 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
         
         if (response.status === 200) {
           alert("파일 업로드 성공!");
-          await fetchImages();
           setIsProcessing(false); // 서버 측 처리 완료
         } else {
           alert("파일 업로드 실패.");
