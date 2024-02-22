@@ -26,6 +26,7 @@ const Edit = () => {
     "https://jungle-buchida-s3.s3.amazonaws.com/stitched_images/stitched_result_20240219_115602.jpg",
     "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com_19/img7.jpg",
   ]);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
@@ -99,6 +100,22 @@ const Edit = () => {
       setFetchAttempted(true); // 요청 실패 시에도 상태 업데이트
     }
   };
+
+  useEffect(() => {
+    // 전체 화면 상태 변경을 감지하는 함수
+    const handleFullScreenChange = () => {
+      const isFullScreenNow = !!document.fullscreenElement;
+      setIsFullScreen(isFullScreenNow);
+    };
+
+     // fullscreenchange 이벤트 리스너 등록
+  document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+  // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+  return () => {
+    document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  };
+}, []);
 
   useEffect(() => {
     const { selectedImage: querySelectedImage } = getQueryParams();
@@ -195,14 +212,28 @@ const Edit = () => {
   };
 
   const handleFullScreen = () => {
-    if (fullScreenRef.current.requestFullscreen) {
-      fullScreenRef.current.requestFullscreen();
-    } else if (fullScreenRef.current.webkitRequestFullscreen) { /* Safari */
-      fullScreenRef.current.webkitRequestFullscreen();
-    } else if (fullScreenRef.current.msRequestFullscreen) { /* IE11 */
-      fullScreenRef.current.msRequestFullscreen();
+    if (!document.fullscreenElement) {
+        if (fullScreenRef.current.requestFullscreen) {
+            fullScreenRef.current.requestFullscreen().then(() => {
+                setIsFullScreen(true); // 전체 화면 모드 진입 성공 시
+            });
+        } else if (fullScreenRef.current.webkitRequestFullscreen) {
+            fullScreenRef.current.webkitRequestFullscreen().then(() => {
+                setIsFullScreen(true);
+            });
+        } else if (fullScreenRef.current.msRequestFullscreen) {
+            fullScreenRef.current.msRequestFullscreen().then(() => {
+                setIsFullScreen(true);
+            });
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().then(() => {
+                setIsFullScreen(false); // 전체 화면 모드 해제 성공 시
+            });
+        }
     }
-  };
+};
 
   // "배경 붙이기" 버튼의 이벤트 핸들러
   const handleStitchImages = async () => {
@@ -417,15 +448,14 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
               />
             )} */}
 
-            <div ref={fullScreenRef}>
-              <img
-                  className="selected-image"
-                  src={selectedImage}
-                  alt="Selected"
-                  draggable="false"
-              />
-            </div>
-
+<div ref={fullScreenRef} className={`selected-image-container ${isFullScreen ? 'fullscreen' : ''}`}>
+    <img
+        className="selected-image"
+        src={selectedImage}
+        alt="Selected"
+        draggable="false"
+    />
+</div>
             {overlayImages.map((img, index) => (
               <ResizableBox
                 key={index}

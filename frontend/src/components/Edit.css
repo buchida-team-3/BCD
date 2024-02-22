@@ -214,3 +214,9 @@
   }
 }
 
+/* 전체 화면일 때 적용할 스타일 */
+.fullscreen .selected-image {
+  width: 100vw; /* 화면 너비에 맞춤 */
+  height: 100vh; /* 화면 높이에 맞춤 */
+  object-fit: contain; /* 이미지 비율 유지 */
+}
