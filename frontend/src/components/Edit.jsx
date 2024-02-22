@@ -205,107 +205,94 @@ const Edit = () => {
     }
   };
 
-  // "처리된 이미지" 드래그 시작 처리
-  const handleDragStart = (e, imageUrl) => {
-    console.log(imageUrl);
-    e.dataTransfer.setData("imageUrl", imageUrl);
-  };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const imageUrl = e.dataTransfer.getData("imageUrl");
-    if (!overlayContainerRef.current) return;
+  // const handleStickerClick = (imageUrl) => {
+  //   const image = new Image();
+  //   image.src = imageUrl;
+  //   image.onload = () => {
+  //     const stickerWidth = 200;
+  //     const stickerHeight = 400;
   
-    const rect = overlayContainerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width; // X 위치를 비율로 변환
-    const y = (e.clientY - rect.top) / rect.height; // Y 위치를 비율로 변환
-  
-    if (!!imageUrl === false) {
-      return;
+  //     // Get the dimensions and position of the selectedImage container
+  //     const selectedImageRect = overlayContainerRef.current.getBoundingClientRect();
+      
+  //     // Calculate the center position of the sticker relative to the selectedImage
+  //     // The x and y coordinates should represent the top-left corner of the sticker
+  //     // so that when the sticker's center is aligned to the selectedImage's center
+  //     const xCenter = selectedImageRect.width / selectedImageRect.width;
+  //     const yCenter = selectedImageRect.height / selectedImageRect.height;
+      
+  //     // Adjust the sticker position to be a percentage of the selectedImage dimensions
+  //     const x = xCenter - 2 * stickerWidth / selectedImageRect.width - 2 * xCenter / stickerWidth;
+  //     const y = yCenter - stickerHeight / selectedImageRect.height;
+      
+  //     setOverlayImages((prev) => [
+  //       ...prev,
+  //       {
+  //         imageUrl,
+  //         x, // X position as a percentage of the selectedImage width
+  //         y, // Y position as a percentage of the selectedImage height
+  //         width: stickerWidth,
+  //         height: stickerHeight,
+  //       },
+  //     ]);
+  //   };
+  // };
+// "처리된 이미지" 드래그 시작 처리
+const handleDragStart = (e, imageUrl) => {
+  console.log(imageUrl);
+  e.dataTransfer.setData("imageUrl", imageUrl);
+};
+// "선택된 이미지" 컨테이너에 드롭 처리
+const handleDrop = (e) => {
+  e.preventDefault();
+  const imageUrl = e.dataTransfer.getData("imageUrl");
+  if ( !overlayContainerRef.current ) return;
+  const rect = overlayContainerRef.current.getBoundingClientRect();
+  const x = e.clientX - rect.left; // 드롭된 위치의 X 좌표
+  const y = e.clientY - rect.top; // 드롭된 위치의 Y 좌표
+  const x_abs = e.clientX; // 드롭된 위치의 X 좌표
+  const y_abs = e.clientY; // 드롭된 위치의 Y 좌표
+  console.log('handle Drag ', !!imageUrl)
+  if(!!imageUrl === false){
+    return;
+  }
+
+  setOverlayImages(prev => [...prev, { imageUrl, x, y, x_abs, y_abs, width: 100, height: 100 }]);
+};
+// 드래그 시작 처리
+const handleDragImageStart = (e, index) => {
+  const rect = e.target.getBoundingClientRect();
+  const offsetX = e.clientX - rect.left; // 마우스 위치와 이미지 왼쪽 상단 간 X 차이
+  const offsetY = e.clientY - rect.top; // 마우스 위치와 이미지 왼쪽 상단 간 Y 차이
+
+  setDragging(true);
+  setDraggingIndex(index);
+  setOffsetX(offsetX);
+  setOffsetY(offsetY);
+
+  e.stopPropagation(); // 이벤트 버블링 방지
+};
+// 이미지 이동 처리
+const handleMouseMove = (e) => {
+  if (!dragging || draggingIndex === null) return;
+  const rect = overlayContainerRef.current.getBoundingClientRect();
+  const x = e.clientX - rect.left - offsetX; // offsetX를 고려하여 새로운 X 좌표 계산
+  const y = e.clientY - rect.top - offsetY; // offsetY를 고려하여 새로운 Y 좌표 계산
+
+  setOverlayImages(prev => prev.map((img, index) => {
+    if (index === draggingIndex) {
+      return { ...img, x, y, x_abs: e.clientX - offsetX, y_abs: e.clientY - offsetY };
     }
-  
-    setOverlayImages((prev) => [
-      ...prev,
-      { imageUrl, x, y, width: 100, height: 100 }, // 절대 좌표 대신 비율 저장
-    ]);
-  };
-
-  const handleStickerClick = (imageUrl) => {
-    const image = new Image();
-    image.src = imageUrl;
-    image.onload = () => {
-      const stickerWidth = 200;
-      const stickerHeight = 400;
-  
-      // Get the dimensions and position of the selectedImage container
-      const selectedImageRect = overlayContainerRef.current.getBoundingClientRect();
-      
-      // Calculate the center position of the sticker relative to the selectedImage
-      // The x and y coordinates should represent the top-left corner of the sticker
-      // so that when the sticker's center is aligned to the selectedImage's center
-      const xCenter = selectedImageRect.width / selectedImageRect.width;
-      const yCenter = selectedImageRect.height / selectedImageRect.height;
-      
-      // Adjust the sticker position to be a percentage of the selectedImage dimensions
-      const x = xCenter - 2 * stickerWidth / selectedImageRect.width - 2 * xCenter / stickerWidth;
-      const y = yCenter - stickerHeight / selectedImageRect.height;
-      
-      setOverlayImages((prev) => [
-        ...prev,
-        {
-          imageUrl,
-          x, // X position as a percentage of the selectedImage width
-          y, // Y position as a percentage of the selectedImage height
-          width: stickerWidth,
-          height: stickerHeight,
-        },
-      ]);
-    };
-  };
-
-  // 드래그 시작 시 상대적 위치를 계산하는 로직
-  const handleDragImageStart = (e, index) => {
-    e.stopPropagation(); // 이벤트 버블링 방지
-    setDragging(true);
-    setDraggingIndex(index);
-
-    const rect = overlayContainerRef.current.getBoundingClientRect();
-    const offsetX = (e.clientX - rect.left) / rect.width - overlayImages[index].x;
-    const offsetY = (e.clientY - rect.top) / rect.height - overlayImages[index].y;
-
-    // 계산된 오프셋을 상태에 저장합니다.
-    setOffsetX(offsetX);
-    setOffsetY(offsetY);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!dragging || draggingIndex === null || !overlayContainerRef.current) return;
-  
-    const rect = overlayContainerRef.current.getBoundingClientRect();
-    // 드래그 시작 시점에서의 마우스 포인터와 이미지 위치 사이의 오프셋을 고려하여 새 위치 계산
-    const newX = ((e.clientX - rect.left) / rect.width) - offsetX;
-    const newY = ((e.clientY - rect.top) / rect.height) - offsetY;
-  
-    // 이미지의 새 위치를 상태에 저장
-    setOverlayImages((prev) =>
-      prev.map((img, index) => {
-        if (index === draggingIndex) {
-          return { ...img, x: newX, y: newY };
-        }
-        return img;
-      })
-    );
-  };
-  
-  // 드래그 종료 처리
-  const handleMouseUp = (e) => {
-    if (!dragging) return;
-    setDragging(false);
-    setDraggingIndex(null);
-  };
-  const handleGo = () => {
-    window.location.href = "/album";
-  };
+    return img;
+  }));
+};
+// 드래그 종료 처리
+const handleMouseUp = (e) => {
+  if (!dragging) return;
+  setDragging(false);
+  setDraggingIndex(null);
+};
 
   // 이미지 합성 요청
   const handleMergeImages = async () => {
@@ -440,27 +427,18 @@ const Edit = () => {
                 width={img.width}
                 height={img.height}
                 onResizeStop={(e, { size }) => {
-                  setOverlayImages((prev) =>
-                    prev.map((image, idx) =>
-                      idx === index
-                        ? { ...image, width: size.width, height: size.height }
-                        : image
-                    )
+                  setOverlayImages(prev =>
+                    prev.map((image, idx) => idx === index ? { ...image, width: size.width, height: size.height } : image)
                   );
                 }}
                 className="overlay-image"
-                style={{
-                  position: "absolute",
-                  left: `${img.x * 100}%`, // 저장된 X 비율을 사용
-                  top: `${img.y * 100}%`, // 저장된 Y 비율을 사용
-                  transform: "translate(-50%, -50%)", // 이미지 중심을 기준으로 위치 조정
-                }}
+                style={{ position: 'absolute', left: img.x_abs, top: img.y_abs }}
               >
-                <img
+                <img  
                   src={img.imageUrl}
                   alt={`Overlay ${index}`}
                   draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                  style={{ width: "100%", height: "100%" }} // ResizableBox에 맞게 이미지 크기 조정
+                  style={{ width: '100%', height: '100%' }} // ResizableBox에 맞게 이미지 크기 조정
                   onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
                 />
               </ResizableBox>
@@ -479,7 +457,7 @@ const Edit = () => {
                       alt={`removedImage ${index}`}
                       className="removed-image"
                       draggable="true"
-                      onClick={() => handleStickerClick(removedImage)} // 클릭 이벤트에 핸들러 연결
+                      // onClick={() => handleStickerClick(removedImage)} // 클릭 이벤트에 핸들러 연결
                       onDragStart={(e) => handleDragStart(e, removedImage)}
                   />
               ))}
