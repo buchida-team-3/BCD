@@ -27,6 +27,7 @@ const Edit = () => {
     "https://jungle-buchida-s3.s3.amazonaws.com/stitched_images/stitched_result_20240219_115602.jpg",
     "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com_19/img7.jpg",
   ]);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
@@ -36,6 +37,7 @@ const Edit = () => {
     alert("앨범이 생성되었습니다.");
     navigate('/album');
   }
+  const fullScreenRef = useRef(null);
 
   // 이미지를 추가하는 함수
   const handleMergeImages = () => {
@@ -105,6 +107,22 @@ const Edit = () => {
       setFetchAttempted(true); // 요청 실패 시에도 상태 업데이트
     }
   };
+
+  useEffect(() => {
+    // 전체 화면 상태 변경을 감지하는 함수
+    const handleFullScreenChange = () => {
+      const isFullScreenNow = !!document.fullscreenElement;
+      setIsFullScreen(isFullScreenNow);
+    };
+
+     // fullscreenchange 이벤트 리스너 등록
+  document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+  // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+  return () => {
+    document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  };
+}, []);
 
   useEffect(() => {
     const { selectedImage: querySelectedImage } = getQueryParams();
@@ -199,6 +217,30 @@ const Edit = () => {
     setShowCheckboxes(false);
     setCheckedImages([]);
   };
+
+  const handleFullScreen = () => {
+    if (!document.fullscreenElement) {
+        if (fullScreenRef.current.requestFullscreen) {
+            fullScreenRef.current.requestFullscreen().then(() => {
+                setIsFullScreen(true); // 전체 화면 모드 진입 성공 시
+            });
+        } else if (fullScreenRef.current.webkitRequestFullscreen) {
+            fullScreenRef.current.webkitRequestFullscreen().then(() => {
+                setIsFullScreen(true);
+            });
+        } else if (fullScreenRef.current.msRequestFullscreen) {
+            fullScreenRef.current.msRequestFullscreen().then(() => {
+                setIsFullScreen(true);
+            });
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().then(() => {
+                setIsFullScreen(false); // 전체 화면 모드 해제 성공 시
+            });
+        }
+    }
+};
 
   // "배경 붙이기" 버튼의 이벤트 핸들러
   const handleStitchImages = async () => {
@@ -400,6 +442,9 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                 <button className="edit-button" onClick={handleGo}>
                   앨범 생성
                 </button>
+                <button className="edit-button" onClick={handleFullScreen}>
+                  전체화면
+                </button>
               </div>
             </div>
 
@@ -413,15 +458,14 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
               />
             )} */}
 
-            <div>
-              <img
-                  className="selected-image"
-                  src={selectedImage}
-                  alt="Selected"
-                  draggable="false"
-              />
-            </div>
-
+<div ref={fullScreenRef} className={`selected-image-container ${isFullScreen ? 'fullscreen' : ''}`}>
+    <img
+        className="selected-image"
+        src={selectedImage}
+        alt="Selected"
+        draggable="false"
+    />
+</div>
             {overlayImages.map((img, index) => (
               <ResizableBox
                 key={index}
@@ -439,7 +483,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   src={img.imageUrl}
                   alt={`Overlay ${index}`}
                   draggable={false} // 내부 이미지는 드래그 불가능하게 설정
-                  style={{ width: '100%', height: '100%' }} // ResizableBox에 맞게 이미지 크기 조정
+                  style={{ width: '600%', height: '600%' }} // ResizableBox에 맞게 이미지 크기 조정
                   onMouseDown={(e) => handleDragImageStart(e, index)} // 드래그 시작 이벤트 추가
                 />
               </ResizableBox>
