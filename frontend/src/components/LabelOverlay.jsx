@@ -8,6 +8,7 @@ import { useImageData } from "./ImageContext";
 
 function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const fileInputRef = useRef(null);
+  
   const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수를 초기화합니다.
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
@@ -18,6 +19,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const { imageData, setImageData } = useImageData();
   const [uploadProgress, setUploadProgress] = useState(0); // 업로드 진행률 상태 추가
   const [isProcessing, setIsProcessing] = useState(false); // 서버 측 처리 상태 관리
+  
   
   const LoadingModal = ({ isLoading }) => {
     if (!isLoading) return null;
@@ -140,7 +142,8 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
         
         if (response.status === 200) {
           alert("파일 업로드 성공!");
-          setIsProcessing(false); // 서버 측 처리 완료
+          await refreshImages(); // 여기서 이미지 목록을 새로고침합니다.
+          window.location.reload();
         } else {
           alert("파일 업로드 실패.");
         }
@@ -151,6 +154,24 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
         setUploadProgress(0); // 에러 발생 시 진행률 초기화
         setIsProcessing(false); // 서버 측 처리 완료
       }
+    }
+  };
+
+   // 이미지 데이터를 새로고침하는 함수
+   const refreshImages = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/all", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      if (response.status === 200) {
+        setImageData(response.data);
+      } else {
+        console.error("이미지 목록을 불러오는 데 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("이미지 목록을 불러오는 중 오류 발생:", error);
     }
   };
 
