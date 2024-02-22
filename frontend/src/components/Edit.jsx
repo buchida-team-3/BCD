@@ -14,21 +14,44 @@ const Edit = () => {
   const [checkedImages, setCheckedImages] = useState([]);
   const [showCheckboxes, setShowCheckboxes] = useState(false);
   const [removedImages, setRemovedImages] = useState([]);
-  const [overlayImages, setOverlayImages] = useState([]); // 겹쳐진 이미지들의 정보 배열
-
-  const [dragging, setDragging] = useState(false); // 드래그 중인지 여부
-  const [draggingIndex, setDraggingIndex] = useState(null); // 현재 드래그 중인 이미지 인덱스
-
+  const [overlayImages, setOverlayImages] = useState([]);
+  const [dragging, setDragging] = useState(false);
+  const [draggingIndex, setDraggingIndex] = useState(null);
   const [offsetX, setOffsetX] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchAttempted, setFetchAttempted] = useState(false);
+  const [additionalImages, setAdditionalImages] = useState([
+    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_15/p993.jpg",
+    "https://jungle-buchida-s3.s3.amazonaws.com/stitched_images/stitched_result_20240219_115602.jpg",
+    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com_19/img7.jpg",
+  ]);
 
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
-  
-  const [ fetchAttempted, setFetchAttempted ] = useState(false); // 요청 시도 상태 추가
-
-  const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
-
+  const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
+
+  // 이미지를 추가하는 함수
+  const handleMergeImages = () => {
+    // 현재 이미지 목록을 복사합니다.
+    let currentImages = [...images];
+
+    // 추가할 이미지를 가져옵니다. (하나씩 순차적으로)
+    if (additionalImages.length > 0) {
+      const newImage = additionalImages[0]; // 첫 번째 이미지를 가져옵니다.
+
+      // 이미지 중복 여부를 확인합니다.
+      if (!currentImages.includes(newImage)) {
+        // 현재 이미지 목록에 추가합니다.
+        currentImages.push(newImage);
+        
+        // 상태를 업데이트합니다.
+        setImages(currentImages);
+        
+        // 추가된 이미지는 추가 목록에서 제거합니다.
+        setAdditionalImages(additionalImages.slice(1));
+      }
+    }
+  };
 
   const getQueryParams = () => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -189,9 +212,7 @@ const Edit = () => {
         });
         // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
         console.log("Stitched image:", response.data.filename);
-        const stitchUrl = response.data
-        await fetchImages();
-        setSelectedImage(stitchUrl);
+        setSelectedImage(response.data);
         setIsLoading(false); // 2초 후 로딩 종료
     } catch (error) {
       // 에러 메시지 표시
@@ -303,48 +324,18 @@ const Edit = () => {
     setDragging(false);
     setDraggingIndex(null);
   };
-  const handleGo = () => {
-    window.location.href = "/album";
-  };
 
   // 이미지 합성 요청
-  const handleMergeImages = async () => {
-    if (!selectedImage || overlayImages.length === 0) {
-      alert("선택된 이미지가 없거나, 겹쳐진 이미지가 없습니다.");
-      return;
-    }
-    console.log("select: ", selectedImage);
-    console.log("overlay: ", overlayImages);
-    setIsLoading(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/merge_images",
-        {
-          baseImage: selectedImage,
-          overlayImages: overlayImages.map(img => ({
-            imageUrl: img.imageUrl,
-            x: img.x, // 상대적 X 위치
-            y: img.y, // 상대적 Y 위치
-            width: img.width,
-            height: img.height
-          })),
-        }, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
-        }
-      );
-      console.log("Merged image:", response.data);
-      const mergedUrl = response.data;
-      await fetchImages();
-      setSelectedImage(mergedUrl);
-      setIsLoading(false); // 2초 후 로딩 종료
-      setOverlayImages([]); // 새로운 이미지 합성 시 기존 이미지 초기화
-    } catch (error) {
-      console.error("Error merging images:", error);
-      setIsLoading(false); // 2초 후 로딩 종료
-    }
-  };
+  // 이미지 카드에 사용될 더미 이미지 URL
+const dummyImageUrl = "https://example.com/dummy_image.jpg";
+
+// "편집 저장" 버튼의 이벤트 핸들러
+// "편집 저장" 버튼의 이벤트 핸들러
+
+
+// 이미지를 추가하는 함수
+// "편집 저장" 버튼의 이벤트 핸들러
+
 
   return (
     <div onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} className={'main-container'}>
@@ -408,9 +399,6 @@ const Edit = () => {
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
-                </button>
-                <button className="edit-button" onClick={handleGo}>
-                  앨범 생성
                 </button>
               </div>
             </div>
