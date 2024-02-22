@@ -257,7 +257,7 @@ const handleDrop = (e) => {
   if(!!imageUrl === false){
     return;
   }
-  
+
   setOverlayImages(prev => [...prev, { imageUrl, x, y, x_abs, y_abs, width: 100, height: 100 }]);
 };
 // 드래그 시작 처리
@@ -293,7 +293,6 @@ const handleMouseUp = (e) => {
   setDragging(false);
   setDraggingIndex(null);
 };
-
 
   // 이미지 합성 요청
   const handleMergeImages = async () => {
@@ -396,6 +395,9 @@ const handleMouseUp = (e) => {
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
+                </button>
+                <button className="edit-button" onClick={handleGo}>
+                  앨범 생성
                 </button>
               </div>
             </div>
