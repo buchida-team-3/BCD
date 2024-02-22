@@ -10,6 +10,21 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
 
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+
+  const LoadingModal = ({ isLoading }) => {
+    if (!isLoading) return null;
+
+    return (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <h2>처리 중...</h2>
+          <progress className="progress-bar" max="100"></progress>
+        </div>
+      </div>
+    );
+  };
+
   // 모달창 열기 수정
   const openModal = () => {
     document.body.style.overflow = 'hidden';
@@ -89,7 +104,8 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
       const selectedFiles = fileInput.files;
       if (selectedFiles.length > 0) {
         const formData = new FormData();
-  
+        setIsLoading(true);
+        
         for (let i = 0; i < selectedFiles.length; i++) {
           formData.append("files", selectedFiles[i]);
         }
@@ -108,6 +124,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   
           console.log("LabelOverlay.jsx -> responseData:", response.data);
   
+          setIsLoading(false); // 2초 후 로딩 종료
           if (response.status === 200) {
             alert("파일 업로드 성공!");
             window.location.reload();
@@ -116,6 +133,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
           }
         } catch (error) {
           console.error("파일 업로드 중 오류 발생:", error);
+          setIsLoading(false); // 2초 후 로딩 종료
         }
       }
     }
@@ -129,6 +147,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none", width: "100%", height: "100%" }}>
+      <LoadingModal isLoading={isLoading} />
       <input type="file" ref={fileInputRef} onChange={handleChange} style={{ display: "none" }} multiple />
       <button onClick={openModal} style={{ position: "absolute", bottom: 43, left: 80, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>앨범 생성</button>
       <button onClick={uploadFiles} style={{ position: "absolute", bottom: 43, right: 80, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer"  }}>업로드</button>
