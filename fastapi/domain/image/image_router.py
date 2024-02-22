@@ -21,7 +21,7 @@ from database import get_db
 
 from sqlalchemy.orm import Session  # Session 클래스 임포트
 import aiofiles
-from PIL import Image
+from PIL import Image, ExifTags
 from io import BytesIO
 
 from rembg import remove
@@ -292,7 +292,23 @@ async def merge_images(data: ImageMergeData, db=Depends(get_db), current_user: U
     base_image_bytes = await download_image_from_s3(base_image_path)
     base_image = Image.open(BytesIO(base_image_bytes))
     # base_image_resized = base_image.resize((800, 800))
-
+    try:
+        # 이미지의 EXIF 태그에서 회전 정보를 가져옵니다.
+        for orientation in ExifTags.TAGS.keys():
+            if ExifTags.TAGS[orientation] == 'Orientation':
+                break
+        exif = dict(base_image._getexif().items())
+        
+        # 이미지의 방향을 확인하고 필요한 경우 회전합니다.
+        if exif[orientation] == 3:
+            base_image = base_image.rotate(180, expand=True)
+        elif exif[orientation] == 6:
+            base_image = base_image.rotate(270, expand=True)
+        elif exif[orientation] == 8:
+            base_image = base_image.rotate(90, expand=True)
+    except (AttributeError, KeyError, IndexError):
+        # 이미지에 EXIF 정보가 없는 경우 회전하지 않습니다.
+        pass
     # 원본 이미지의 크기를 가져옵니다.
     original_width, original_height = base_image.size
 
