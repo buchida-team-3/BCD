@@ -189,7 +189,9 @@ const Edit = () => {
         });
         // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
         console.log("Stitched image:", response.data.filename);
-        setSelectedImage(response.data);
+        const stitchUrl = response.data
+        await fetchImages();
+        setSelectedImage(stitchUrl);
         setIsLoading(false); // 2초 후 로딩 종료
     } catch (error) {
       // 에러 메시지 표시

@@ -93,6 +93,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
 
   return (
     <div style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none", width: "100%", height: "100%" }}>
+      <LoadingModal isLoading={isLoading} />
       <input type="file" ref={fileInputRef} onChange={handleChange} style={{ display: "none" }} multiple />
       <button onClick={openModal} style={{ position: "absolute", bottom: 43, left: 80, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>앨범 생성</button>
       <button onClick={uploadFiles} style={{ position: "absolute", bottom: 43, right: 80, fontSize: "20px", color: "white", backgroundColor: "transparent", border: "none", pointerEvents: "auto", cursor: "pointer" }}>업로드</button>

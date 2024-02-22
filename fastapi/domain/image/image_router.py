@@ -32,7 +32,7 @@ from botocore.exceptions import ClientError, NoCredentialsError, PartialCredenti
 from urllib.parse import urlparse
 import re
 from domain.image.theme_dict import theme
-from datetime import datetime
+import datetime
 
 
 router = APIRouter(
@@ -50,8 +50,6 @@ SERVICE_NAME =  "s3"
 REGION = "ap-northeast-2"
 BUCKET_NAME = "jungle-buchida-s3"
 s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY, aws_secret_access_key=SECRET_KEY)
-
-import datetime
 
 @router.post("/group/album/upload", tags=["image"])
 async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), current_user: User = Depends(get_current_user)):
@@ -371,7 +369,7 @@ async def stitch_images(image_names: ImageNames, db=Depends(get_db), current_use
 
     if status == cv2.Stitcher_OK:
         # 현재 시간을 기반으로 고유한 파일명 생성
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         stitched_filename = f"stitched_result_{timestamp}.jpg"
         cv2.imwrite(stitched_filename, stitched)
 
