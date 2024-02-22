@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "./Edit.css";
@@ -29,7 +30,12 @@ const Edit = () => {
   const overlayContainerRef = useRef(null); // 선택된 이미지를 담고 있는 컨테이너의 ref
 
   const { imageData, setImageData } = useImageData();
-
+  const navigate = useNavigate();
+  const handleGo = () => {
+    alert("앨범이 생성되었습니다.");
+    navigate('/album');
+  }
+  
   const getQueryParams = () => {
     const queryParams = new URLSearchParams(window.location.search);
     // const selectedImageForEditPath = "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_01/";
@@ -391,7 +397,7 @@ const handleMouseUp = (e) => {
                   배경 제거
                 </button>
                 <button className="edit-button" onClick={handleStitchImages}>
-                  배경 붙이기
+                  사진 붙이기
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
