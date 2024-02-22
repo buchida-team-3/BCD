@@ -12,16 +12,25 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
 
-  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
+  const [ fetchAttempted, setFetchAttempted ] = useState(false); // 요청 시도 상태 추가
+  const { imageData, setImageData } = useImageData();
+  const [uploadProgress, setUploadProgress] = useState(0); // 업로드 진행률 상태 추가
+  const [isProcessing, setIsProcessing] = useState(false); // 서버 측 처리 상태 관리
+  
   const LoadingModal = ({ isLoading }) => {
     if (!isLoading) return null;
 
     return (
       <div className="modal-backdrop">
         <div className="modal-content">
-          <h2>처리 중...</h2>
-          <progress className="progress-bar" max="100"></progress>
+          <h2>{uploadProgress < 100 ? "업로드 중..." : "처리 중..."}</h2>
+          {uploadProgress < 100 ? (
+            <progress className="progress-bar" max="100" value={uploadProgress}></progress>
+          ) : (
+            <div>{isProcessing ? "이미지 처리 중입니다. 잠시만 기다려주세요... \n 네트워크 환경에 따라 시간이 오래 걸릴 수 있습니다." : "처리 완료!"}</div>
+          )}
         </div>
       </div>
     );
@@ -102,41 +111,46 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   // };
   const handleChange = async (event) => {
     const fileInput = event.target;
-    if (fileInput) {
-      const selectedFiles = fileInput.files;
-      if (selectedFiles.length > 0) {
-        const formData = new FormData();
-        setIsLoading(true);
-        
-        for (let i = 0; i < selectedFiles.length; i++) {
-          formData.append("files", selectedFiles[i]);
-        }
-  
-        try {
-          const response = await axios.post(
-            "http://localhost:8000/group/album/upload",
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                // 'Content-Type': 'multipart/form-data' 이 부분은 axios가 자동으로 설정함
-              },
-            }
-          );
-  
-          console.log("LabelOverlay.jsx -> responseData:", response.data);
-  
-          setIsLoading(false); // 2초 후 로딩 종료
-          if (response.status === 200) {
-            alert("파일 업로드 성공!");
-            window.location.reload();
-          } else {
-            alert("파일 업로드 실패.");
+    if (fileInput && fileInput.files.length > 0) {
+      const formData = new FormData();
+      for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append("files", fileInput.files[i]);
+      }
+      setIsLoading(true);
+      setIsProcessing(true); // 서버 측 처리 시작
+
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/group/album/upload",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              // 'Content-Type': 'multipart/form-data' 이 부분은 axios가 자동으로 설정함
+            },
+            onUploadProgress: progressEvent => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setUploadProgress(percentCompleted); // 업로드 진행률 업데이트
+            },
           }
-        } catch (error) {
-          console.error("파일 업로드 중 오류 발생:", error);
-          setIsLoading(false); // 2초 후 로딩 종료
+        );
+        console.log("LabelOverlay.jsx -> responseData:", response.data);
+        setIsLoading(false); // 2초 후 로딩 종료
+        setUploadProgress(100); // 업로드 완료 후 진행률 100%로 설정
+        
+        if (response.status === 200) {
+          alert("파일 업로드 성공!");
+          await fetchImages();
+          setIsProcessing(false); // 서버 측 처리 완료
+        } else {
+          alert("파일 업로드 실패.");
         }
+      } catch (error) {
+        setIsLoading(false);
+        console.error("파일 업로드 중 오류 발생:", error);
+        setIsLoading(false); // 2초 후 로딩 종료
+        setUploadProgress(0); // 에러 발생 시 진행률 초기화
+        setIsProcessing(false); // 서버 측 처리 완료
       }
     }
   };
