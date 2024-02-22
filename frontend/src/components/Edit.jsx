@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "./Edit.css";
@@ -30,6 +31,12 @@ const Edit = () => {
 
   const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
+
+  const navigate = useNavigate();
+  const handleGo = () => {
+    alert("앨범이 생성되었습니다.");
+    navigate('/album');
+  }
   const fullScreenRef = useRef(null);
 
   // 이미지를 추가하는 함수
@@ -427,10 +434,13 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   배경 제거
                 </button>
                 <button className="edit-button" onClick={handleStitchImages}>
-                  배경 붙이기
+                  사진 붙이기
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
+                </button>
+                <button className="edit-button" onClick={handleGo}>
+                  앨범 생성
                 </button>
                 <button className="edit-button" onClick={handleFullScreen}>
                   전체화면
