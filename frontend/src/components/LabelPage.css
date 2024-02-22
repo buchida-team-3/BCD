@@ -54,5 +54,7 @@ a {
   margin: 0 auto;
   align-items: center;
   justify-content: center;
-  padding: 100px;
+  bottom: 0;
+  /* padding: 100px; */
+  /* padding: 0px; */
 }

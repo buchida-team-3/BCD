@@ -47,7 +47,7 @@ export default function LabelContent2({ filterLabel }) {
 
   return (
     <div className="grid-container" style={{ width: "100vw" }}>
-      <Grid images={images} width={1770} height={800} showProgressBar={false} />
+      <Grid images={images} width={1770} height={920} showProgressBar={false} />
     </div>
   );
 }

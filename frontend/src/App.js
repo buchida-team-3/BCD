@@ -57,7 +57,9 @@ function App() {
           <Route path="/cardpage" element={<CardPage />} />
           <Route path="/cardpage2" element={<CardPage2 />} />
 
+          {/* 그리드 컴포넌트 */}
           <Route path="/labelpage2" element={<LabelPage2 />} />
+          
           {/* <Route path="/aIbum" element={<LabelPage3 />} /> */}
           <Route path="/home" element={<LabelPage3 />} />
 

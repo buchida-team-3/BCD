@@ -11,7 +11,8 @@ function NavbarBefore() {
     return (
         <div className="navbar">
             {/* 이미지에 onClick 이벤트 핸들러 추가 */}
-            <img src={logo} className="navbar-logo" alt="Logo" onClick={handleLogoClick} />
+            {/* <img src={logo} className="navbar-logo" alt="Logo" onClick={handleLogoClick} /> */}
+            {/* <button style={{display: "none"}} onClick={handleLogoClick} /> */}
         </div>
     );
 }
