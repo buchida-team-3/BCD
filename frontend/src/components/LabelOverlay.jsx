@@ -9,6 +9,20 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
   const { setImageData } = useImageData();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const LoadingModal = ({ isLoading }) => {
+    if (!isLoading) return null;
+
+    return (
+      <div className="modal-backdrop">
+        <div className="modal-content">
+          <h2>처리 중...</h2>
+          <progress className="progress-bar" max="100"></progress>
+        </div>
+      </div>
+    );
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -64,7 +78,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
       for (let i = 0; i < fileInput.files.length; i++) {
         formData.append("files", fileInput.files[i]);
       }
-
+      setIsLoading(true);
       try {
         const response = await axios.post(
           "http://localhost:8000/group/album/upload",
@@ -75,6 +89,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
             },
           }
         );
+        setIsLoading(false);
 
         if (response.status === 200) {
           alert("파일 업로드 성공!");
@@ -86,6 +101,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
           alert("파일 업로드 실패.");
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("파일 업로드 중 오류 발생:", error);
       }
     }
