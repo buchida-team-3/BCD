@@ -58,6 +58,8 @@ const Edit = () => {
         
         // 추가된 이미지는 추가 목록에서 제거합니다.
         setAdditionalImages(additionalImages.slice(1));
+
+        alert("이미지가 저장되었습니다.");
       }
     }
   };
