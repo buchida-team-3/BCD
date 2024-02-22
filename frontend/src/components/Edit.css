@@ -74,10 +74,6 @@
   object-fit: contain; /* 이미지 비율을 유지하면서 컨테이너에 맞춤 */
   z-index: 500;
 }
-.overlay-image img {
-  pointer-events: none; /* 기본적으로 오버레이 이미지에 대한 포인터 이벤트 무시 */
-}
-  
 
 .react-resizable-handle {
   background-color: #ff5722; /* 눈에 띄는 오렌지 색상 */
