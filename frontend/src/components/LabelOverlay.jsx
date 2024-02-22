@@ -9,6 +9,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
 
+
   const [isLoading, setIsLoading] = useState(false); // 로딩 상태
   const [ fetchAttempted, setFetchAttempted ] = useState(false); // 요청 시도 상태 추가
   const { imageData, setImageData } = useImageData();
@@ -111,9 +112,9 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
       for (let i = 0; i < fileInput.files.length; i++) {
         formData.append("files", fileInput.files[i]);
       }
-
       setIsLoading(true);
       setIsProcessing(true); // 서버 측 처리 시작
+
       try {
         const response = await axios.post(
           "http://localhost:8000/group/album/upload",
@@ -141,6 +142,7 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
           alert("파일 업로드 실패.");
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("파일 업로드 중 오류 발생:", error);
         setIsLoading(false); // 2초 후 로딩 종료
         setUploadProgress(0); // 에러 발생 시 진행률 초기화
