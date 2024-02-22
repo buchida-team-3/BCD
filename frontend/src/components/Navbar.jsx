@@ -29,6 +29,7 @@ function Navbar() {
         // localStorage에서 항목 삭제
         localStorage.removeItem('access_token');
         localStorage.removeItem('user_name');
+        localStorage.removeItem('imageData');
         // 사용자를 /loginandsignup로 리다이렉션
         window.location.href = '/loginandsignup';
     }
