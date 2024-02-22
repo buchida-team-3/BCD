@@ -303,6 +303,9 @@ const Edit = () => {
     setDragging(false);
     setDraggingIndex(null);
   };
+  const handleGo = () => {
+    window.location.href = "/album";
+  };
 
   // 이미지 합성 요청
   const handleMergeImages = async () => {
@@ -405,6 +408,9 @@ const Edit = () => {
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
+                </button>
+                <button className="edit-button" onClick={handleGo}>
+                  앨범 생성
                 </button>
               </div>
             </div>

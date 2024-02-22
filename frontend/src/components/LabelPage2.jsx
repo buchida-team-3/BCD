@@ -1,17 +1,9 @@
-import * as THREE from "three";
-import { Suspense, useRef, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Preload, Image as ImageImpl } from "@react-three/drei";
-import { ScrollControls, Scroll, useScroll } from "./LabelScrollControls";
-
+// LabelPage2 컴포넌트
+import React, { useState } from "react";
 import Navbar from "./Navbar";
-import LabelOverlay from "./LabelOverlay";
-// import LabelContent from "./LabelContent";
-
 import LabelContent2 from "./LabelContent2";
+import LabelOverlay from "./LabelOverlay";
 import "./LabelPage.css";
-
-import bgImage from "./content/background.jpg";
 
 function LabelPage2() {
   const [filterLabel, setFilterLabel] = useState("Filtering");
@@ -25,7 +17,6 @@ function LabelPage2() {
   return (
     <div className="label-page-container">
       <Navbar />
-      {/* <LabelContent filterLabel={filterLabel} /> */}
       <LabelContent2 filterLabel={filterLabel} />
       <LabelOverlay
         onToggleFilterLabel={toggleFilterLabel}
