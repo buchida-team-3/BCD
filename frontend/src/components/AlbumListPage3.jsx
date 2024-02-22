@@ -15,12 +15,10 @@ import AlbumListCard from './AlbumListCard.jsx'
 import AlbumListRig from './AlbumListRig.jsx'
 import AlbumListCarousel from './AlbumListCarousel.jsx'
 import AlbumListContent3 from './AlbumListContent3.jsx'
-import Navbar from './Navbar.jsx'
 
 export const AlbumListPage3 = () => (
   <>
   <AlbumListProvider>
-    <Navbar />
   <AlbumListContent3 />
   <AlbumListOverlay2 />
   </AlbumListProvider>

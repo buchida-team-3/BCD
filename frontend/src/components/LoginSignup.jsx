@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import NavbarBefore from "./NavbarBefore";
 import LoginContainer from "./LoginContainer";
 import SignupContainer from "./SignupContainer";
-import bgImage from "./content/background.jpg";
 import "./LoginSignup.css";
 
 function LoginSignup() {
@@ -19,7 +17,7 @@ function LoginSignup() {
 
   return (
     <div className="login-signup-container">
-      <NavbarBefore />
+
       <div className={`login-signup ${isVisible ? "show" : ""}`}>
         $
         {mode === "login" ? (
