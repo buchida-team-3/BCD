@@ -31,7 +31,7 @@ function Navbar() {
         localStorage.removeItem('user_name');
         localStorage.removeItem('imageData');
         // 사용자를 /loginandsignup로 리다이렉션
-        window.location.href = '/loginandsignup';
+        window.location.href = '/';
     }
 
     // // 로고 클릭 처리 함수
