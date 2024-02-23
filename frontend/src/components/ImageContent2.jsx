@@ -52,11 +52,11 @@ function Image(props) {
 
       <group {...props}>
 
-        <Image position={[-width * w-1, 0, -0.5]} scale={[6, 5, 1]} url={urls[0]} />
+        <Image position={[-width * w-1.2, 0, -0.8]} scale={[6, 5, 1]} url={urls[0]} />
 
-        <Image position={[0, 0, 0]} scale={[6, 5, 1]} url={urls[1]} />
+        <Image position={[1.5, 0, 0]} scale={[6, 5, 1]} url={urls[1]} />
 
-        <Image position={[width * w+0.5, 0, 0.5]} scale={[6, 5, 1]} url={urls[2]} />
+        <Image position={[width * w+3, 0, 1]} scale={[6, 5, 1]} url={urls[2]} />
 
       </group>
 
@@ -77,13 +77,13 @@ function Image(props) {
 
         <Page position={[width * 0.3, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
 
-        <Page position={[width * 1.5, 0, 0]} urls={['snow/img4.jpg', 'snow/img5.jpg', 'snow/img6.jpg']} />
+        <Page position={[width * 2, 0, 0]} urls={['snow/img4.jpg', 'snow/img5.jpg', 'snow/img6.jpg']} />
 
-        <Page position={[width * 2.7, 0, 0]} urls={['snow/img7.jpg', 'snow/img8.jpg', 'snow/img9.jpg']} />
+        <Page position={[width * 3.7, 0, 0]} urls={['snow/img7.jpg', 'snow/img8.jpg', 'snow/img9.jpg']} />
 
-        <Page position={[width * 3.9, 0, 0]} urls={['snow/img10.jpg', 'snow/img11.jpg', 'snow/img1.jpg']} />
+        <Page position={[width * 5.4, 0, 0]} urls={['snow/img10.jpg', 'snow/img11.jpg', 'snow/img1.jpg']} />
 
-        <Page position={[width * 5.1, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
+        <Page position={[width * 7.1, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
 
       </>
 
@@ -108,7 +108,7 @@ function Image(props) {
 
         <Suspense fallback={null}>
 
-          <ScrollControls infinite horizontal damping={4} pages={6.5} distance={1}>
+          <ScrollControls infinite horizontal damping={4} pages={9} distance={1}>
 
             <Scroll>
 
