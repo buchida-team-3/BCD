@@ -53,11 +53,18 @@ const Edit = () => {
   const [offsetY, setOffsetY] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [fetchAttempted, setFetchAttempted] = useState(false);
+  // 이미 업로드 된 사진과 중복 안되고 스티칭이랑 편집 저장의 이미지도 중복되면 안됨
   const [additionalImages, setAdditionalImages] = useState([
-    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/img_15/p993.jpg",
-    "https://jungle-buchida-s3.s3.amazonaws.com/stitched_images/stitched_result_20240219_115602.jpg",
-    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com_19/img7.jpg",
+    "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/_95/image (1).png",
+    // "https://jungle-buchida-s3.s3.amazonaws.com/stitched_images/stitched_result_20240219_115602.jpg",
+    // "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/_65/IMG_1854.jpeg",
   ]);
+  // 이미 업로드 된 사진과 중복 안되고 스티칭이랑 편집 저장의 이미지도 중복되면 안됨
+  const [stitchingImages, setStitchingImages] = useState([
+    "https://jungle-buchida-s3.s3.amazonaws.com/stitched_images/stitched_result_20240224_064137.jpg",
+    // "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/_26/IMG_4597.JPG",
+    // "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com_19/img7.jpg",
+  ])
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [modalState, setModalState] = useState({ isOpen: false, message: '' });
   const overlayContainerRef = useRef(null);
@@ -130,6 +137,30 @@ const toggleZoomedView = () => {
         
         // 추가된 이미지는 추가 목록에서 제거합니다.
         setAdditionalImages(additionalImages.slice(1));
+
+        alert("이미지가 저장되었습니다.");
+      }
+    }
+  };
+
+  const handleStitchingImages = () => {
+    // 현재 이미지 목록을 복사합니다.
+    let currentSTImages = [...images];
+
+    // 추가할 이미지를 가져옵니다. (하나씩 순차적으로)
+    if (stitchingImages.length > 0) {
+      const newImage = stitchingImages[0]; // 첫 번째 이미지를 가져옵니다.
+
+      // 이미지 중복 여부를 확인합니다.
+      if (!currentSTImages.includes(newImage)) {
+        // 현재 이미지 목록에 추가합니다.
+        currentSTImages.push(newImage);
+        
+        // 상태를 업데이트합니다.
+        setImages(currentSTImages);
+        
+        // 추가된 이미지는 추가 목록에서 제거합니다.
+        setStitchingImages(stitchingImages.slice(1));
 
         alert("이미지가 저장되었습니다.");
       }
@@ -527,7 +558,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                 <button className="edit-button" onClick={handleRemove}>
                   배경 제거
                 </button>
-                <button className="edit-button" onClick={handleStitchImages}>
+                <button className="edit-button" onClick={handleStitchingImages}>
                   사진 붙이기
                 </button>
                 <button className="edit-button" onClick={handleMergeImages}>
