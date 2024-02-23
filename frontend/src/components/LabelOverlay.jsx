@@ -147,7 +147,6 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
         } else {
         }
       } catch (error) {
-        setIsLoading(false);
         console.error("파일 업로드 중 오류 발생:", error);
         setIsLoading(false); // 2초 후 로딩 종료
         setUploadProgress(0); // 에러 발생 시 진행률 초기화
