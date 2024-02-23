@@ -21,7 +21,7 @@ import LabelPage from './components/LabelPage';
 import ImagePage3 from './components/ImagePage3';
 import ImagePage4 from './components/ImagePage4';
 import ImagePage5 from './components/ImagePage5';
-import ImagePage6 from './components/ImageContent6';
+import ImagePage6 from './components/ImagePage6';
 
 
 function App() {
