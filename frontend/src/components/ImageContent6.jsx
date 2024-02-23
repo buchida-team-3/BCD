@@ -81,9 +81,9 @@ function Image(props) {
 
         <Page position={[width * 3.7, 0, 0]} urls={['jeju/img7.jpg', 'jeju/img8.jpg', 'jeju/img9.jpg']} />
 
-        <Page position={[width * 5.4, 0, 0]} urls={['jeju/img10.jpg', 'jeju/img2.jpg', 'jeju/img1.jpg']} />
+        {/* <Page position={[width * 5.4, 0, 0]} urls={['jeju/img10.jpg', 'jeju/img2.jpg', 'jeju/img1.jpg']} />
 
-        <Page position={[width * 7.1, 0, 0]} urls={['jeju/img4.jpg', 'jeju/img5.jpg', 'jeju/img6.jpg']} />
+        <Page position={[width * 7.1, 0, 0]} urls={['jeju/img4.jpg', 'jeju/img5.jpg', 'jeju/img6.jpg']} /> */}
 
       </>
 
@@ -108,7 +108,7 @@ function Image(props) {
 
         <Suspense fallback={null}>
 
-          <ScrollControls infinite horizontal damping={4} pages={9} distance={1}>
+          <ScrollControls infinite horizontal damping={4} pages={5.5} distance={1}>
 
             <Scroll>
 
