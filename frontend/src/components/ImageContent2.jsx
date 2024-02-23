@@ -75,15 +75,15 @@ function Image(props) {
 
       <>
 
-        <Page position={[width * 0.3, 0, 0]} urls={['img1.jpg', '/img2.jpg', '/img3.jpg']} />
+        <Page position={[width * 0.3, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
 
-        <Page position={[width * 1.5, 0, 0]} urls={['/img4.jpg', '/img5.jpg', '/img6.jpg']} />
+        <Page position={[width * 1.5, 0, 0]} urls={['snow/img4.jpg', 'snow/img5.jpg', 'snow/img6.jpg']} />
 
-        <Page position={[width * 2.7, 0, 0]} urls={['/img7.jpg', '/img8.jpg', '/img9.jpg']} />
+        <Page position={[width * 2.7, 0, 0]} urls={['snow/img7.jpg', 'snow/img8.jpg', 'snow/img9.jpg']} />
 
-        <Page position={[width * 3.9, 0, 0]} urls={['/img10.jpg', '/img11.jpg', '/img12.jpg']} />
+        <Page position={[width * 3.9, 0, 0]} urls={['snow/img10.jpg', 'snow/img11.jpg', 'snow/img1.jpg']} />
 
-        <Page position={[width * 5.1, 0, 0]} urls={['img13.jpg', '/img14.jpg', '/img15.jpg']} />
+        <Page position={[width * 5.1, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
 
       </>
 
