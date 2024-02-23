@@ -81,9 +81,9 @@ function Image(props) {
 
         <Page position={[width * 3.7, 0, 0]} urls={['mountain/img7.jpg', 'mountain/img8.jpg', 'mountain/img9.jpg']} />
 
-        <Page position={[width * 5.4, 0, 0]} urls={['mountain/img10.jpg', 'mountain/img1.jpg', 'mountain/img2.jpg']} />
+        {/* <Page position={[width * 5.4, 0, 0]} urls={['mountain/img10.jpg', 'mountain/img1.jpg', 'mountain/img2.jpg']} />
 
-        <Page position={[width * 7.1, 0, 0]} urls={['mountain/img4.jpg', 'mountain/img5.jpg', 'mountain/img6.jpg']} />
+        <Page position={[width * 7.1, 0, 0]} urls={['mountain/img4.jpg', 'mountain/img5.jpg', 'mountain/img6.jpg']} /> */}
 
       </>
 
@@ -108,7 +108,7 @@ function Image(props) {
 
         <Suspense fallback={null}>
 
-          <ScrollControls infinite horizontal damping={4} pages={9} distance={1}>
+          <ScrollControls infinite horizontal damping={4} pages={5.5} distance={1}>
 
             <Scroll>
 
