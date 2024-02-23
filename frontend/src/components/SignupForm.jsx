@@ -16,6 +16,10 @@ function SignupForm() {
     });
   };
 
+  const handleBack = () => {
+    window.location.href = "/loginandsignup";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -83,6 +87,9 @@ function SignupForm() {
       <div className="button-container">
         <button type="submit" className="confirm-button">
           회원가입
+        </button>
+        <button type="button" className="confirm-button" onClick={handleBack}>
+          뒤로
         </button>
       </div>
     </form>
