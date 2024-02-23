@@ -70,7 +70,7 @@ function App() {
           <Route path="/imagepage5" element={<ImagePage2 />} />
           <Route path="/imagepage3" element={<ImagePage3 />} />
           <Route path="/imagepage4" element={<ImagePage4 />} />
-          <Route path="/imagepage2" element={<ImagePage5 />} />
+          <Route path="/imagepage6" element={<ImagePage5 />} />
 
         </Routes>
       </Router>

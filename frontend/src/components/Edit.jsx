@@ -8,6 +8,7 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import editDefault from "./content/edit_default.jpg";
 import { useImageData } from "./ImageContext";
+import CustomModal from "./CustomModal";
 
 const ZoomedImageView = ({ imageUrl, overlayImages, onClose }) => {
   if (!imageUrl) return null;
@@ -58,9 +59,12 @@ const Edit = () => {
     "https://jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com/jungle-buchida-s3.s3.ap-northeast-2.amazonaws.com_19/img7.jpg",
   ]);
   const [isFullScreen, setIsFullScreen] = useState(false);
-
+  const [modalState, setModalState] = useState({ isOpen: false, message: '' });
   const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
+  const [uploadProgress, setUploadProgress] = useState(0); // 업로드 진행률 상태 추가
+  const [isProcessing, setIsProcessing] = useState(false); // 서버 측 처리 상태 관리
+  const [showImageList, setShowImageList] = useState(true); // 이미지 목록의 보이기/숨기기 상태
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -88,10 +92,23 @@ const toggleZoomedView = () => {
   };
 
   const navigate = useNavigate();
+
+  // 모달을 여는 함수를 일반화하여, 메시지를 인자로 받습니다.
+  const openModalWithMessage = (message) => {
+    setModalState({ isOpen: true, message });
+  };
+
+  // 모달을 닫는 함수
+  const closeModal = () => {
+    setModalState({ isOpen: false, message: '' });
+    // 특정 동작이 필요한 경우 여기에 추가 (예: navigate('/album');)
+  };
+  // 이벤트 핸들러에서 openModalWithMessage 함수를 사용하여 메시지를 설정
   const handleGo = () => {
-    alert("앨범이 생성되었습니다.");
+    openModalWithMessage("앨범이 생성되었습니다.");
     navigate('/album');
-  }
+  };
+
   const fullScreenRef = useRef(null);
 
   // 이미지를 추가하는 함수
@@ -136,7 +153,7 @@ const toggleZoomedView = () => {
       <div className="modal-backdrop">
         <div className="modal-content">
           <h2>처리 중...</h2>
-          <progress className="progress-bar" max="100"></progress>
+          <div>{isProcessing ? "이미지 처리 중입니다. 잠시만 기다려주세요... \n\n 네트워크 환경에 따라 시간이 오래 걸릴 수 있습니다." : ""}</div>
         </div>
       </div>
     );
@@ -239,7 +256,12 @@ const toggleZoomedView = () => {
 
   const handleRemove = async (event) => {
     event.preventDefault();
+    if (checkedImages.length === 0) {
+      openModalWithMessage("이미지를 선택해 주세요."); // 에러 시 메시지
+      return;
+    }
     setIsLoading(true);
+    setIsProcessing(true); // 서버 측 처리 시작
     try {
       const response = await axios.post(
         "http://localhost:8000/remove_background",
@@ -258,11 +280,12 @@ const toggleZoomedView = () => {
       // 에러 메시지 표시
       console.log(`error : ${error.response.data.detail}`);
       if (error.response.data && error.response.data.detail) {
-        alert(error.response.data.detail);
+        openModalWithMessage(error.response.data.detail); // 에러 시 메시지
       } else {
-        alert("예기치 못한 오류가 발생했습니다.");
+        openModalWithMessage("예기치 못한 오류가 발생했습니다."); // 에러 시 메시지
       }
       setIsLoading(false); // 2초 후 로딩 종료
+      setUploadProgress(100); // 업로드 완료 후 진행률 100%로 설정
     }
     // setRemovedImages(response.data);
 
@@ -302,33 +325,41 @@ const toggleZoomedView = () => {
   // "배경 붙이기" 버튼의 이벤트 핸들러
   const handleStitchImages = async () => {
     if (checkedImages.length === 0) {
-      alert("이미지를 선택해주세요.");
+      openModalWithMessage("이미지를 선택해 주세요."); // 에러 시 메시지
       return;
     }
     console.log(checkedImages);
     
     setIsLoading(true);
+    setIsProcessing(true); // 서버 측 처리 시작
     try {
         const response = await axios.post("http://localhost:8000/stitch_images", {
           images: checkedImages, // 선택된 이미지들을 백엔드로 전송
         }, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-          }
+          },
+          onUploadProgress: progressEvent => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(percentCompleted); // 업로드 진행률 업데이트
+          },
         });
         // 스티칭 결과 처리 로직 (예: 결과 이미지 표시)
         console.log("Stitched image:", response.data.filename);
         setSelectedImage(response.data);
         setIsLoading(false); // 2초 후 로딩 종료
+        setUploadProgress(100); // 업로드 완료 후 진행률 100%로 설정
     } catch (error) {
       // 에러 메시지 표시
       console.log(`error : ${error.response.data.detail}`);
       if (error.response.data && error.response.data.detail) {
-        alert(error.response.data.detail);
+        openModalWithMessage(error.response.data.detail); // 에러 시 메시지
       } else {
-        alert("예기치 못한 오류가 발생했습니다.");
+        openModalWithMessage("예기치 못한 오류가 발생했습니다."); // 에러 시 메시지
       }
       setIsLoading(false); // 2초 후 로딩 종료
+      setUploadProgress(0); // 에러 발생 시 진행률 초기화
+      setIsProcessing(false); // 서버 측 처리 완료
     }
   };
 
@@ -453,26 +484,32 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   취소
                 </button>
             )}
+            <button className="edit-button" onClick={() => setShowImageList(!showImageList)}>
+              {showImageList ? "숨기기" : "보이기"}
+            </button>
           </div>
 
           <div className="image-box">
-            <div className="image-list">
+            {showImageList && (
+
+              <div className={`image-list ${showImageList ? '' : 'collapsed'}`}>
               {images.map((image) => (
-                  <div
-                      key={image}
-                      className={`image-checkbox ${
-                          checkedImages.includes(image) ? "selected" : ""
-                      }`}
-                      onClick={() => handleClick(image)}
-                  >
+                <div
+                key={image}
+                className={`image-checkbox ${
+                  checkedImages.includes(image) ? "selected" : ""
+                }`}
+                onClick={() => handleClick(image)}
+                >
                     <img
                         className="image-element"
                         src={image}
                         alt={image}
-                    />
+                        />
                   </div>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -535,14 +572,14 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
               />
             )} */}
 
-<div ref={fullScreenRef} className={`selected-image-container ${isFullScreen ? 'fullscreen' : ''}`}>
-    <img
-        className="selected-image"
-        src={selectedImage}
-        alt="Selected"
-        draggable="false"
-    />
-</div>
+            <div ref={fullScreenRef} className={`selected-image-container ${isFullScreen ? 'fullscreen' : ''} ${showImageList ? '' : 'expand'}`}>
+              <img
+                className="selected-image"
+                src={selectedImage}
+                alt="Selected"
+                draggable="false"
+              />
+            </div>
             {overlayImages.map((img, index) => (
               <ResizableBox
                 key={index}
@@ -586,6 +623,9 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
             </div>
           </div>
         </div>
+        <CustomModal isOpen={modalState.isOpen} onClose={closeModal}>
+          <p>{modalState.message}</p>
+        </CustomModal>
     </div>
   );
 };
