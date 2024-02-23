@@ -35,6 +35,8 @@ function AlbumListCard({ url, ...props }) {
       navigate('/imagepage5');
     } else if (url === '/title5.jpg') {
       navigate('/imagepage6');
+    } else if (url === '/title6.jpg') {
+      navigate('/imagepage7');
     }
   };
 
