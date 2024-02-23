@@ -19,9 +19,10 @@ from domain.user.user_router import get_current_user
 from models import User
 from database import get_db
 
+from sqlalchemy import desc
 from sqlalchemy.orm import Session  # Session 클래스 임포트
 import aiofiles
-from PIL import Image, ExifTags
+from PIL import Image, ImageOps, ExifTags
 from io import BytesIO
 
 from rembg import remove
@@ -70,6 +71,20 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
 
         with open(file_path, "wb") as fp:
             fp.write(content)
+
+        image_original = Image.open(file_path)
+        image = ImageOps.exif_transpose(image_original)
+        max_length = 800  # 최대 길이 설정
+        original_width, original_height = image.size
+
+        if max(original_width, original_height) > max_length:
+            scale = max_length / max(original_width, original_height)
+            new_width = int(original_width * scale)
+            new_height = int(original_height * scale)
+            image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            
+            # 리사이징된 이미지를 임시 파일로 다시 저장
+            image.save(file_path)  # 원본 파일 경로에 덮어쓰기
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
@@ -125,7 +140,7 @@ async def get_album(db=Depends(get_db), current_user: User = Depends(get_current
     image_list = []
     images = db.query(image_crud.Image).filter(
         image_crud.Image.user_id == current_user.id
-        ).all()
+        ).order_by(image_crud.Image.image_path.desc()).all()
     
     # 이미지 모델 직렬화
     for image in images:
@@ -408,5 +423,5 @@ async def stitch_images(image_names: ImageNames, db=Depends(get_db), current_use
 
         return f"https://{BUCKET_NAME}.s3.amazonaws.com/{s3_stitched_image_path}"
 
-    else:
-        raise HTTPException(status_code=500, detail="서로 붙일 수 없는 이미지를 선택했습니다. 다른 이미지를 선택해주세요.")
+    else:   
+        raise HTTPException(status_code=500, detail="서로 붙일 수 없는 이미지를 선택했습니다.\n\n다른 이미지를 선택해주세요.")

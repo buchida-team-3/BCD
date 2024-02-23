@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './LoginForm.css';
+import CustomModal from "./CustomModal";
 
 function LoginForm(props) {
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 표시 상태
     const [credentials, setCredentials] = useState({
         username: '',
         password: ''
@@ -47,11 +49,16 @@ function LoginForm(props) {
 
             } else {
                 // 로그인 실패 처리
-                alert('로그인 실패', response.data);
+                setIsModalOpen(true);
             }
         } catch (error) {
-            alert('로그인 실패:', error);
+            setIsModalOpen(true);
         }
+    };
+
+
+    const closeModal = () => {
+        setIsModalOpen(false); // 모달을 숨깁니다.
     };
 
     return (
@@ -81,6 +88,9 @@ function LoginForm(props) {
                 <button type="button" className="login-confirm-button" onClick={handleGoHome}>홈으로</button>
             </div>
             </form>
+            <CustomModal isOpen={isModalOpen} onClose={closeModal}>
+            <p>로그인에 실패했습니다. 다시 입력해주세요.</p>
+            </CustomModal>
         </>
     );
 }
