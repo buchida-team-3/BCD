@@ -84,7 +84,7 @@ async def image_upload(files: List[UploadFile] = File(...), db=Depends(get_db), 
             image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
             
             # 리사이징된 이미지를 임시 파일로 다시 저장
-            image.save(file_path)  # 원본 파일 경로에 덮어쓰기
+            # image.save(file_path)  # 원본 파일 경로에 덮어쓰기
 
         results.append({"filename": file_path, "num": num})
         results_aws.append(aws_upload(file_path, "jungle-buchida-s3", f"{num_path.split('/')[-1]}/{file.filename}"))
