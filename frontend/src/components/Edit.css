@@ -258,36 +258,9 @@
   border-radius: 4px;
 }
 
-.album-modal-content button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  margin-right: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.album-modal-content button:hover {
-  background-color: #0056b3;
-}
-
-.album-modal-content button:last-child {
-  background-color: #6c757d;
-}
-
-.album-modal-content button:last-child:hover {
-  background-color: #545b62;
-}
-
-.album-modal-text {
-  color:  #545b62;
-}
-
 .album-modal-buttons {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 20px;
 }
 

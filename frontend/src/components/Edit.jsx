@@ -380,6 +380,7 @@ const toggleZoomedView = () => {
         setSelectedImage(response.data);
         setIsLoading(false); // 2초 후 로딩 종료
         setUploadProgress(100); // 업로드 완료 후 진행률 100%로 설정
+        fetchImages();
     } catch (error) {
       // 에러 메시지 표시
       console.log(`error : ${error.response.data.detail}`);
@@ -515,9 +516,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   취소
                 </button>
             )}
-            <button className="edit-button" onClick={() => setShowImageList(!showImageList)}>
-              {showImageList ? "숨기기" : "보이기"}
-            </button>
+
           </div>
 
           <div className="image-box">
@@ -574,8 +573,8 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
             <h2 className="album-modal-text">앨범 생성</h2>
             <input type="text" placeholder="앨범 제목을 입력하세요" />
             <div className="album-modal-buttons">
-              <button onClick={handleConfirm}>확인</button>
-            <button onClick={handleModalCancel}>취소</button>
+              <button className="edit-button" onClick={handleConfirm}>확인</button>
+              <button className="edit-button" onClick={handleModalCancel}>취소</button>
             </div>
           </div>
         </div>
