@@ -54,7 +54,7 @@ function AlbumListOverlay() {
     <div style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
       {hoveredCard && (
         <>
-          <div style={{ position: 'absolute', bottom: '3%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '50px', color: "white", fontWeight: "bold"}}>
+          <div style={{ position: 'absolute', bottom: '75%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '50px', color: "white", fontWeight: "bold"}}>
             {cardTexts[hoveredCard] || "기본 텍스트"} {/* 호버된 카드에 해당하는 텍스트를 동적으로 표시 */}
           </div>
           {/* <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
