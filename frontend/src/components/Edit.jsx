@@ -349,6 +349,7 @@ const toggleZoomedView = () => {
         setSelectedImage(response.data);
         setIsLoading(false); // 2초 후 로딩 종료
         setUploadProgress(100); // 업로드 완료 후 진행률 100%로 설정
+        fetchImages();
     } catch (error) {
       // 에러 메시지 표시
       console.log(`error : ${error.response.data.detail}`);
