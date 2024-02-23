@@ -15,6 +15,10 @@ function LoginForm(props) {
         });
     };
 
+    const handleGoHome = () => {
+        window.location.href = '/';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -74,6 +78,7 @@ function LoginForm(props) {
             <div className="button-link-container">
                 <button type="submit" className="login-confirm-button">로그인</button>
                 <button type="button" className="login-confirm-button" onClick={props.mode}>회원가입</button>
+                <button type="button" className="login-confirm-button" onClick={handleGoHome}>홈으로</button>
             </div>
             </form>
         </>
