@@ -484,9 +484,7 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                   취소
                 </button>
             )}
-            <button className="edit-button" onClick={() => setShowImageList(!showImageList)}>
-              {showImageList ? "숨기기" : "보이기"}
-            </button>
+
           </div>
 
           <div className="image-box">
@@ -543,8 +541,8 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
             <h2 className="album-modal-text">앨범 생성</h2>
             <input type="text" placeholder="앨범 제목을 입력하세요" />
             <div className="album-modal-buttons">
-              <button onClick={handleConfirm}>확인</button>
-            <button onClick={handleModalCancel}>취소</button>
+              <button className="edit-button" onClick={handleConfirm}>확인</button>
+              <button className="edit-button" onClick={handleModalCancel}>취소</button>
             </div>
           </div>
         </div>
