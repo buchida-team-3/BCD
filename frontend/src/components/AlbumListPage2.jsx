@@ -15,7 +15,6 @@ import AlbumListCard from './AlbumListCard.jsx'
 import AlbumListRig from './AlbumListRig.jsx'
 import AlbumListCarousel from './AlbumListCarousel.jsx'
 import AlbumListContent2 from './AlbumListContent2.jsx'
-import Navbar from './Navbar.jsx'
 
 const AlbumListPage2 = () => (
   <>
