@@ -141,11 +141,10 @@ function LabelOverlay({ onToggleFilterLabel, filterLabel }) {
         setUploadProgress(100); // 업로드 완료 후 진행률 100%로 설정
         
         if (response.status === 200) {
-          alert("파일 업로드 성공!");
+          
           await refreshImages(); // 여기서 이미지 목록을 새로고침합니다.
           window.location.reload();
         } else {
-          alert("파일 업로드 실패.");
         }
       } catch (error) {
         setIsLoading(false);
