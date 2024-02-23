@@ -8,12 +8,12 @@ import ReactDOM from 'react-dom';
 
 // URL과 텍스트 매핑 객체 예시입니다. 실제 URL을 사용하도록 변경해주세요.
 const cardTexts = {
-  "/title1.jpg": "다대포해수욕장",
+  "/title1.jpg": "바다",
   "/title2.jpg": "정글 단체사진",
-  "/title3.jpg": "설악산 대청봉",
-  "/title4.jpg": "정글 눈 오는 날 썰매",
-  "/title5.jpg": "다섯 번째 이미지",
-  "/title6.jpg": "여섯 번째 이미지",
+  "/title3.jpg": "하이킹",
+  "/title4.jpg": "눈 오는 날",
+  "/title5.jpg": "제주도 여행",
+  "/title6.jpg": "정글 추억",
   "/title7.jpg": "일곱 번째 이미지",
   // 나머지 이미지에 대한 텍스트 추가...
 };
