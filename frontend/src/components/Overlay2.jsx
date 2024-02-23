@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
+import "./EditButton2.css"
+import ReactDOM from "react-dom"; // ReactDOM을 임포트합니다.
 
 function Overlay2() {
     const navigate = useNavigate();
@@ -14,7 +16,7 @@ function Overlay2() {
           style={{ position: 'absolute', bottom: 43, left: 80, fontSize: '20px' }}>
           Follow me
         </a> */}
-        <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '80px', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
+        <button className="edit-button2" onClick={goBack} style={{ pointerEvents: 'auto' }}>
         뒤로 가기
       </button>
         {/* <div style={{ position: 'absolute', top: 40, left: 40, fontSize: '20px' }}>Ria Chakravarty</div> */}
