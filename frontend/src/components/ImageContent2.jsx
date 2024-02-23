@@ -52,11 +52,11 @@ function Image(props) {
 
       <group {...props}>
 
-        <Image position={[-width * w, 0, -1]} scale={[width * w - m * 2, 5, 1]} url={urls[0]} />
+        <Image position={[-width * w-1, 0, -0.5]} scale={[6, 5, 1]} url={urls[0]} />
 
-        <Image position={[0, 0, 0]} scale={[width * w - m * 2, 5, 1]} url={urls[1]} />
+        <Image position={[0, 0, 0]} scale={[6, 5, 1]} url={urls[1]} />
 
-        <Image position={[width * w, 0, 1]} scale={[width * w - m * 2, 5, 1]} url={urls[2]} />
+        <Image position={[width * w+0.5, 0, 0.5]} scale={[6, 5, 1]} url={urls[2]} />
 
       </group>
 
@@ -75,28 +75,15 @@ function Image(props) {
 
       <>
 
-        <Page position={[-width * 1, 0, 0]} urls={['img4.jpg', '/img5.jpg', '/img6.jpg']} />
+        <Page position={[width * 0.3, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
 
-        <Page position={[width * 0, 0, 0]} urls={['/img7.jpg', '/img8.jpg', '/img9.jpg']} />
+        <Page position={[width * 1.5, 0, 0]} urls={['snow/img4.jpg', 'snow/img5.jpg', 'snow/img6.jpg']} />
 
-        <Page position={[width * 1, 0, 0]} urls={['/img10.jpg', '/img11.jpg', '/img12.jpg']} />
+        <Page position={[width * 2.7, 0, 0]} urls={['snow/img7.jpg', 'snow/img8.jpg', 'snow/img9.jpg']} />
 
-        <Page position={[width * 2, 0, 0]} urls={['/img1.jpg', '/img2.jpg', '/img3.jpg']} />
+        <Page position={[width * 3.9, 0, 0]} urls={['snow/img10.jpg', 'snow/img11.jpg', 'snow/img1.jpg']} />
 
-        <Page position={[width * 3, 0, 0]} urls={['img13.jpg', '/img14.jpg', '/img15.jpg']} />
-
-
-
-
-        <Page position={[width * 4, 0, 0]} urls={['img4.jpg', '/img5.jpg', '/img6.jpg']} />
-
-        <Page position={[width * 5, 0, 0]} urls={['/img7.jpg', '/img8.jpg', '/img9.jpg']} />
-
-        <Page position={[width * 6, 0, 0]} urls={['/img10.jpg', '/img11.jpg', '/img12.jpg']} />
-
-        <Page position={[width * 7, 0, 0]} urls={['/img1.jpg', '/img2.jpg', '/img3.jpg']} />
-
-        <Page position={[width * 8, 0, 0]} urls={['img13.jpg', '/img14.jpg', '/img15.jpg']} />
+        <Page position={[width * 5.1, 0, 0]} urls={['snow/img1.jpg', 'snow/img2.jpg', 'snow/img3.jpg']} />
 
       </>
 
@@ -121,7 +108,7 @@ function Image(props) {
 
         <Suspense fallback={null}>
 
-          <ScrollControls infinite horizontal damping={4} pages={6} distance={1}>
+          <ScrollControls infinite horizontal damping={4} pages={6.5} distance={1}>
 
             <Scroll>
 
