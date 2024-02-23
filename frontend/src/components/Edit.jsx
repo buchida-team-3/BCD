@@ -89,7 +89,7 @@ const toggleZoomedView = () => {
   // 모달에서 "확인" 버튼 핸들러
   const handleConfirm = () => {
     setIsModalVisible(false); // 모달을 숨깁니다.
-    alert("앨범이 생성되었습니다.");
+    openModalWithMessage("앨범이 생성되었습니다.");
     navigate('/album'); // 앨범 페이지로 이동합니다.
   };
 
@@ -138,7 +138,7 @@ const toggleZoomedView = () => {
         // 추가된 이미지는 추가 목록에서 제거합니다.
         setAdditionalImages(additionalImages.slice(1));
 
-        alert("이미지가 저장되었습니다.");
+        openModalWithMessage("이미지가 저장되었습니다.");
       }
     }
   };
