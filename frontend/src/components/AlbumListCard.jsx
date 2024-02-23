@@ -24,7 +24,16 @@ function AlbumListCard({ url, ...props }) {
   };
 
   const handleCardClick = () => {
-    navigate('/imagepage2'); // 클릭 시 /album 경로로 이동
+    // 예시 URL에 따라 다른 페이지로 navigate하는 로직
+    if (url === '/title1.jpg') {
+      navigate('/imagepage2');
+    } else if (url === '/title2.jpg') {
+      navigate('/imagepage3');
+    } else if (url === '/title3.jpg') {
+      navigate('/imagepage4');
+    } else if (url === '/title4.jpg') {
+      navigate('/imagepage5');
+    }
   };
 
   useFrame((state, delta) => {

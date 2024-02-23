@@ -8,13 +8,13 @@ import ReactDOM from 'react-dom';
 
 // URL과 텍스트 매핑 객체 예시입니다. 실제 URL을 사용하도록 변경해주세요.
 const cardTexts = {
-  "/image1.jpeg": "부산 해운대",
-  "/image2.jpeg": "등산 추억",
-  "/image3.jpeg": "외국 여행",
-  "/image4.jpeg": "겨울 휴가",
-  "/image5.jpeg": "다섯 번째 이미지",
-  "/image6.jpeg": "여섯 번째 이미지",
-  "/image7.jpeg": "일곱 번째 이미지",
+  "/title1.jpg": "다대포해수욕장",
+  "/title2.jpg": "정글 단체사진",
+  "/title3.jpg": "설악산 대청봉",
+  "/title4.jpg": "정글 눈 오는 날 썰매",
+  "/title5.jpg": "다섯 번째 이미지",
+  "/title6.jpg": "여섯 번째 이미지",
+  "/title7.jpg": "일곱 번째 이미지",
   // 나머지 이미지에 대한 텍스트 추가...
 };
 
@@ -54,7 +54,7 @@ function AlbumListOverlay() {
     <div style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
       {hoveredCard && (
         <>
-          <div style={{ position: 'absolute', bottom: '3%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '50px', color: "white", fontWeight: "bold"}}>
+          <div style={{ position: 'absolute', bottom: '75%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '50px', color: "white", fontWeight: "bold"}}>
             {cardTexts[hoveredCard] || "기본 텍스트"} {/* 호버된 카드에 해당하는 텍스트를 동적으로 표시 */}
           </div>
           {/* <button onClick={goBack} style={{ position: 'absolute', bottom: '43px', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '20px', color: "white", background: "none", border: "none", cursor: "pointer", pointerEvents: 'all' }}>
