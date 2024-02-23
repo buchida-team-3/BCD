@@ -45,25 +45,26 @@ export default function LabelContent2({ filterLabel }) {
     alt: `Image ${index + 1}`,
   }));
 
+// 그리드 컴포넌트 사이즈
 const defaultImageSizes = {
     "1X": {
-      width: 120,
-      height: 100,
+      width: 400,
+      height: 300,
     },
     "2X": {
-      width: 200,
-      height: 180,
+      width: 500,
+      height: 400,
     },
     "3X": {
-      // width: 320,
-      width: 500,
+      width: 800,
       height: 400,
     },
   };
 
  return (
     <div className="grid-container" style={{ width: "100vw" }}>
-      <Grid images={images} width={1770} height={920} showProgressBar={false} imageSizes={defaultImageSizes} />
+      {/* <Grid images={images} width={1770} height={920} showProgressBar={false} imageSizes={defaultImageSizes} /> */}
+      <Grid images={images} width={1770} height={1000} showProgressBar={false} imageSizes={defaultImageSizes} />
     </div>
   );
 }
