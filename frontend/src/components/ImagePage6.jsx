@@ -8,12 +8,18 @@ import Overlay2 from './Overlay2'
 import ImageContent6 from './ImageContent6'
 
 import './ImagePage.css'
+import Navbar from './Navbar'
+import './LabelPage.css'
 
 function ImagePage6() {
     return (
         <>
+        <div className="label-page-container">
+            <Navbar />
         <ImageContent6 />
         <Overlay2 />
+        </div>
+        
         </>
 
     )

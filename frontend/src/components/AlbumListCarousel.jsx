@@ -1,6 +1,6 @@
 import AlbumListCard from "./AlbumListCard";
 
-function AlbumListCarousel({ radius = 1.4, count = 5 }) {
+function AlbumListCarousel({ radius = 1.4, count = 6 }) {
     return Array.from({ length: count }, (_, i) => (
       <AlbumListCard
         key={i}
