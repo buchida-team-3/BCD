@@ -9,6 +9,36 @@ import "react-resizable/css/styles.css";
 import editDefault from "./content/edit_default.jpg";
 import { useImageData } from "./ImageContext";
 
+const ZoomedImageView = ({ imageUrl, overlayImages, onClose }) => {
+  if (!imageUrl) return null;
+
+  return (
+    <div className="zoomed-image-modal">
+      <div className="zoomed-image-content">
+        <div className="zoomed-image-container" style={{ position: 'relative' }}>
+          <img className="zoomed-image" src={imageUrl} alt="Zoomed" />
+          {overlayImages.map((overlay, index) => (
+            <img
+              key={index}
+              src={overlay.imageUrl}
+              alt={`Overlay ${index}`}
+              style={{
+                position: 'absolute',
+                left: overlay.x, // 이 위치는 overlayImages 상태에서 계산된 위치를 사용합니다.
+                top: overlay.y,
+                width: overlay.width,
+                height: overlay.height,
+              }}
+            />
+          ))}
+        </div>
+        <button onClick={onClose}>닫기</button>
+      </div>
+    </div>
+  );
+};
+
+
 const Edit = () => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -33,6 +63,12 @@ const Edit = () => {
   const { imageData, setImageData } = useImageData();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [isZoomedViewVisible, setIsZoomedViewVisible] = useState(false);
+
+const toggleZoomedView = () => {
+  setIsZoomedViewVisible(!isZoomedViewVisible);
+};
 
   // 앨범 생성 버튼 핸들러
   const handleCreateAlbum = () => {
@@ -476,9 +512,16 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
           </div>
         </div>
       )}
-                <button className="edit-button" onClick={handleFullScreen}>
+                <button className="edit-button" onClick={toggleZoomedView}>
                   전체화면
                 </button>
+                {isZoomedViewVisible && (
+  <ZoomedImageView
+    imageUrl={selectedImage}
+    overlayImages={overlayImages}
+    onClose={toggleZoomedView}
+  />
+)}
               </div>
             </div>
 
