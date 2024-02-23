@@ -22,6 +22,7 @@ import ImagePage3 from './components/ImagePage3';
 import ImagePage4 from './components/ImagePage4';
 import ImagePage5 from './components/ImagePage5';
 import ImagePage6 from './components/ImagePage6';
+import ImagePage7 from './components/ImagePage7';
 
 
 function App() {
@@ -73,8 +74,8 @@ function App() {
           <Route path="/imagepage4" element={<ImagePage4 />} />
           <Route path="/imagepage5" element={<ImagePage2 />} />
           <Route path="/imagepage6" element={<ImagePage6 />} />
+          <Route path="/imagepage7" element={<ImagePage7 />} />
           
-
         </Routes>
       </Router>
     </ImageDataProvider>
