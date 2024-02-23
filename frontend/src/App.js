@@ -21,6 +21,7 @@ import LabelPage from './components/LabelPage';
 import ImagePage3 from './components/ImagePage3';
 import ImagePage4 from './components/ImagePage4';
 import ImagePage5 from './components/ImagePage5';
+import ImagePage6 from './components/ImageContent6';
 
 
 function App() {
@@ -67,10 +68,12 @@ function App() {
           {/* <Route path="/aIbum" element={<LabelPage3 />} /> */}
           <Route path="/home" element={<LabelPage3 />} />
 
-          <Route path="/imagepage5" element={<ImagePage2 />} />
+          <Route path="/imagepage2" element={<ImagePage5 />} />
           <Route path="/imagepage3" element={<ImagePage3 />} />
           <Route path="/imagepage4" element={<ImagePage4 />} />
-          <Route path="/imagepage6" element={<ImagePage5 />} />
+          <Route path="/imagepage5" element={<ImagePage2 />} />
+          <Route path="/imagepage6" element={<ImagePage6 />} />
+          
 
         </Routes>
       </Router>
