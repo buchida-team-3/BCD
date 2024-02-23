@@ -32,6 +32,25 @@ const Edit = () => {
   const overlayContainerRef = useRef(null);
   const { imageData, setImageData } = useImageData();
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // 앨범 생성 버튼 핸들러
+  const handleCreateAlbum = () => {
+    setIsModalVisible(true);
+  };
+
+  // 모달에서 "확인" 버튼 핸들러
+  const handleConfirm = () => {
+    setIsModalVisible(false); // 모달을 숨깁니다.
+    alert("앨범이 생성되었습니다.");
+    navigate('/album'); // 앨범 페이지로 이동합니다.
+  };
+
+  // 모달에서 "취소" 버튼 핸들러
+  const handleModalCancel = () => {
+    setIsModalVisible(false); // 모달을 숨깁니다.
+  };
+
   const navigate = useNavigate();
   const handleGo = () => {
     alert("앨범이 생성되었습니다.");
@@ -441,9 +460,22 @@ const dummyImageUrl = "https://example.com/dummy_image.jpg";
                 <button className="edit-button" onClick={handleMergeImages}>
                   편집 저장
                 </button>
-                <button className="edit-button" onClick={handleGo}>
+                <button className="edit-button" onClick={handleCreateAlbum}>
                   앨범 생성
                 </button>
+                {/* 모달 창 */}
+      {isModalVisible && (
+        <div className="album-modal">
+          <div className="album-modal-content">
+            <h2 className="album-modal-text">앨범 생성</h2>
+            <input type="text" placeholder="앨범 제목을 입력하세요" />
+            <div className="album-modal-buttons">
+              <button onClick={handleConfirm}>확인</button>
+            <button onClick={handleModalCancel}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
                 <button className="edit-button" onClick={handleFullScreen}>
                   전체화면
                 </button>
